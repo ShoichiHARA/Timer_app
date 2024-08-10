@@ -5,6 +5,7 @@ class Language:
         for i in range(len(lg_list)):
             if lg_list[i] == lg:
                 self.mwn = output(i, ["Count Up Timer", "カウントアップタイマー"])
+                self.twn = output(i, ["Timer", "表示ウインドウ"])
                 self.fil = output(i, ["File", "ファイル"])
                 self.opn = output(i, ["Open", "開く"])
                 self.sav = output(i, ["Save", "上書き保存"])
