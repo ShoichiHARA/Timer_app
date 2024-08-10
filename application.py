@@ -24,7 +24,8 @@ class MainWin(tk.Frame):
         self.master.title(self.lg.mwn)       # ウインドウタイトル
         self.master.geometry("800x600")      # ウインドウサイズ
         self.master.resizable(False, False)  # サイズ変更禁止
-        self.widgets()
+        self.widgets()                       # ウィジェット
+        self.event()                         # イベント
 
     # ウィジェット
     def widgets(self: tk.Tk):
@@ -52,8 +53,16 @@ class MainWin(tk.Frame):
             if e.keysym in self.keys:
                 return
             self.keys.append(e.keysym)
+
+        def k_release(e):  # キーボード離した場合
+            self.keys.remove(e.keysym)
             if e.keysym == "Escape":
                 self.exit()  # プログラム終了
+
+        self.master.bind("<ButtonPress>", m_press)
+        self.master.bind("<ButtonRelease>", m_release)
+        self.master.bind("<KeyPress>", k_press)
+        self.master.bind("<KeyRelease>", k_release)
 
 
 # アプリケーション
