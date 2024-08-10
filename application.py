@@ -20,6 +20,8 @@ class MainWin(tk.Frame):
         self.set = Setting()                # 設定
         self.lg = lg.Language(self.set.lg)  # 言語
         self.keys = []                      # キーボードの状態
+        self.now = 0                        # 現在時刻
+        self.siz = 1                        # 大きさ
         self.bt0 = tk.Button(self.master, text="Button", command=self.tm_win)  # ボタン1
 
         # ウインドウの定義
@@ -69,7 +71,8 @@ class MainWin(tk.Frame):
                 return
             self.keys.append(e.keysym)
             if e.keysym == "space":
-                print(datetime.datetime.now())
+                self.now = datetime.datetime.now()
+                print(self.now)
 
         def k_release(e):  # キーボード離した場合
             self.keys.remove(e.keysym)
@@ -91,7 +94,8 @@ class TMWin(tk.Frame):
         # 定義
         self.set = Setting()                # 設定
         self.lg = lg.Language(self.set.lg)  # 言語
-        self.frm = tk.Frame(self.master)  # フレーム
+        self.cvs = tk.Canvas(self.master, bg="white")  # キャンバス
+        self.seg = SevenSeg(cvs=self.cvs)
 
         # ウインドウの定義
         self.master.title(self.lg.twn)
@@ -99,8 +103,94 @@ class TMWin(tk.Frame):
         self.widgets()  # ウィジェット
 
     def widgets(self: tk.Tk):
-        # フレームの設定
-        self.frm.pack(fill=tk.BOTH, expand=True)
+        # キャンバスの設定
+        self.cvs.pack(fill=tk.BOTH, expand=True)
+        self.seg.place(10, 10, 10)
+
+    # 画面更新
+    def re_frm(self):
+        self.master.after(10, self.re_frm)  # 0.1s後再描画
+
+
+# 7セグクラス
+class SevenSeg:
+    def __init__(self, tag="", cvs=None):
+        self.num = 0  # 数値
+        self.clr = "orange"  # 色
+        self.tag = tag
+        self.cvs = cvs
+        self.seg = [None] * 7
+        self.cls = [None] * 7
+        self.bit = [
+            [1, 1, 1, 1, 1, 1, 0],
+            [0, 1, 1, 0, 0, 0, 0],
+            [1, 1, 0, 1, 1, 0, 1],
+            [1, 1, 1, 1, 0, 0, 1],
+            [0, 1, 1, 0, 0, 1, 1],
+            [1, 0, 1, 1, 0, 1, 1],
+            [1, 0, 1, 1, 1, 1, 1],
+            [1, 1, 1, 0, 0, 1, 0],
+            [1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 0, 1]
+        ]
+        self.set_bit()
+
+    # 数値の設定
+    def set_num(self, num):
+        self.num = num
+        self.set_bit()
+
+    # 色の設定
+    def set_clr(self, clr):
+        self.clr = clr
+        self.set_bit()
+
+    def set_bit(self):
+        for i in range(7):
+            if self.bit[self.num][i] == 0:
+                self.cls[i] = "white"
+            else:
+                self.cls[i] = self.clr
+
+    # 配置
+    def place(self, x, y, s):
+        a = 5
+        b = 5
+        self.seg[0] = self.cvs.create_polygon(
+            s+x, s+y, 2*s+x, 2*s+y, (a+2)*s+x, 2*s+y,
+            (3+a)*s+x, s+y, (a+2)*s+x, y, 2*s+x, y,
+            fill=self.cls[0]
+        )
+        self.seg[1] = self.cvs.create_polygon(
+            (a+3)*s+x, s+y, (a+2)*s+x, 2*s+y, (a+2)*s+x, (2+b)*s+y,
+            (a+3)*s+x, (3+b)*s+y, (4+a)*s+x, (2+b)*s+y, (4+a)*s+x, 2*s+y,
+            fill=self.cls[1]
+        )
+        self.seg[2] = self.cvs.create_polygon(
+            (a+3)*s+x, 8*s+y, (2+a)*s+x, (4+b)*s+y, (a+2)*s+x, (2*b+4)*s+y,
+            (a+3)*s+x, (2*b+5)*s+y, (4+a)*s+x, (2*b+4)*s+y, (4+a)*s+x, (4+b)*s+y,
+            fill=self.cls[2]
+        )
+        self.seg[3] = self.cvs.create_polygon(
+            s+x, (2*b+5)*s+y, 2*s+x, (2*b+6)*s+y, (a+2)*s+x, (2*b+6)*s+y,
+            (a+3)*s+x, (2*b+5)*s+y, (a+2)*s+x, (2*b+4)*s+y, 2*s+x, (2*b+4)*s+y,
+            fill=self.cls[3]
+        )
+        self.seg[4] = self.cvs.create_polygon(
+            s+x, (3+b)*s+y, x, (4+b)*s+y, x, (2*b+4)*s+y,
+            s+x, (2*b+5)*s+y, 2*s+x, (2*b+4)*s+y, 2*s+x, (3+b)*s+y,
+            fill=self.cls[4]
+        )
+        self.seg[5] = self.cvs.create_polygon(
+            s+x, s+y, x, 2*s+y, x, (2+b)*s+y,
+            s+x, (3+b)*s+y, 2*s+x, (2+b)*s+y, 2*s+x, 2*s+y,
+            fill=self.cls[5]
+        )
+        self.seg[6] = self.cvs.create_polygon(
+            s+x, (3+b)*s+y, 2*s+x, (4+b)*s+y, (2+a)*s+x, (4+b)*s+y,
+            (a+3)*s+x, (3+b)*s+y, (2+a)*s+x, (2+b)*s+y, 2*s+x, (2+b)*s+y,
+            fill=self.cls[6]
+        )
 
 
 # アプリケーション
