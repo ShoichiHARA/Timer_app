@@ -105,7 +105,7 @@ class TMWin(tk.Frame):
     def widgets(self: tk.Tk):
         # キャンバスの設定
         self.cvs.pack(fill=tk.BOTH, expand=True)
-        self.seg.place(10, 10, 10)
+        self.seg.place(200, 150, 10)
 
     # 画面更新
     def re_frm(self):
@@ -115,7 +115,7 @@ class TMWin(tk.Frame):
 # 7セグクラス
 class SevenSeg:
     def __init__(self, tag="", cvs=None):
-        self.num = 0  # 数値
+        self.num = 7  # 数値
         self.clr = "orange"  # 色
         self.tag = tag
         self.cvs = cvs
@@ -154,41 +154,41 @@ class SevenSeg:
 
     # 配置
     def place(self, x, y, s):
-        a = 5
+        a = 3
         b = 5
         self.seg[0] = self.cvs.create_polygon(
-            s+x, s+y, 2*s+x, 2*s+y, (a+2)*s+x, 2*s+y,
-            (3+a)*s+x, s+y, (a+2)*s+x, y, 2*s+x, y,
+            (-a-1)*s+x, (-b-2)*s+y, -a*s+x, (-b-3)*s+y, a*s+x, (-b-3)*s+y,
+            (a+1)*s+x, (-b-2)*s+y, a*s+x, (-b-1)*s+y, -a*s+x, (-b-1)*s+y,
             fill=self.cls[0]
         )
         self.seg[1] = self.cvs.create_polygon(
-            (a+3)*s+x, s+y, (a+2)*s+x, 2*s+y, (a+2)*s+x, (2+b)*s+y,
-            (a+3)*s+x, (3+b)*s+y, (4+a)*s+x, (2+b)*s+y, (4+a)*s+x, 2*s+y,
+            (a+1)*s+x, (-b-2)*s+y, (a+2)*s+x, (-b-1)*s+y, (a+2)*s+x, -s+y,
+            (a+1)*s+x, y, a*s+x, -s+y, a*s+x, (-b-1)*s+y,
             fill=self.cls[1]
         )
         self.seg[2] = self.cvs.create_polygon(
-            (a+3)*s+x, 8*s+y, (2+a)*s+x, (4+b)*s+y, (a+2)*s+x, (2*b+4)*s+y,
-            (a+3)*s+x, (2*b+5)*s+y, (4+a)*s+x, (2*b+4)*s+y, (4+a)*s+x, (4+b)*s+y,
+            (a+1)*s+x, y, (a+2)*s+x, s+y, (a+2)*s+x, (b+1)*s+y,
+            (a+1)*s+x, (b+2)*s+y, a*s+x, (b+1)*s+y, a*s+x, s+y,
             fill=self.cls[2]
         )
         self.seg[3] = self.cvs.create_polygon(
-            s+x, (2*b+5)*s+y, 2*s+x, (2*b+6)*s+y, (a+2)*s+x, (2*b+6)*s+y,
-            (a+3)*s+x, (2*b+5)*s+y, (a+2)*s+x, (2*b+4)*s+y, 2*s+x, (2*b+4)*s+y,
+            (-a-1)*s+x, (b+2)*s+y, -a*s+x, (b+1)*s+y, a*s+x, (b+1)*s+y,
+            (a+1)*s+x, (b+2)*s+y, a*s+x, (b+3)*s+y, -a*s+x, (b+3)*s+y,
             fill=self.cls[3]
         )
         self.seg[4] = self.cvs.create_polygon(
-            s+x, (3+b)*s+y, x, (4+b)*s+y, x, (2*b+4)*s+y,
-            s+x, (2*b+5)*s+y, 2*s+x, (2*b+4)*s+y, 2*s+x, (3+b)*s+y,
+            (-a-1)*s+x, y, -a*s+x, s+y, -a*s+x, (b+1)*s+y,
+            (-a-1)*s+x, (b+2)*s+y, (-a-2)*s+x, (b+1)*s+y, (-a-2)*s+x, s+y,
             fill=self.cls[4]
         )
         self.seg[5] = self.cvs.create_polygon(
-            s+x, s+y, x, 2*s+y, x, (2+b)*s+y,
-            s+x, (3+b)*s+y, 2*s+x, (2+b)*s+y, 2*s+x, 2*s+y,
+            (-a-1)*s+x, (-b-2)*s+y, -a*s+x, (-b-1)*s+y, -a*s+x, -s+y,
+            (-a-1)*s+x, y, (-a-2)*s+x, -s+y, (-a-2)*s+x, (-b-1)*s+y,
             fill=self.cls[5]
         )
         self.seg[6] = self.cvs.create_polygon(
-            s+x, (3+b)*s+y, 2*s+x, (4+b)*s+y, (2+a)*s+x, (4+b)*s+y,
-            (a+3)*s+x, (3+b)*s+y, (2+a)*s+x, (2+b)*s+y, 2*s+x, (2+b)*s+y,
+            (-a-1)*s+x, y, -a*s+x, -s+y, a*s+x, -s+y,
+            (a+1)*s+x, y, a*s+x, s+y, -a*s+x, s+y,
             fill=self.cls[6]
         )
 

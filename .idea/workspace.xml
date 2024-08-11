@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="08/10&#10;サブウインドウ表示">
+    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="08/10&#10;７セグ表示">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application.py" beforeDir="false" afterPath="$PROJECT_DIR$/application.py" afterDir="false" />
     </list>
@@ -123,7 +123,15 @@
       <option name="project" value="LOCAL" />
       <updated>1723288553548</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="08/10&#10;７セグ表示">
+      <option name="closed" value="true" />
+      <created>1723307710464</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1723307710464</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -142,6 +150,7 @@
     <MESSAGE value="08/08&#10;アプリケーションの土台" />
     <MESSAGE value="08/10&#10;イベント関数の土台" />
     <MESSAGE value="08/10&#10;サブウインドウ表示" />
-    <option name="LAST_COMMIT_MESSAGE" value="08/10&#10;サブウインドウ表示" />
+    <MESSAGE value="08/10&#10;７セグ表示" />
+    <option name="LAST_COMMIT_MESSAGE" value="08/10&#10;７セグ表示" />
   </component>
 </project>
