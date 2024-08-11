@@ -20,7 +20,10 @@ class MainWin(tk.Frame):
         self.set = Setting()                # 設定
         self.lg = lg.Language(self.set.lg)  # 言語
         self.keys = []                      # キーボードの状態
-        self.now = 0                        # 現在時刻
+        self.now = {
+            "y": 0, "m": 0, "d": 0,
+            "h": 0, "min": 0, "sec": 0, "msc": 0
+        }                    # 現在時刻
         self.siz = 1                        # 大きさ
         self.bt0 = tk.Button(self.master, text="Button", command=self.tm_win)  # ボタン1
 
@@ -35,6 +38,9 @@ class MainWin(tk.Frame):
         self.tm_mas = None
         self.tm_app = None
 
+        # 現在時刻取得
+        self.get_now()
+
     # ウィジェット
     def widgets(self: tk.Tk):
         self.bt0.pack()
@@ -47,10 +53,38 @@ class MainWin(tk.Frame):
     def tm_win(self):
         if self.tm_mas is None:
             self.tm_mas = tk.Toplevel(self.master)
-            self.tm_app = TMWin(self.tm_mas)
+            self.tm_app = TMWin(self.tm_mas, self)
         elif not self.tm_mas.winfo_exists():
             self.tm_mas = tk.Toplevel(self.master)
-            self.tm_app = TMWin(self.tm_mas)
+            self.tm_app = TMWin(self.tm_mas, self)
+
+    # 現在時刻取得
+    def get_now(self):
+        now = datetime.datetime.now()
+        self.now["y"] = now.year
+        self.now["m"] = now.month
+        self.now["d"] = now.day
+        self.now["h"] = now.hour
+        self.now["min"] = now.minute
+        self.now["sec"] = now.second
+        self.now["msc"] = now.microsecond // 100000
+
+    # 現在時刻カウント
+    def cnt_now(self):
+        self.now["msc"] += 1                               # +1 -> 100ms
+        if self.now["msc"] >= 10:                          # 1000ms超えた場合
+            self.now["sec"] += self.now["msc"] // 10       # 繰り上げ
+            self.now["msc"] -= self.now["msc"] // 10 * 10  # 繰り上げ分減算
+            if self.now["sec"] >= 60:                          # 60秒超えた場合
+                self.now["min"] += self.now["sec"] // 60       # 繰り上げ
+                self.now["sec"] -= self.now["sec"] // 60 * 60  # 繰り上げ分減算
+                if self.now["min"] >= 60:                          # 60分超えた場合
+                    self.now["h"] += self.now["min"] // 60         # 繰り上げ
+                    self.now["min"] -= self.now["min"] // 60 * 60  # 繰り上げ分減算
+        if self.now["min"] == 0:
+            if self.now["sec"] == 0:
+                if self.now["msc"] == 0:
+                    self.get_now()
 
     # イベント
     def event(self):
@@ -73,6 +107,7 @@ class MainWin(tk.Frame):
             if e.keysym == "space":
                 self.now = datetime.datetime.now()
                 print(self.now)
+                print(self.now.microsecond // 100000)
 
         def k_release(e):  # キーボード離した場合
             self.keys.remove(e.keysym)
@@ -87,13 +122,14 @@ class MainWin(tk.Frame):
 
 # 表示ウインドウ
 class TMWin(tk.Frame):
-    def __init__(self: tk.Tk, master):
+    def __init__(self: tk.Tk, master, mw):
         super().__init__(master)
         self.pack()
 
         # 定義
         self.set = Setting()                # 設定
         self.lg = lg.Language(self.set.lg)  # 言語
+        self.mw = mw                        # メインウインドウ
         self.cvs = tk.Canvas(self.master, bg="white")  # キャンバス
         self.seg = SevenSeg(cvs=self.cvs)
 
@@ -102,6 +138,8 @@ class TMWin(tk.Frame):
         self.master.geometry("400x300")
         self.widgets()  # ウィジェット
 
+        self.re_frm()
+
     def widgets(self: tk.Tk):
         # キャンバスの設定
         self.cvs.pack(fill=tk.BOTH, expand=True)
@@ -109,16 +147,25 @@ class TMWin(tk.Frame):
 
     # 画面更新
     def re_frm(self):
-        self.master.after(10, self.re_frm)  # 0.1s後再描画
+        self.mw.get_now()
+        self.cvs.delete("all")
+
+        self.seg.set_num(self.mw.now["msc"])
+        self.seg.place(200, 150, 10)
+
+        # print(datetime.datetime.now())
+
+        self.master.after(10, self.re_frm)  # 0.01s後再描画
 
 
 # 7セグクラス
 class SevenSeg:
-    def __init__(self, tag="", cvs=None):
-        self.num = 7  # 数値
-        self.clr = "orange"  # 色
-        self.tag = tag
-        self.cvs = cvs
+    def __init__(self, tag="", cvs=None, num=0, clr="black"):
+        # 定義
+        self.num = None  # 数値
+        self.clr = None  # 色
+        self.tag = tag   # タグ
+        self.cvs = cvs   # キャンバス
         self.seg = [None] * 7
         self.cls = [None] * 7
         self.bit = [
@@ -131,13 +178,17 @@ class SevenSeg:
             [1, 0, 1, 1, 1, 1, 1],
             [1, 1, 1, 0, 0, 1, 0],
             [1, 1, 1, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 0, 1]
+            [1, 1, 1, 1, 0, 1, 1]
         ]
-        self.set_bit()
+
+        # 初期設定
+        self.set_num(num)  # 数値
+        self.set_clr(clr)  # 色
+        self.set_bit()     # セグの設定
 
     # 数値の設定
     def set_num(self, num):
-        self.num = num
+        self.num = num % 10  # 一の位
         self.set_bit()
 
     # 色の設定
