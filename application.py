@@ -130,6 +130,8 @@ class TMWin(tk.Frame):
         self.set = Setting()                # 設定
         self.lg = lg.Language(self.set.lg)  # 言語
         self.mw = mw                        # メインウインドウ
+        self.wwd = 400                      # ウインドウ幅
+        self.whg = 300                      # ウインドウ高
         self.cvs = tk.Canvas(self.master, bg="white")  # キャンバス
         self.seg = SevenSeg(cvs=self.cvs)
 
@@ -137,6 +139,7 @@ class TMWin(tk.Frame):
         self.master.title(self.lg.twn)
         self.master.geometry("400x300")
         self.widgets()  # ウィジェット
+        self.event()    # イベント
 
         self.re_frm()
 
@@ -151,11 +154,19 @@ class TMWin(tk.Frame):
         self.cvs.delete("all")
 
         self.seg.set_num(self.mw.now["msc"])
-        self.seg.place(200, 150, 10)
+        self.seg.place(self.wwd/2, self.whg/2, 10)
 
         # print(datetime.datetime.now())
 
         self.master.after(10, self.re_frm)  # 0.01s後再描画
+
+    # イベント
+    def event(self):
+        def win_size(e):
+            self.wwd = self.master.winfo_width()
+            self.whg = self.master.winfo_height()
+
+        self.bind("<Configure>", win_size)
 
 
 # 7セグクラス
