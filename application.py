@@ -24,8 +24,10 @@ class MainWin(tk.Frame):
             "y": 0, "m": 0, "d": 0,
             "h": 0, "min": 0, "sec": 0, "msc": 0
         }                    # 現在時刻
-        self.siz = 1                        # 大きさ
+        self.siz = 10                        # 大きさ
         self.bt0 = tk.Button(self.master, text="Button", command=self.tm_win)  # ボタン1
+        self.bt1 = tk.Button(self.master, text="Start", command=self.bt1_ps)   # ボタン2
+        self.bt2 = tk.Button(self.master, text="Stop", command=self.bt2_ps)    # ボタン3
 
         # ウインドウの定義
         self.master.title(self.lg.mwn)       # ウインドウタイトル
@@ -44,6 +46,8 @@ class MainWin(tk.Frame):
     # ウィジェット
     def widgets(self: tk.Tk):
         self.bt0.pack()
+        self.bt1.pack()
+        self.bt2.pack()
 
     # 終了
     def exit(self):
@@ -57,6 +61,12 @@ class MainWin(tk.Frame):
         elif not self.tm_mas.winfo_exists():
             self.tm_mas = tk.Toplevel(self.master)
             self.tm_app = TMWin(self.tm_mas, self)
+
+    def bt1_ps(self):
+        self.siz += 1
+
+    def bt2_ps(self):
+        self.siz -= 1
 
     # 現在時刻取得
     def get_now(self):
@@ -133,6 +143,8 @@ class TMWin(tk.Frame):
         self.wwd = 400                      # ウインドウ幅
         self.whg = 300                      # ウインドウ高
         self.cvs = tk.Canvas(self.master, bg="white")  # キャンバス
+        self.tim = Time(self.cvs)
+
         self.seg = SevenSeg(cvs=self.cvs)
 
         # ウインドウの定義
@@ -146,15 +158,18 @@ class TMWin(tk.Frame):
     def widgets(self: tk.Tk):
         # キャンバスの設定
         self.cvs.pack(fill=tk.BOTH, expand=True)
-        self.seg.place(200, 150, 10)
 
     # 画面更新
     def re_frm(self):
-        self.mw.get_now()
-        self.cvs.delete("all")
+        self.cvs.delete("all")    # 表示リセット
+        pnm = self.mw.now["msc"]  # 前回のミリ秒
+        self.mw.get_now()         # 現在時刻取得
+        if pnm != self.mw.now["msc"]:  # ミリ秒が進んでいる場合
+            self.tim.cnt_tim()         # 時間カウント
+        self.tim.display(self.wwd/2, self.whg/2, self.mw.siz)
 
-        self.seg.set_num(self.mw.now["msc"])
-        self.seg.place(self.wwd/2, self.whg/2, 10)
+        # self.seg.set_num(self.mw.now["msc"])
+        # self.seg.place(self.wwd/2, self.whg/2, self.mw.siz)
 
         # print(datetime.datetime.now())
 
@@ -167,6 +182,90 @@ class TMWin(tk.Frame):
             self.whg = self.master.winfo_height()
 
         self.bind("<Configure>", win_size)
+
+
+# 時間クラス
+class Time:
+    def __init__(self, cvs):
+        self.cvs = cvs
+        self.clr = "black"
+        self.h = [SevenSeg(cvs=cvs), SevenSeg(cvs=cvs)]  # 時間　一の位, 十の位
+        self.m = [SevenSeg(cvs=cvs), SevenSeg(cvs=cvs)]  # 分　　一の位, 十の位
+        self.s = [SevenSeg(cvs=cvs), SevenSeg(cvs=cvs)]  # 秒　　一の位, 十の位
+        self.ms = SevenSeg(cvs=cvs)                      # 秒　　1/10の位
+
+    # 7セグに時間を登録
+    def set_tim(self, h=None, m=None, s=None, ms=None):
+        if h is not None:
+            self.h[0].set_num(h % 10)   # 時間　一の位
+            self.h[1].set_num(h // 10)  # 時間　十の位
+        if m is not None:
+            self.m[0].set_num(m % 10)   # 分　一の位
+            self.m[1].set_num(m // 10)  # 分　十の位
+        if s is not None:
+            self.s[0].set_num(s % 10)   # 秒　一の位
+            self.s[1].set_num(s // 10)  # 秒　十の位
+        if ms is not None:
+            self.ms.set_num(ms)         # 秒　1/10の位
+
+    # 7セグの色を登録
+    def set_clr(self, clr):
+        self.clr = clr
+        self.h[0].set_clr(clr)  # 時間　一の位
+        self.h[1].set_clr(clr)  # 時間　十の位
+        self.m[0].set_clr(clr)  # 分　一の位
+        self.m[1].set_clr(clr)  # 分　十の位
+        self.s[0].set_clr(clr)  # 秒　一の位
+        self.s[1].set_clr(clr)  # 秒　十の位
+        self.ms.set_clr(clr)    # 秒　1/10の位
+
+    # カウント
+    def cnt_tim(self):
+        self.ms.set_num(self.ms.num+1)
+        if self.ms.num == 0:  # 1/10秒桁を繰り上げ
+            self.s[0].set_num(self.s[0].num+1)
+            if self.s[0].num == 0:  # 1秒桁を繰り上げ
+                self.s[1].set_num(self.s[1].num+1)
+                if self.s[1].num == 6:  # 10秒桁を繰り上げ
+                    self.m[0].set_num(self.m[0].num+1)
+                    self.s[1].set_num(0)
+                    if self.m[0].num == 0:  # 1分桁を繰り上げ
+                        self.m[1].set_num(self.m[1].num+1)
+                        if self.m[1].num == 6:  # 10分桁を繰り上げ
+                            self.h[0].set_num(self.h[0].num+1)
+                            self.m[1].set_num(0)
+                            if self.h[0].num == 0:  # 1時間桁を繰り上げ
+                                self.h[1].set_num(self.h[1].num+1)
+
+    # ディスプレイ表示
+    def display(self, x, y, s):
+        self.h[1].place(-45*s+x, y, s)
+        self.h[0].place(-33*s+x, y, s)
+        self.cvs.create_rectangle(
+            -25*s+x, -4*s+y, -23*s+x, -2*s+y,
+            fill=self.clr
+        )
+        self.cvs.create_rectangle(
+            -25*s+x, 2*s+y, -23*s+x, 4*s+y,
+            fill=self.clr
+        )
+        self.m[1].place(-15*s+x, y, s)
+        self.m[0].place(-3*s+x, y, s)
+        self.cvs.create_rectangle(
+            5*s+x, -4*s+y, 7*s+x, -2*s+y,
+            fill=self.clr
+        )
+        self.cvs.create_rectangle(
+            5*s+x, 2*s+y, 7*s+x, 4*s+y,
+            fill=self.clr
+        )
+        self.s[1].place(15*s+x, y, s)
+        self.s[0].place(27*s+x, y, s)
+        self.cvs.create_rectangle(
+            35*s+x, 6*s+y, 37*s+x, 8*s+y,
+            fill=self.clr
+        )
+        self.ms.place(45*s+x, y, s)
 
 
 # 7セグクラス
@@ -221,37 +320,37 @@ class SevenSeg:
         self.seg[0] = self.cvs.create_polygon(
             (-a-1)*s+x, (-b-2)*s+y, -a*s+x, (-b-3)*s+y, a*s+x, (-b-3)*s+y,
             (a+1)*s+x, (-b-2)*s+y, a*s+x, (-b-1)*s+y, -a*s+x, (-b-1)*s+y,
-            fill=self.cls[0]
+            fill=self.cls[0], outline="white", width=s/5
         )
         self.seg[1] = self.cvs.create_polygon(
             (a+1)*s+x, (-b-2)*s+y, (a+2)*s+x, (-b-1)*s+y, (a+2)*s+x, -s+y,
             (a+1)*s+x, y, a*s+x, -s+y, a*s+x, (-b-1)*s+y,
-            fill=self.cls[1]
+            fill=self.cls[1], outline="white", width=s/5
         )
         self.seg[2] = self.cvs.create_polygon(
             (a+1)*s+x, y, (a+2)*s+x, s+y, (a+2)*s+x, (b+1)*s+y,
             (a+1)*s+x, (b+2)*s+y, a*s+x, (b+1)*s+y, a*s+x, s+y,
-            fill=self.cls[2]
+            fill=self.cls[2], outline="white", width=s/5
         )
         self.seg[3] = self.cvs.create_polygon(
             (-a-1)*s+x, (b+2)*s+y, -a*s+x, (b+1)*s+y, a*s+x, (b+1)*s+y,
             (a+1)*s+x, (b+2)*s+y, a*s+x, (b+3)*s+y, -a*s+x, (b+3)*s+y,
-            fill=self.cls[3]
+            fill=self.cls[3], outline="white", width=s/5
         )
         self.seg[4] = self.cvs.create_polygon(
             (-a-1)*s+x, y, -a*s+x, s+y, -a*s+x, (b+1)*s+y,
             (-a-1)*s+x, (b+2)*s+y, (-a-2)*s+x, (b+1)*s+y, (-a-2)*s+x, s+y,
-            fill=self.cls[4]
+            fill=self.cls[4], outline="white", width=s/5
         )
         self.seg[5] = self.cvs.create_polygon(
             (-a-1)*s+x, (-b-2)*s+y, -a*s+x, (-b-1)*s+y, -a*s+x, -s+y,
             (-a-1)*s+x, y, (-a-2)*s+x, -s+y, (-a-2)*s+x, (-b-1)*s+y,
-            fill=self.cls[5]
+            fill=self.cls[5], outline="white", width=s/5
         )
         self.seg[6] = self.cvs.create_polygon(
             (-a-1)*s+x, y, -a*s+x, -s+y, a*s+x, -s+y,
             (a+1)*s+x, y, a*s+x, s+y, -a*s+x, s+y,
-            fill=self.cls[6]
+            fill=self.cls[6], outline="white", width=s/5
         )
 
 
