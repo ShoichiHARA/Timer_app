@@ -180,6 +180,7 @@ class TMWin(tk.Frame):
         def win_size(e):
             self.wwd = self.master.winfo_width()
             self.whg = self.master.winfo_height()
+            self.mw.siz = self.wwd // 110
 
         self.bind("<Configure>", win_size)
 

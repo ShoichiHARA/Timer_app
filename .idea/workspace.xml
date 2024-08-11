@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="08/11&#10;ウインドウサイズ取得">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="08/12&#10;時間表示">
       <change beforePath="$PROJECT_DIR$/application.py" beforeDir="false" afterPath="$PROJECT_DIR$/application.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -155,7 +154,15 @@
       <option name="project" value="LOCAL" />
       <updated>1723376424795</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="08/12&#10;時間表示">
+      <option name="closed" value="true" />
+      <created>1723389270921</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1723389270921</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -178,6 +185,7 @@
     <MESSAGE value="08/11&#10;７セグ&#10;原点を中心へ" />
     <MESSAGE value="08/11&#10;現在時刻表示" />
     <MESSAGE value="08/11&#10;ウインドウサイズ取得" />
-    <option name="LAST_COMMIT_MESSAGE" value="08/11&#10;ウインドウサイズ取得" />
+    <MESSAGE value="08/12&#10;時間表示" />
+    <option name="LAST_COMMIT_MESSAGE" value="08/12&#10;時間表示" />
   </component>
 </project>
