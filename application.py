@@ -271,10 +271,11 @@ class Time:
 
 # 7セグクラス
 class SevenSeg:
-    def __init__(self, tag="", cvs=None, num=0, clr="black"):
+    def __init__(self, tag="", cvs=None, num=0, clr="black", bgc="white"):
         # 定義
         self.num = None  # 数値
         self.clr = None  # 色
+        self.bgc = bgc   # 背景色
         self.tag = tag   # タグ
         self.cvs = cvs   # キャンバス
         self.seg = [None] * 7
@@ -310,7 +311,7 @@ class SevenSeg:
     def set_bit(self):
         for i in range(7):
             if self.bit[self.num][i] == 0:
-                self.cls[i] = "white"
+                self.cls[i] = self.bgc
             else:
                 self.cls[i] = self.clr
 
@@ -321,37 +322,37 @@ class SevenSeg:
         self.seg[0] = self.cvs.create_polygon(
             (-a-1)*s+x, (-b-2)*s+y, -a*s+x, (-b-3)*s+y, a*s+x, (-b-3)*s+y,
             (a+1)*s+x, (-b-2)*s+y, a*s+x, (-b-1)*s+y, -a*s+x, (-b-1)*s+y,
-            fill=self.cls[0], outline="white", width=s/5
+            fill=self.cls[0], outline=self.bgc, width=s/5
         )
         self.seg[1] = self.cvs.create_polygon(
             (a+1)*s+x, (-b-2)*s+y, (a+2)*s+x, (-b-1)*s+y, (a+2)*s+x, -s+y,
             (a+1)*s+x, y, a*s+x, -s+y, a*s+x, (-b-1)*s+y,
-            fill=self.cls[1], outline="white", width=s/5
+            fill=self.cls[1], outline=self.bgc, width=s/5
         )
         self.seg[2] = self.cvs.create_polygon(
             (a+1)*s+x, y, (a+2)*s+x, s+y, (a+2)*s+x, (b+1)*s+y,
             (a+1)*s+x, (b+2)*s+y, a*s+x, (b+1)*s+y, a*s+x, s+y,
-            fill=self.cls[2], outline="white", width=s/5
+            fill=self.cls[2], outline=self.bgc, width=s/5
         )
         self.seg[3] = self.cvs.create_polygon(
             (-a-1)*s+x, (b+2)*s+y, -a*s+x, (b+1)*s+y, a*s+x, (b+1)*s+y,
             (a+1)*s+x, (b+2)*s+y, a*s+x, (b+3)*s+y, -a*s+x, (b+3)*s+y,
-            fill=self.cls[3], outline="white", width=s/5
+            fill=self.cls[3], outline=self.bgc, width=s/5
         )
         self.seg[4] = self.cvs.create_polygon(
             (-a-1)*s+x, y, -a*s+x, s+y, -a*s+x, (b+1)*s+y,
             (-a-1)*s+x, (b+2)*s+y, (-a-2)*s+x, (b+1)*s+y, (-a-2)*s+x, s+y,
-            fill=self.cls[4], outline="white", width=s/5
+            fill=self.cls[4], outline=self.bgc, width=s/5
         )
         self.seg[5] = self.cvs.create_polygon(
             (-a-1)*s+x, (-b-2)*s+y, -a*s+x, (-b-1)*s+y, -a*s+x, -s+y,
             (-a-1)*s+x, y, (-a-2)*s+x, -s+y, (-a-2)*s+x, (-b-1)*s+y,
-            fill=self.cls[5], outline="white", width=s/5
+            fill=self.cls[5], outline=self.bgc, width=s/5
         )
         self.seg[6] = self.cvs.create_polygon(
             (-a-1)*s+x, y, -a*s+x, -s+y, a*s+x, -s+y,
             (a+1)*s+x, y, a*s+x, s+y, -a*s+x, s+y,
-            fill=self.cls[6], outline="white", width=s/5
+            fill=self.cls[6], outline=self.bgc, width=s/5
         )
 
 
