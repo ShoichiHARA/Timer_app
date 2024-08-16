@@ -24,7 +24,10 @@ class MainWin(tk.Frame):
             "y": 0, "m": 0, "d": 0,
             "h": 0, "min": 0, "sec": 0, "msc": 0
         }                    # 現在時刻
-        self.siz = 10                        # 大きさ
+        self.siz = 10                       # 大きさ
+        self.clr = "black"                  # 文字色
+        self.bgc = "white"                  # 背景色
+        self.cup = False                    # カウントアップ
         self.bt0 = tk.Button(self.master, text="Button", command=self.tm_win)  # ボタン1
         self.bt1 = tk.Button(self.master, text="Start", command=self.bt1_ps)   # ボタン2
         self.bt2 = tk.Button(self.master, text="Stop", command=self.bt2_ps)    # ボタン3
@@ -142,10 +145,8 @@ class TMWin(tk.Frame):
         self.mw = mw                        # メインウインドウ
         self.wwd = 400                      # ウインドウ幅
         self.whg = 300                      # ウインドウ高
-        self.cvs = tk.Canvas(self.master, bg="white")  # キャンバス
-        self.tim = Time(self.cvs)
-
-        self.seg = SevenSeg(cvs=self.cvs)
+        self.cvs = tk.Canvas(self.master, bg=self.mw.bgc)  # キャンバス
+        self.tim = Time(self.cvs, clr=self.mw.clr, bgc=self.mw.bgc)
 
         # ウインドウの定義
         self.master.title(self.lg.twn)
@@ -187,13 +188,22 @@ class TMWin(tk.Frame):
 
 # 時間クラス
 class Time:
-    def __init__(self, cvs):
+    def __init__(self, cvs, clr="black", bgc="white"):
         self.cvs = cvs
-        self.clr = "black"
-        self.h = [SevenSeg(cvs=cvs), SevenSeg(cvs=cvs)]  # 時間　一の位, 十の位
-        self.m = [SevenSeg(cvs=cvs), SevenSeg(cvs=cvs)]  # 分　　一の位, 十の位
-        self.s = [SevenSeg(cvs=cvs), SevenSeg(cvs=cvs)]  # 秒　　一の位, 十の位
-        self.ms = SevenSeg(cvs=cvs)                      # 秒　　1/10の位
+        self.clr = clr
+        self.h = [
+            SevenSeg(cvs=cvs, clr=clr, bgc=bgc),
+            SevenSeg(cvs=cvs, clr=clr, bgc=bgc)
+        ]                                 # 時間　一の位, 十の位
+        self.m = [
+            SevenSeg(cvs=cvs, clr=clr, bgc=bgc),
+            SevenSeg(cvs=cvs, clr=clr, bgc=bgc)
+        ]                                 # 分　　一の位, 十の位
+        self.s = [
+            SevenSeg(cvs=cvs, clr=clr, bgc=bgc),
+            SevenSeg(cvs=cvs, clr=clr, bgc=bgc)
+        ]                                 # 秒　　一の位, 十の位
+        self.ms = SevenSeg(cvs=cvs, clr=clr, bgc=bgc)  # 秒　　1/10の位
 
     # 7セグに時間を登録
     def set_tim(self, h=None, m=None, s=None, ms=None):
@@ -238,40 +248,50 @@ class Time:
                             if self.h[0].num == 0:  # 1時間桁を繰り上げ
                                 self.h[1].set_num(self.h[1].num+1)
 
+    # リセット
+    def rst_tim(self):
+        self.h[0].set_num(0)  # 時間　一の位
+        self.h[1].set_num(0)  # 時間　十の位
+        self.m[0].set_num(0)  # 分　一の位
+        self.m[1].set_num(0)  # 分　十の位
+        self.s[0].set_num(0)  # 秒　一の位
+        self.s[1].set_num(0)  # 秒　十の位
+        self.ms.set_num(0)    # 秒　1/10の位
+
     # ディスプレイ表示
     def display(self, x, y, s):
         self.h[1].place(-45*s+x, y, s)
         self.h[0].place(-33*s+x, y, s)
         self.cvs.create_rectangle(
             -25*s+x, -4*s+y, -23*s+x, -2*s+y,
-            fill=self.clr
+            fill=self.clr, width=0
         )
         self.cvs.create_rectangle(
             -25*s+x, 2*s+y, -23*s+x, 4*s+y,
-            fill=self.clr
+            fill=self.clr, width=0
         )
         self.m[1].place(-15*s+x, y, s)
         self.m[0].place(-3*s+x, y, s)
         self.cvs.create_rectangle(
             5*s+x, -4*s+y, 7*s+x, -2*s+y,
-            fill=self.clr
+            fill=self.clr, width=0
         )
         self.cvs.create_rectangle(
             5*s+x, 2*s+y, 7*s+x, 4*s+y,
-            fill=self.clr
+            fill=self.clr, width=0
         )
         self.s[1].place(15*s+x, y, s)
         self.s[0].place(27*s+x, y, s)
         self.cvs.create_rectangle(
             35*s+x, 6*s+y, 37*s+x, 8*s+y,
-            fill=self.clr
+            fill=self.clr, width=0
         )
         self.ms.place(45*s+x, y, s)
 
 
 # 7セグクラス
 class SevenSeg:
-    def __init__(self, tag="", cvs=None, num=0, clr="black", bgc="white"):
+    def __init__(self, cvs, tag="", num=0, clr="black", bgc="white"):
         # 定義
         self.num = None  # 数値
         self.clr = None  # 色
