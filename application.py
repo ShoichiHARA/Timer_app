@@ -27,10 +27,12 @@ class MainWin(tk.Frame):
         self.siz = 10                       # 大きさ
         self.clr = "black"                  # 文字色
         self.bgc = "white"                  # 背景色
-        self.cup = False                    # カウントアップ
+        self.cnt = False                    # カウントアップ
+        self.tmr = Time()
+
         self.bt0 = tk.Button(self.master, text="Button", command=self.tm_win)  # ボタン1
-        self.bt1 = tk.Button(self.master, text="Start", command=self.bt1_ps)   # ボタン2
-        self.bt2 = tk.Button(self.master, text="Stop", command=self.bt2_ps)    # ボタン3
+        self.bt1 = tk.Button(self.master, text=self.lg.stt, command=self.bt1_ps)   # ボタン2
+        self.bt2 = tk.Button(self.master, text=self.lg.rst, command=self.bt2_ps)   # ボタン3
 
         # ウインドウの定義
         self.master.title(self.lg.mwn)       # ウインドウタイトル
@@ -66,7 +68,7 @@ class MainWin(tk.Frame):
             self.tm_app = TMWin(self.tm_mas, self)
 
     def bt1_ps(self):
-        self.siz += 1
+        self.cnt = not self.cnt
 
     def bt2_ps(self):
         self.siz -= 1
@@ -146,7 +148,7 @@ class TMWin(tk.Frame):
         self.wwd = 400                      # ウインドウ幅
         self.whg = 300                      # ウインドウ高
         self.cvs = tk.Canvas(self.master, bg=self.mw.bgc)  # キャンバス
-        self.tim = Time(self.cvs, clr=self.mw.clr, bgc=self.mw.bgc)
+        self.tim = Time(clr=self.mw.clr, bgc=self.mw.bgc)
 
         # ウインドウの定義
         self.master.title(self.lg.twn)
@@ -167,7 +169,7 @@ class TMWin(tk.Frame):
         self.mw.get_now()         # 現在時刻取得
         if pnm != self.mw.now["msc"]:  # ミリ秒が進んでいる場合
             self.tim.cnt_tim()         # 時間カウント
-        self.tim.display(self.wwd/2, self.whg/2, self.mw.siz)
+        self.tim.display(self.cvs, self.mw.clr, self.mw.bgc, self.wwd/2, self.whg/2, self.mw.siz)
 
         # self.seg.set_num(self.mw.now["msc"])
         # self.seg.place(self.wwd/2, self.whg/2, self.mw.siz)
@@ -188,22 +190,21 @@ class TMWin(tk.Frame):
 
 # 時間クラス
 class Time:
-    def __init__(self, cvs, clr="black", bgc="white"):
-        self.cvs = cvs
+    def __init__(self, clr="black", bgc="white"):
         self.clr = clr
         self.h = [
-            SevenSeg(cvs=cvs, clr=clr, bgc=bgc),
-            SevenSeg(cvs=cvs, clr=clr, bgc=bgc)
-        ]                                 # 時間　一の位, 十の位
+            SevenSeg(clr=clr, bgc=bgc),
+            SevenSeg(clr=clr, bgc=bgc)
+        ]                        # 時間　一の位, 十の位
         self.m = [
-            SevenSeg(cvs=cvs, clr=clr, bgc=bgc),
-            SevenSeg(cvs=cvs, clr=clr, bgc=bgc)
-        ]                                 # 分　　一の位, 十の位
+            SevenSeg(clr=clr, bgc=bgc),
+            SevenSeg(clr=clr, bgc=bgc)
+        ]                        # 分　　一の位, 十の位
         self.s = [
-            SevenSeg(cvs=cvs, clr=clr, bgc=bgc),
-            SevenSeg(cvs=cvs, clr=clr, bgc=bgc)
-        ]                                 # 秒　　一の位, 十の位
-        self.ms = SevenSeg(cvs=cvs, clr=clr, bgc=bgc)  # 秒　　1/10の位
+            SevenSeg(clr=clr, bgc=bgc),
+            SevenSeg(clr=clr, bgc=bgc)
+        ]                        # 秒　　一の位, 十の位
+        self.ms = SevenSeg(clr=clr, bgc=bgc)  # 秒　　1/10の位
 
     # 7セグに時間を登録
     def set_tim(self, h=None, m=None, s=None, ms=None):
@@ -220,15 +221,15 @@ class Time:
             self.ms.set_num(ms)         # 秒　1/10の位
 
     # 7セグの色を登録
-    def set_clr(self, clr):
+    def set_clr(self, clr, bgc):
         self.clr = clr
-        self.h[0].set_clr(clr)  # 時間　一の位
-        self.h[1].set_clr(clr)  # 時間　十の位
-        self.m[0].set_clr(clr)  # 分　一の位
-        self.m[1].set_clr(clr)  # 分　十の位
-        self.s[0].set_clr(clr)  # 秒　一の位
-        self.s[1].set_clr(clr)  # 秒　十の位
-        self.ms.set_clr(clr)    # 秒　1/10の位
+        self.h[0].set_clr(clr, bgc)  # 時間　一の位
+        self.h[1].set_clr(clr, bgc)  # 時間　十の位
+        self.m[0].set_clr(clr, bgc)  # 分　一の位
+        self.m[1].set_clr(clr, bgc)  # 分　十の位
+        self.s[0].set_clr(clr, bgc)  # 秒　一の位
+        self.s[1].set_clr(clr, bgc)  # 秒　十の位
+        self.ms.set_clr(clr, bgc)    # 秒　1/10の位
 
     # カウント
     def cnt_tim(self):
@@ -259,47 +260,49 @@ class Time:
         self.ms.set_num(0)    # 秒　1/10の位
 
     # ディスプレイ表示
-    def display(self, x, y, s):
-        self.h[1].place(-45*s+x, y, s)
-        self.h[0].place(-33*s+x, y, s)
-        self.cvs.create_rectangle(
+    def display(self, cvs, c, b, x, y, s):
+        # 色の設定
+        self.set_clr(c, b)
+
+        # セグとコロンの配置
+        self.h[1].place(cvs, -45*s+x, y, s)
+        self.h[0].place(cvs, -33*s+x, y, s)
+        cvs.create_rectangle(
             -25*s+x, -4*s+y, -23*s+x, -2*s+y,
             fill=self.clr, width=0
         )
-        self.cvs.create_rectangle(
+        cvs.create_rectangle(
             -25*s+x, 2*s+y, -23*s+x, 4*s+y,
             fill=self.clr, width=0
         )
-        self.m[1].place(-15*s+x, y, s)
-        self.m[0].place(-3*s+x, y, s)
-        self.cvs.create_rectangle(
+        self.m[1].place(cvs, -15*s+x, y, s)
+        self.m[0].place(cvs, -3*s+x, y, s)
+        cvs.create_rectangle(
             5*s+x, -4*s+y, 7*s+x, -2*s+y,
             fill=self.clr, width=0
         )
-        self.cvs.create_rectangle(
+        cvs.create_rectangle(
             5*s+x, 2*s+y, 7*s+x, 4*s+y,
             fill=self.clr, width=0
         )
-        self.s[1].place(15*s+x, y, s)
-        self.s[0].place(27*s+x, y, s)
-        self.cvs.create_rectangle(
+        self.s[1].place(cvs, 15*s+x, y, s)
+        self.s[0].place(cvs, 27*s+x, y, s)
+        cvs.create_rectangle(
             35*s+x, 6*s+y, 37*s+x, 8*s+y,
             fill=self.clr, width=0
         )
-        self.ms.place(45*s+x, y, s)
+        self.ms.place(cvs, 45*s+x, y, s)
 
 
 # 7セグクラス
 class SevenSeg:
-    def __init__(self, cvs, tag="", num=0, clr="black", bgc="white"):
+    def __init__(self, num=0, clr="black", bgc="white"):
         # 定義
         self.num = None  # 数値
-        self.clr = None  # 色
-        self.bgc = bgc   # 背景色
-        self.tag = tag   # タグ
-        self.cvs = cvs   # キャンバス
-        self.seg = [None] * 7
-        self.cls = [None] * 7
+        self.clr = None  # 文字色
+        self.bgc = None  # 背景色
+        self.seg = [None] * 7  # セグデータ
+        self.cls = [None] * 7  # セグの色データ
         self.bit = [
             [1, 1, 1, 1, 1, 1, 0],
             [0, 1, 1, 0, 0, 0, 0],
@@ -314,9 +317,9 @@ class SevenSeg:
         ]
 
         # 初期設定
-        self.set_num(num)  # 数値
-        self.set_clr(clr)  # 色
-        self.set_bit()     # セグの設定
+        self.set_num(num)       # 数値
+        self.set_clr(clr, bgc)  # 色
+        self.set_bit()          # セグの設定
 
     # 数値の設定
     def set_num(self, num):
@@ -324,9 +327,10 @@ class SevenSeg:
         self.set_bit()
 
     # 色の設定
-    def set_clr(self, clr):
-        self.clr = clr
-        self.set_bit()
+    def set_clr(self, clr, bgc):
+        self.clr = clr  # 文字色
+        self.bgc = bgc  # 背景色
+        self.set_bit()  # セグの設定
 
     def set_bit(self):
         for i in range(7):
@@ -336,40 +340,41 @@ class SevenSeg:
                 self.cls[i] = self.clr
 
     # 配置
-    def place(self, x, y, s):
+    def place(self, cvs,  x, y, s):
+        self.set_bit()
         a = 3
         b = 5
-        self.seg[0] = self.cvs.create_polygon(
+        self.seg[0] = cvs.create_polygon(
             (-a-1)*s+x, (-b-2)*s+y, -a*s+x, (-b-3)*s+y, a*s+x, (-b-3)*s+y,
             (a+1)*s+x, (-b-2)*s+y, a*s+x, (-b-1)*s+y, -a*s+x, (-b-1)*s+y,
             fill=self.cls[0], outline=self.bgc, width=s/5
         )
-        self.seg[1] = self.cvs.create_polygon(
+        self.seg[1] = cvs.create_polygon(
             (a+1)*s+x, (-b-2)*s+y, (a+2)*s+x, (-b-1)*s+y, (a+2)*s+x, -s+y,
             (a+1)*s+x, y, a*s+x, -s+y, a*s+x, (-b-1)*s+y,
             fill=self.cls[1], outline=self.bgc, width=s/5
         )
-        self.seg[2] = self.cvs.create_polygon(
+        self.seg[2] = cvs.create_polygon(
             (a+1)*s+x, y, (a+2)*s+x, s+y, (a+2)*s+x, (b+1)*s+y,
             (a+1)*s+x, (b+2)*s+y, a*s+x, (b+1)*s+y, a*s+x, s+y,
             fill=self.cls[2], outline=self.bgc, width=s/5
         )
-        self.seg[3] = self.cvs.create_polygon(
+        self.seg[3] = cvs.create_polygon(
             (-a-1)*s+x, (b+2)*s+y, -a*s+x, (b+1)*s+y, a*s+x, (b+1)*s+y,
             (a+1)*s+x, (b+2)*s+y, a*s+x, (b+3)*s+y, -a*s+x, (b+3)*s+y,
             fill=self.cls[3], outline=self.bgc, width=s/5
         )
-        self.seg[4] = self.cvs.create_polygon(
+        self.seg[4] = cvs.create_polygon(
             (-a-1)*s+x, y, -a*s+x, s+y, -a*s+x, (b+1)*s+y,
             (-a-1)*s+x, (b+2)*s+y, (-a-2)*s+x, (b+1)*s+y, (-a-2)*s+x, s+y,
             fill=self.cls[4], outline=self.bgc, width=s/5
         )
-        self.seg[5] = self.cvs.create_polygon(
+        self.seg[5] = cvs.create_polygon(
             (-a-1)*s+x, (-b-2)*s+y, -a*s+x, (-b-1)*s+y, -a*s+x, -s+y,
             (-a-1)*s+x, y, (-a-2)*s+x, -s+y, (-a-2)*s+x, (-b-1)*s+y,
             fill=self.cls[5], outline=self.bgc, width=s/5
         )
-        self.seg[6] = self.cvs.create_polygon(
+        self.seg[6] = cvs.create_polygon(
             (-a-1)*s+x, y, -a*s+x, -s+y, a*s+x, -s+y,
             (a+1)*s+x, y, a*s+x, s+y, -a*s+x, s+y,
             fill=self.cls[6], outline=self.bgc, width=s/5
