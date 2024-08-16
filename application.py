@@ -28,7 +28,7 @@ class MainWin(tk.Frame):
         self.clr = "black"                  # 文字色
         self.bgc = "white"                  # 背景色
         self.cnt = False                    # カウントアップ
-        self.tmr = Time()
+        self.tmr = Time(clr=self.clr, bgc=self.bgc)  # タイマー
 
         self.bt0 = tk.Button(self.master, text="Button", command=self.tm_win)  # ボタン1
         self.bt1 = tk.Button(self.master, text=self.lg.stt, command=self.bt1_ps)   # ボタン2
@@ -69,9 +69,13 @@ class MainWin(tk.Frame):
 
     def bt1_ps(self):
         self.cnt = not self.cnt
+        if self.cnt:
+            self.bt1.configure(text=self.lg.stp)
+        else:
+            self.bt1.configure(text=self.lg.stt)
 
     def bt2_ps(self):
-        self.siz -= 1
+        self.tmr.rst_tim()
 
     # 現在時刻取得
     def get_now(self):
@@ -148,7 +152,6 @@ class TMWin(tk.Frame):
         self.wwd = 400                      # ウインドウ幅
         self.whg = 300                      # ウインドウ高
         self.cvs = tk.Canvas(self.master, bg=self.mw.bgc)  # キャンバス
-        self.tim = Time(clr=self.mw.clr, bgc=self.mw.bgc)
 
         # ウインドウの定義
         self.master.title(self.lg.twn)
@@ -165,11 +168,12 @@ class TMWin(tk.Frame):
     # 画面更新
     def re_frm(self):
         self.cvs.delete("all")    # 表示リセット
-        pnm = self.mw.now["msc"]  # 前回のミリ秒
-        self.mw.get_now()         # 現在時刻取得
-        if pnm != self.mw.now["msc"]:  # ミリ秒が進んでいる場合
-            self.tim.cnt_tim()         # 時間カウント
-        self.tim.display(self.cvs, self.mw.clr, self.mw.bgc, self.wwd/2, self.whg/2, self.mw.siz)
+        if self.mw.cnt:
+            pnm = self.mw.now["msc"]  # 前回のミリ秒
+            self.mw.get_now()         # 現在時刻取得
+            if pnm != self.mw.now["msc"]:  # ミリ秒が進んでいる場合
+                self.mw.tmr.cnt_tim()         # 時間カウント
+        self.mw.tmr.display(self.cvs, self.mw.clr, self.mw.bgc, self.wwd/2, self.whg/2, self.mw.siz)
 
         # self.seg.set_num(self.mw.now["msc"])
         # self.seg.place(self.wwd/2, self.whg/2, self.mw.siz)
