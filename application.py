@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+# from tkinter import ttk
 import datetime
 import language as lg
 
@@ -25,14 +25,15 @@ class MainWin(tk.Frame):
             "h": 0, "min": 0, "sec": 0, "msc": 0
         }                    # 現在時刻
         self.siz = 10                       # 大きさ
-        self.clr = "black"                  # 文字色
-        self.bgc = "white"                  # 背景色
+        self.clr = "white"                  # 文字色
+        self.bgc = "black"                  # 背景色
         self.cnt = False                    # カウントアップ
         self.tmr = Time(clr=self.clr, bgc=self.bgc)  # タイマー
 
         self.bt0 = tk.Button(self.master, text="Button", command=self.tm_win)  # ボタン1
         self.bt1 = tk.Button(self.master, text=self.lg.stt, command=self.bt1_ps)   # ボタン2
         self.bt2 = tk.Button(self.master, text=self.lg.rst, command=self.bt2_ps)   # ボタン3
+        self.bt3 = tk.Button(self.master, text="Button", command=self.ch_win)
 
         # ウインドウの定義
         self.master.title(self.lg.mwn)       # ウインドウタイトル
@@ -42,8 +43,10 @@ class MainWin(tk.Frame):
         self.event()                         # イベント
 
         # サブウインドウの定義
-        self.tm_mas = None
+        self.tm_mas = None  # タイマー表示マスター
         self.tm_app = None
+        self.ch_mas = None  # タイマー文字変更マスター
+        self.ch_app = None
 
         # 現在時刻取得
         self.get_now()
@@ -53,6 +56,7 @@ class MainWin(tk.Frame):
         self.bt0.pack()
         self.bt1.pack()
         self.bt2.pack()
+        self.bt3.pack()
 
     # 終了
     def exit(self):
@@ -66,6 +70,15 @@ class MainWin(tk.Frame):
         elif not self.tm_mas.winfo_exists():
             self.tm_mas = tk.Toplevel(self.master)
             self.tm_app = TMWin(self.tm_mas, self)
+
+    # 変更ウインドウ表示
+    def ch_win(self):
+        if self.ch_mas is None:
+            self.ch_mas = tk.Toplevel(self.master)
+            self.ch_app = ChangeWin(self.ch_mas, self)
+        elif not self.ch_mas.winfo_exists():
+            self.ch_mas = tk.Toplevel(self.master)
+            self.ch_app = ChangeWin(self.ch_mas, self)
 
     def bt1_ps(self):
         self.cnt = not self.cnt
@@ -146,15 +159,13 @@ class TMWin(tk.Frame):
         self.pack()
 
         # 定義
-        self.set = Setting()                # 設定
-        self.lg = lg.Language(self.set.lg)  # 言語
         self.mw = mw                        # メインウインドウ
         self.wwd = 400                      # ウインドウ幅
         self.whg = 300                      # ウインドウ高
         self.cvs = tk.Canvas(self.master, bg=self.mw.bgc)  # キャンバス
 
         # ウインドウの定義
-        self.master.title(self.lg.twn)
+        self.master.title(self.mw.lg.twn)
         self.master.geometry("400x300")
         self.widgets()  # ウィジェット
         self.event()    # イベント
@@ -168,11 +179,11 @@ class TMWin(tk.Frame):
     # 画面更新
     def re_frm(self):
         self.cvs.delete("all")    # 表示リセット
-        if self.mw.cnt:
+        if self.mw.cnt:  # カウントが有効の場合
             pnm = self.mw.now["msc"]  # 前回のミリ秒
             self.mw.get_now()         # 現在時刻取得
             if pnm != self.mw.now["msc"]:  # ミリ秒が進んでいる場合
-                self.mw.tmr.cnt_tim()         # 時間カウント
+                self.mw.tmr.cnt_tim()      # 時間カウント
         self.mw.tmr.display(self.cvs, self.mw.clr, self.mw.bgc, self.wwd/2, self.whg/2, self.mw.siz)
 
         # self.seg.set_num(self.mw.now["msc"])
@@ -185,11 +196,30 @@ class TMWin(tk.Frame):
     # イベント
     def event(self):
         def win_size(e):
+            self.e = e  # エラー処理(仮)
             self.wwd = self.master.winfo_width()
             self.whg = self.master.winfo_height()
             self.mw.siz = self.wwd // 110
 
         self.bind("<Configure>", win_size)
+
+
+# 変更ウインドウ
+class ChangeWin(tk.Frame):
+    def __init__(self: tk.Tk, master, mw):
+        super().__init__(master)
+        self.pack()
+
+        # 定義
+        self.mw = mw  # メインウインドウ
+
+        # ウインドウの定義
+        self.master.title(self.mw.lg.mwn)
+        self.master.geometry("400x300")
+        self.widgets()
+
+    def widgets(self: tk.Tk):
+        pass
 
 
 # 時間クラス
@@ -255,13 +285,7 @@ class Time:
 
     # リセット
     def rst_tim(self):
-        self.h[0].set_num(0)  # 時間　一の位
-        self.h[1].set_num(0)  # 時間　十の位
-        self.m[0].set_num(0)  # 分　一の位
-        self.m[1].set_num(0)  # 分　十の位
-        self.s[0].set_num(0)  # 秒　一の位
-        self.s[1].set_num(0)  # 秒　十の位
-        self.ms.set_num(0)    # 秒　1/10の位
+        self.set_tim(h=0, m=0, s=0, ms=0)
 
     # ディスプレイ表示
     def display(self, cvs, c, b, x, y, s):

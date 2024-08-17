@@ -19,6 +19,8 @@ class Language:
                 self.prb = output(i, ["Practice Board", "実習盤"])
                 self.ioa = output(i, ["I/O Allocation", "入出力割付表"])
                 self.hlp = output(i, ["Help", "ヘルプ"])
+                self.clr = output(i, ["tx color", "文字色"])
+                self.bgc = output(i, ["bg color", "背景色"])
                 break
 
 
