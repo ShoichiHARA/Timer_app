@@ -21,6 +21,8 @@ class Language:
                 self.hlp = output(i, ["Help", "ヘルプ"])
                 self.clr = output(i, ["tx color", "文字色"])
                 self.bgc = output(i, ["bg color", "背景色"])
+                self.ook = output(i, ["ok", "決定"])
+                self.ccl = output(i, ["cancel", "取消"])
                 break
 
 

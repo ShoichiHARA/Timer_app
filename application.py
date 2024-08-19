@@ -89,7 +89,7 @@ class MainWin(tk.Frame):
             self.bt1.configure(text=self.lg.stt)
 
     def bt2_ps(self):
-        self.tmr.rst_tim()
+        self.tmr.set_tmr(h=0, m=0, s=0, ms=0)
 
     # 現在時刻取得
     def get_now(self):
@@ -185,7 +185,7 @@ class TMWin(tk.Frame):
             self.mw.get_now()         # 現在時刻取得
             if pnm != self.mw.now["msc"]:  # ミリ秒が進んでいる場合
                 self.mw.tmr.cnt_tmr()      # 時間カウント
-        self.mw.tmr.display(self.cvs, self.mw.clr, self.mw.bgc, self.wwd/2, self.whg/2, self.mw.siz)
+        self.mw.tmr.out_seg(self.cvs, self.mw.clr, self.mw.bgc, self.wwd/2, self.whg/2, self.mw.siz)
 
         # self.seg.set_num(self.mw.now["msc"])
         # self.seg.place(self.wwd/2, self.whg/2, self.mw.siz)
@@ -213,14 +213,52 @@ class ChangeWin(tk.Frame):
 
         # 定義
         self.mw = mw  # メインウインドウ
+        self.tmr = Time()
+        # self.f = tk.font.Font(size=20)
+        self.dsp = tk.Label(master=master, text="00:00:00.0", font=("", 60, ))
+        self.bt_h1u = tk.Button(
+            self.master, width=3, text="↑", command=self.ps_h1u
+        )
+        self.bt_h1d = tk.Button(
+            self.master, width=3, text="↓", command=self.ps_h1d
+        )
+        self.bt_ok = tk.Button(
+            self.master, width=10, text=self.mw.lg.ook, command=self.ps_ok
+        )
+        self.bt_cn = tk.Button(
+            self.master, width=10, text=self.mw.lg.ccl, command=self.ps_cn
+        )
 
         # ウインドウの定義
-        self.master.title(self.mw.lg.mwn)
-        self.master.geometry("400x300")
+        self.master.title(self.mw.lg.mwn)    # ウインドウタイトル
+        self.master.geometry("400x300")      # ウインドウサイズ
+        self.master.resizable(False, False)  # サイズ変更禁止
         self.widgets()
 
     def widgets(self: tk.Tk):
-        pass
+        self.dsp.place(x=40, y=80)
+        self.bt_h1u.place(x=30, y=30)
+        self.bt_h1d.place(x=30, y=230)
+        self.bt_ok.place(x=200, y=250)
+        self.bt_cn.place(x=300, y=250)
+
+    def ps_h1u(self):
+        self.tmr.h += 10
+        self.tmr.chk_tmr()
+        self.dsp.configure(text=self.tmr.out_txt())
+
+    def ps_h1d(self):
+        self.tmr.h -= 10
+        self.tmr.chk_tmr()
+        self.dsp.configure(text=self.tmr.out_txt())
+
+    # 決定押下
+    def ps_ok(self):
+        self.master.destroy()
+
+    # 取消押下
+    def ps_cn(self):
+        self.master.destroy()
 
 
 # 時間クラス
@@ -250,20 +288,29 @@ class Time:
 
     # 時間をチェック
     def chk_tmr(self):
-        if self.ms > 10:
+        if self.ms >= 10:
             self.s += self.ms // 10  # 超えた分繰り上げ
             self.ms %= 10            # 繰り上げた分引く
-        if self.s > 60:
+        if self.s >= 60:
             self.m += self.s // 60  # 超えた分繰り上げ
             self.s %= 60            # 繰り上げた分引く
-        if self.m > 60:
+        if self.m >= 60:
             self.h += self.m // 60  # 超えた分繰り上げ
             self.s %= 60            # 繰り上げた分引く
-        if self.h > 100:
+        if self.h >= 100:
             self.h %= 100
+        if self.h < 0:
+            while self.h < 0:       # 正になるまで繰り返し
+                self.h += 100       # 足りない分足す
 
-    # 画面表示
-    def dsp_tmr(self, cvs, c, b, x, y, s):
+    # テキスト出力
+    def out_txt(self):
+        t = str(self.h).zfill(2) + ":" + str(self.m).zfill(2) + ":"
+        t = t + str(self.s).zfill(2) + "." + str(self.ms)
+        return t
+
+    # 7セグ出力
+    def out_seg(self, cvs, c, b, x, y, s):
         # セグの定義
         seg_h1 = SevenSeg(num=self.h//10, clr=c, bgc=b)
         seg_h0 = SevenSeg(num=self.h%10, clr=c, bgc=b)
@@ -301,6 +348,7 @@ class Time:
             fill=c, width=0
         )
         seg_ms.place(cvs, 45*s+x, y, s)
+
 
 # 時間クラス
 class Time1:
