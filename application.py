@@ -28,7 +28,8 @@ class MainWin(tk.Frame):
         self.clr = "white"                  # 文字色
         self.bgc = "black"                  # 背景色
         self.cnt = False                    # カウントアップ
-        self.tmr = Time(clr=self.clr, bgc=self.bgc)  # タイマー
+        self.tmr = Time()                   # タイマー
+        # self.tmr = Time1(clr=self.clr, bgc=self.bgc)  # タイマー
 
         self.bt0 = tk.Button(self.master, text="Button", command=self.tm_win)  # ボタン1
         self.bt1 = tk.Button(self.master, text=self.lg.stt, command=self.bt1_ps)   # ボタン2
@@ -183,7 +184,7 @@ class TMWin(tk.Frame):
             pnm = self.mw.now["msc"]  # 前回のミリ秒
             self.mw.get_now()         # 現在時刻取得
             if pnm != self.mw.now["msc"]:  # ミリ秒が進んでいる場合
-                self.mw.tmr.cnt_tim()      # 時間カウント
+                self.mw.tmr.cnt_tmr()      # 時間カウント
         self.mw.tmr.display(self.cvs, self.mw.clr, self.mw.bgc, self.wwd/2, self.whg/2, self.mw.siz)
 
         # self.seg.set_num(self.mw.now["msc"])
@@ -224,6 +225,85 @@ class ChangeWin(tk.Frame):
 
 # 時間クラス
 class Time:
+    def __init__(self, h=None, m=None, s=None, ms=None):
+        self.h = 0
+        self.m = 0
+        self.s = 0
+        self.ms = 0  # 100msで1
+        self.set_tmr(h, m, s, ms)
+
+    # 時間をセット
+    def set_tmr(self, h=None, m=None, s=None, ms=None):
+        if h is not None:
+            self.h = h
+        if m is not None:
+            self.m = m
+        if s is not None:
+            self.s = s
+        if ms is not None:
+            self.ms = ms
+
+    # 時間をカウント
+    def cnt_tmr(self):
+        self.ms += 1
+        self.chk_tmr()
+
+    # 時間をチェック
+    def chk_tmr(self):
+        if self.ms > 10:
+            self.s += self.ms // 10  # 超えた分繰り上げ
+            self.ms %= 10            # 繰り上げた分引く
+        if self.s > 60:
+            self.m += self.s // 60  # 超えた分繰り上げ
+            self.s %= 60            # 繰り上げた分引く
+        if self.m > 60:
+            self.h += self.m // 60  # 超えた分繰り上げ
+            self.s %= 60            # 繰り上げた分引く
+        if self.h > 100:
+            self.h %= 100
+
+    # 画面表示
+    def dsp_tmr(self, cvs, c, b, x, y, s):
+        # セグの定義
+        seg_h1 = SevenSeg(num=self.h//10, clr=c, bgc=b)
+        seg_h0 = SevenSeg(num=self.h%10, clr=c, bgc=b)
+        seg_m1 = SevenSeg(num=self.m//10, clr=c, bgc=b)
+        seg_m0 = SevenSeg(num=self.m%10, clr=c, bgc=b)
+        seg_s1 = SevenSeg(num=self.s//10, clr=c, bgc=b)
+        seg_s0 = SevenSeg(num=self.s%10, clr=c, bgc=b)
+        seg_ms = SevenSeg(num=self.ms, clr=c, bgc=b)
+
+        # セグの配置
+        seg_h1.place(cvs, -45*s+x, y, s)
+        seg_h0.place(cvs, -33*s+x, y, s)
+        cvs.create_rectangle(
+            -25*s+x, -4*s+y, -23*s+x, -2*s+y,
+            fill=c, width=0
+        )
+        cvs.create_rectangle(
+            -25*s+x, 2*s+y, -23*s+x, 4*s+y,
+            fill=c, width=0
+        )
+        seg_m1.place(cvs, -15*s+x, y, s)
+        seg_m0.place(cvs, -3*s+x, y, s)
+        cvs.create_rectangle(
+            5*s+x, -4*s+y, 7*s+x, -2*s+y,
+            fill=c, width=0
+        )
+        cvs.create_rectangle(
+            5*s+x, 2*s+y, 7*s+x, 4*s+y,
+            fill=c, width=0
+        )
+        seg_s1.place(cvs, 15*s+x, y, s)
+        seg_s0.place(cvs, 27*s+x, y, s)
+        cvs.create_rectangle(
+            35*s+x, 6*s+y, 37*s+x, 8*s+y,
+            fill=c, width=0
+        )
+        seg_ms.place(cvs, 45*s+x, y, s)
+
+# 時間クラス
+class Time1:
     def __init__(self, clr="black", bgc="white"):
         self.clr = clr
         self.h = [
@@ -330,7 +410,7 @@ class SevenSeg:
         self.clr = None  # 文字色
         self.bgc = None  # 背景色
         self.seg = [None] * 7  # セグデータ
-        self.cls = [None] * 7  # セグの色データ
+        self.cls = [None] * 7  # セグの色ONOFFデータ
         self.bit = [
             [1, 1, 1, 1, 1, 1, 0],
             [0, 1, 1, 0, 0, 0, 0],
