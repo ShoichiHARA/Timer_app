@@ -216,12 +216,20 @@ class ChangeWin(tk.Frame):
         self.tmr = Time()
         self.dsp = tk.Label(master=master, text="00:00:00.0", font=("", 60, ))
         self.bt_ch = [None] * 14
-        self.bt_h1u = tk.Button(
-            self.master, width=3, text="↑", command=lambda:self.ps_ch("a")
-        )
-        self.bt_h1d = tk.Button(
-            self.master, width=3, text="↓", command=lambda:self.ps_ch("b")
-        )
+        self.bt_ch[0] = tk.Button(self.master, text=" ↑ ", command=lambda: self.ps_ch("a"))
+        self.bt_ch[1] = tk.Button(self.master, text=" ↓ ", command=lambda: self.ps_ch("b"))
+        self.bt_ch[2] = tk.Button(self.master, text=" ↑ ", command=lambda: self.ps_ch("c"))
+        self.bt_ch[3] = tk.Button(self.master, text=" ↓ ", command=lambda: self.ps_ch("d"))
+        self.bt_ch[4] = tk.Button(self.master, text=" ↑ ", command=lambda: self.ps_ch("e"))
+        self.bt_ch[5] = tk.Button(self.master, text=" ↓ ", command=lambda: self.ps_ch("f"))
+        self.bt_ch[6] = tk.Button(self.master, text=" ↑ ", command=lambda: self.ps_ch("g"))
+        self.bt_ch[7] = tk.Button(self.master, text=" ↓ ", command=lambda: self.ps_ch("h"))
+        self.bt_ch[8] = tk.Button(self.master, text=" ↑ ", command=lambda: self.ps_ch("i"))
+        self.bt_ch[9] = tk.Button(self.master, text=" ↓ ", command=lambda: self.ps_ch("j"))
+        self.bt_ch[10] = tk.Button(self.master, text=" ↑ ", command=lambda: self.ps_ch("k"))
+        self.bt_ch[11] = tk.Button(self.master, text=" ↓ ", command=lambda: self.ps_ch("l"))
+        self.bt_ch[12] = tk.Button(self.master, text=" ↑ ", command=lambda: self.ps_ch("m"))
+        self.bt_ch[13] = tk.Button(self.master, text=" ↓ ", command=lambda: self.ps_ch("n"))
         self.bt_ok = tk.Button(
             self.master, width=10, text=self.mw.lg.ook, command=self.ps_ok
         )
@@ -235,56 +243,48 @@ class ChangeWin(tk.Frame):
         self.master.resizable(False, False)  # サイズ変更禁止
         self.widgets()
 
-        # ボタンの定義
-        for i in range(14):
-            if i % 2 == 0:
-                self.bt_ch[i] = tk.Button(
-                    self.master, width=3, text="↑", command=lambda:self.ps_ch(i)
-                )
-            else:
-                self.bt_ch[i] = tk.Button(
-                    self.master, width=3, text="↓", command=lambda:self.ps_ch(i)
-                )
-
     def widgets(self: tk.Tk):
         self.dsp.place(x=40, y=80)
-        self.bt_h1u.place(x=30, y=30)
-        self.bt_h1d.place(x=30, y=230)
         self.bt_ok.place(x=200, y=250)
         self.bt_cn.place(x=300, y=250)
 
-        p = [[30, 30], [30, 230], [], [], [], [], [], [], [], [], [], [], [], []]
+        p = [
+            [48, 60], [48, 165], [88, 60], [88, 165],
+            [144, 60], [144, 165], [184, 60], [184, 165],
+            [240, 60], [240, 165], [280, 60], [280, 165],
+            [336, 60], [336, 165]
+        ]
         for i in range(14):
             self.bt_ch[i].place(x=p[i][0], y=p[i][1])
 
     def ps_ch(self, e):
-        if e == 1:  # 時間十の位を増加
+        if e == "a":  # 時間十の位を増加
             self.tmr.h += 10
-        elif e == 2:  # 時間十の位を減少
+        elif e == "b":  # 時間十の位を減少
             self.tmr.h -= 10
-        elif e == 3:  # 時間一の位を増加
+        elif e == "c":  # 時間一の位を増加
             self.tmr.h += 1
-        elif e == 4:  # 時間一の位を減少
+        elif e == "d":  # 時間一の位を減少
             self.tmr.h -= 1
-        elif e == 5:  # 分十の位を増加
+        elif e == "e":  # 分十の位を増加
             self.tmr.m += 10
-        elif e == 6:  # 分十の位を減少
+        elif e == "f":  # 分十の位を減少
             self.tmr.m -= 10
-        elif e == 7:  # 分一の位を増加
+        elif e == "g":  # 分一の位を増加
             self.tmr.m += 1
-        elif e == 8:  # 分一の位を減少
+        elif e == "h":  # 分一の位を減少
             self.tmr.m -= 1
-        elif e == 9:  # 秒十の位を増加
+        elif e == "i":  # 秒十の位を増加
             self.tmr.s += 10
-        elif e == 10:  # 秒十の位を減少
+        elif e == "j":  # 秒十の位を減少
             self.tmr.s -= 10
-        elif e == 11:  # 秒一の位を増加
+        elif e == "k":  # 秒一の位を増加
             self.tmr.s += 1
-        elif e == 12:  # 秒一の位を減少
+        elif e == "l":  # 秒一の位を減少
             self.tmr.s -= 1
-        elif e == 13:  # ミリ秒を増加
+        elif e == "m":  # ミリ秒を増加
             self.tmr.ms += 1
-        elif e == 14:  # ミリ秒を減少
+        elif e == "n":  # ミリ秒を減少
             self.tmr.ms -= 1
         self.tmr.chk_tmr()
         self.dsp.configure(text=self.tmr.out_txt())
@@ -342,7 +342,7 @@ class Time:
                 self.m -= 1    # 繰り下げ
         if self.m >= 60:
             self.h += self.m // 60  # 超えた分繰り上げ
-            self.s %= 60            # 繰り上げた分引く
+            self.m %= 60            # 繰り上げた分引く
         if self.m < 0:
             while self.m < 0:  # 正になるまで繰り返し
                 self.m += 60   # 足りない分繰り下げ
