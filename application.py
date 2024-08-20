@@ -217,10 +217,10 @@ class ChangeWin(tk.Frame):
         # self.f = tk.font.Font(size=20)
         self.dsp = tk.Label(master=master, text="00:00:00.0", font=("", 60, ))
         self.bt_h1u = tk.Button(
-            self.master, width=3, text="↑", command=self.ps_h1u
+            self.master, width=3, text="↑", command=lambda:self.ps_ch("a")
         )
         self.bt_h1d = tk.Button(
-            self.master, width=3, text="↓", command=self.ps_h1d
+            self.master, width=3, text="↓", command=lambda:self.ps_ch("b")
         )
         self.bt_ok = tk.Button(
             self.master, width=10, text=self.mw.lg.ook, command=self.ps_ok
@@ -242,18 +242,41 @@ class ChangeWin(tk.Frame):
         self.bt_ok.place(x=200, y=250)
         self.bt_cn.place(x=300, y=250)
 
-    def ps_h1u(self):
-        self.tmr.h += 10
-        self.tmr.chk_tmr()
-        self.dsp.configure(text=self.tmr.out_txt())
-
-    def ps_h1d(self):
-        self.tmr.h -= 10
+    def ps_ch(self, e):
+        if e =="a":  # 時間十の位を増加
+            self.tmr.h += 10
+        elif e == "b":  # 時間十の位を減少
+            self.tmr.h -= 10
+        elif e == "c":  # 時間一の位を増加
+            self.tmr.h += 1
+        elif e == "d":  # 時間一の位を減少
+            self.tmr.h -= 1
+        elif e == "e":  # 分十の位を増加
+            self.tmr.m += 10
+        elif e == "f":  # 分十の位を減少
+            self.tmr.m -= 10
+        elif e == "g":  # 分一の位を増加
+            self.tmr.m += 1
+        elif e == "h":  # 分一の位を減少
+            self.tmr.m -= 1
+        elif e == "i":  # 秒十の位を増加
+            self.tmr.s += 10
+        elif e == "j":  # 秒十の位を減少
+            self.tmr.s -= 10
+        elif e == "k":  # 秒一の位を増加
+            self.tmr.s += 1
+        elif e == "l":  # 秒一の位を減少
+            self.tmr.s -= 1
+        elif e == "m":  # ミリ秒を増加
+            self.tmr.ms += 1
+        elif e == "n":  # ミリ秒を減少
+            self.tmr.ms -= 1
         self.tmr.chk_tmr()
         self.dsp.configure(text=self.tmr.out_txt())
 
     # 決定押下
     def ps_ok(self):
+        self.mw.tmr = self.tmr
         self.master.destroy()
 
     # 取消押下
@@ -291,12 +314,24 @@ class Time:
         if self.ms >= 10:
             self.s += self.ms // 10  # 超えた分繰り上げ
             self.ms %= 10            # 繰り上げた分引く
+        if self.ms < 0:
+            while self.ms < 0:  # 正になるまで繰り返し
+                self.ms += 10   # 足りない分繰り下げ
+                self.s -= 1     # 繰り下げ
         if self.s >= 60:
             self.m += self.s // 60  # 超えた分繰り上げ
             self.s %= 60            # 繰り上げた分引く
+        if self.s < 0:
+            while self.s < 0:  # 正になるまで繰り返し
+                self.s += 60   # 足りない分繰り下げ
+                self.m -= 1    # 繰り下げ
         if self.m >= 60:
             self.h += self.m // 60  # 超えた分繰り上げ
             self.s %= 60            # 繰り上げた分引く
+        if self.m < 0:
+            while self.m < 0:  # 正になるまで繰り返し
+                self.m += 60   # 足りない分繰り下げ
+                self.h -= 1    # 繰り下げ
         if self.h >= 100:
             self.h %= 100
         if self.h < 0:
