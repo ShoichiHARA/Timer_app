@@ -76,10 +76,10 @@ class MainWin(tk.Frame):
     def ch_win(self):
         if self.ch_mas is None:
             self.ch_mas = tk.Toplevel(self.master)
-            self.ch_app = ChangeWin(self.ch_mas, self)
+            self.ch_app = ChanColorWin(self.ch_mas, self)
         elif not self.ch_mas.winfo_exists():
             self.ch_mas = tk.Toplevel(self.master)
-            self.ch_app = ChangeWin(self.ch_mas, self)
+            self.ch_app = ChanColorWin(self.ch_mas, self)
 
     def bt1_ps(self):
         self.cnt = not self.cnt
@@ -205,8 +205,8 @@ class TMWin(tk.Frame):
         self.bind("<Configure>", win_size)
 
 
-# 変更ウインドウ
-class ChangeWin(tk.Frame):
+# 時間変更ウインドウ
+class ChanTimeWin(tk.Frame):
     def __init__(self: tk.Tk, master, mw):
         super().__init__(master)
         self.pack()
@@ -298,6 +298,39 @@ class ChangeWin(tk.Frame):
     def ps_cn(self):
         self.master.destroy()
 
+
+# 色変更ウインドウ
+class ChanColorWin(tk.Frame):
+    def __init__(self: tk.Tk, master, mw):
+        super().__init__(master)
+        self.pack()
+
+        # 定義
+        self.mw = mw
+        self.bt_ok = tk.Button(
+            self.master, width=10, text=self.mw.lg.ook, command=self.ps_ok
+        )
+        self.bt_cn = tk.Button(
+            self.master, width=10, text=self.mw.lg.ccl, command=self.ps_cn
+        )
+
+        # ウインドウの定義
+        self.master.title(self.mw.lg.mwn)
+        self.master.geometry("400x300")
+        self.master.resizable(False, False)
+        self.widgets()
+
+    def widgets(self):
+        self.bt_ok.place(x=200, y=250)
+        self.bt_cn.place(x=300, y=250)
+
+    # 決定押下
+    def ps_ok(self):
+        self.master.destroy()
+
+    # 取消押下
+    def ps_cn(self):
+        self.master.destroy()
 
 # 時間クラス
 class Time:
@@ -398,106 +431,6 @@ class Time:
             fill=c, width=0
         )
         seg_ms.place(cvs, 45*s+x, y, s)
-
-
-# 時間クラス
-class Time1:
-    def __init__(self, clr="black", bgc="white"):
-        self.clr = clr
-        self.h = [
-            SevenSeg(clr=clr, bgc=bgc),
-            SevenSeg(clr=clr, bgc=bgc)
-        ]                        # 時間　一の位, 十の位
-        self.m = [
-            SevenSeg(clr=clr, bgc=bgc),
-            SevenSeg(clr=clr, bgc=bgc)
-        ]                        # 分　　一の位, 十の位
-        self.s = [
-            SevenSeg(clr=clr, bgc=bgc),
-            SevenSeg(clr=clr, bgc=bgc)
-        ]                        # 秒　　一の位, 十の位
-        self.ms = SevenSeg(clr=clr, bgc=bgc)  # 秒　　1/10の位
-
-    # 7セグに時間を登録
-    def set_tim(self, h=None, m=None, s=None, ms=None):
-        if h is not None:
-            self.h[0].set_num(h % 10)   # 時間　一の位
-            self.h[1].set_num(h // 10)  # 時間　十の位
-        if m is not None:
-            self.m[0].set_num(m % 10)   # 分　一の位
-            self.m[1].set_num(m // 10)  # 分　十の位
-        if s is not None:
-            self.s[0].set_num(s % 10)   # 秒　一の位
-            self.s[1].set_num(s // 10)  # 秒　十の位
-        if ms is not None:
-            self.ms.set_num(ms)         # 秒　1/10の位
-
-    # 7セグの色を登録
-    def set_clr(self, clr, bgc):
-        self.clr = clr
-        self.h[0].set_clr(clr, bgc)  # 時間　一の位
-        self.h[1].set_clr(clr, bgc)  # 時間　十の位
-        self.m[0].set_clr(clr, bgc)  # 分　一の位
-        self.m[1].set_clr(clr, bgc)  # 分　十の位
-        self.s[0].set_clr(clr, bgc)  # 秒　一の位
-        self.s[1].set_clr(clr, bgc)  # 秒　十の位
-        self.ms.set_clr(clr, bgc)    # 秒　1/10の位
-
-    # カウント
-    def cnt_tim(self):
-        self.ms.set_num(self.ms.num+1)
-        if self.ms.num == 0:  # 1/10秒桁を繰り上げ
-            self.s[0].set_num(self.s[0].num+1)
-            if self.s[0].num == 0:  # 1秒桁を繰り上げ
-                self.s[1].set_num(self.s[1].num+1)
-                if self.s[1].num == 6:  # 10秒桁を繰り上げ
-                    self.m[0].set_num(self.m[0].num+1)
-                    self.s[1].set_num(0)
-                    if self.m[0].num == 0:  # 1分桁を繰り上げ
-                        self.m[1].set_num(self.m[1].num+1)
-                        if self.m[1].num == 6:  # 10分桁を繰り上げ
-                            self.h[0].set_num(self.h[0].num+1)
-                            self.m[1].set_num(0)
-                            if self.h[0].num == 0:  # 1時間桁を繰り上げ
-                                self.h[1].set_num(self.h[1].num+1)
-
-    # リセット
-    def rst_tim(self):
-        self.set_tim(h=0, m=0, s=0, ms=0)
-
-    # ディスプレイ表示
-    def display(self, cvs, c, b, x, y, s):
-        # 色の設定
-        self.set_clr(c, b)
-
-        # セグとコロンの配置
-        self.h[1].place(cvs, -45*s+x, y, s)
-        self.h[0].place(cvs, -33*s+x, y, s)
-        cvs.create_rectangle(
-            -25*s+x, -4*s+y, -23*s+x, -2*s+y,
-            fill=self.clr, width=0
-        )
-        cvs.create_rectangle(
-            -25*s+x, 2*s+y, -23*s+x, 4*s+y,
-            fill=self.clr, width=0
-        )
-        self.m[1].place(cvs, -15*s+x, y, s)
-        self.m[0].place(cvs, -3*s+x, y, s)
-        cvs.create_rectangle(
-            5*s+x, -4*s+y, 7*s+x, -2*s+y,
-            fill=self.clr, width=0
-        )
-        cvs.create_rectangle(
-            5*s+x, 2*s+y, 7*s+x, 4*s+y,
-            fill=self.clr, width=0
-        )
-        self.s[1].place(cvs, 15*s+x, y, s)
-        self.s[0].place(cvs, 27*s+x, y, s)
-        cvs.create_rectangle(
-            35*s+x, 6*s+y, 37*s+x, 8*s+y,
-            fill=self.clr, width=0
-        )
-        self.ms.place(cvs, 45*s+x, y, s)
 
 
 # 7セグクラス
