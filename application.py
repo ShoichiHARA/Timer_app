@@ -308,6 +308,23 @@ class ChanColorWin(tk.Frame):
 
         # 定義
         self.mw = mw
+        self.clr = [0, 0, 0]  # r, g, b
+        self.ccd = "black"
+        self.sc_r = tk.Scale(
+            self.master, from_=0, to=255, length=200,
+            orient="horizontal", command=self.ch_sc
+        )
+        self.sc_g = tk.Scale(
+            self.master, from_=0, to=255, length=200,
+            orient="horizontal", command=self.ch_sc
+        )
+        self.sc_b = tk.Scale(
+            self.master, from_=0, to=255, length=200,
+            orient="horizontal", command=self.ch_sc
+        )
+        self.dsp = tk.Label(
+            self.master, width=10, height=6, bg=self.ccd
+        )
         self.bt_ok = tk.Button(
             self.master, width=10, text=self.mw.lg.ook, command=self.ps_ok
         )
@@ -322,11 +339,34 @@ class ChanColorWin(tk.Frame):
         self.widgets()
 
     def widgets(self):
+        self.sc_r.place(x=50, y=50)
+        self.sc_g.place(x=50, y=100)
+        self.sc_b.place(x=50, y=150)
+        self.dsp.place(x=280, y=80)
         self.bt_ok.place(x=200, y=250)
         self.bt_cn.place(x=300, y=250)
 
+    # カラーコード変換
+    def c_code(self, r=None, g=None, b=None):
+        if r is not None:
+            self.clr[0] = r
+        if g is not None:
+            self.clr[1] = g
+        if b is not None:
+            self.clr[2] = b
+        self.ccd = f"#{self.clr[0]:02X}{self.clr[1]:02X}{self.clr[2]:02X}"
+        self.dsp.configure(bg=self.ccd)
+
+    # スライドバー移動
+    def ch_sc(self, n):
+        self.clr[0] = self.sc_r.get()
+        self.clr[1] = self.sc_g.get()
+        self.clr[2] = self.sc_b.get()
+        self.c_code()
+
     # 決定押下
     def ps_ok(self):
+        print(self.ccd)
         self.master.destroy()
 
     # 取消押下
