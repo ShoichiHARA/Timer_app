@@ -25,6 +25,7 @@ class MainWin(tk.Frame):
             "y": 0, "m": 0, "d": 0,
             "h": 0, "min": 0, "sec": 0, "msc": 0
         }                    # 現在時刻
+        self.nw = tm.Time()
         self.siz = 10                       # 大きさ
         self.clr = "white"                  # 文字色
         self.bgc = "black"                  # 背景色
@@ -141,7 +142,8 @@ class MainWin(tk.Frame):
             if e.keysym == "space":
                 self.now = datetime.datetime.now()
                 print(self.now)
-                print(self.now.microsecond // 100000)
+                self.nw.get_now()
+                print(self.nw.out_txt())
 
         def k_release(e):  # キーボード離した場合
             self.keys.remove(e.keysym)
@@ -182,9 +184,12 @@ class TMWin(tk.Frame):
     def re_frm(self):
         self.cvs.delete("all")    # 表示リセット
         if self.mw.cnt:  # カウントが有効の場合
-            pnm = self.mw.now["msc"]  # 前回のミリ秒
-            self.mw.get_now()         # 現在時刻取得
-            if pnm != self.mw.now["msc"]:  # ミリ秒が進んでいる場合
+            # pnm = self.mw.now["msc"]  # 前回のミリ秒
+            pnm = self.mw.nw.ms
+            # self.mw.get_now()         # 現在時刻取得
+            self.mw.nw.get_now()
+            # if pnm != self.mw.now["msc"]:  # ミリ秒が進んでいる場合
+            if pnm != self.mw.nw.ms:
                 self.mw.tmr.cnt_tmr()      # 時間カウント
         self.mw.tmr.out_seg(self.cvs, self.mw.clr, self.mw.bgc, self.wwd/2, self.whg/2, self.mw.siz)
 

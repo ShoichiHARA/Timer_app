@@ -1,4 +1,5 @@
 # import tkinter as tk
+import datetime
 
 
 # 時間クラス
@@ -20,6 +21,14 @@ class Time:
             self.s = s
         if ms is not None:
             self.ms = ms
+
+    # 現在時刻を取得
+    def get_now(self):
+        t = datetime.datetime.now()
+        self.h = t.hour
+        self.m = t.minute
+        self.s = t.second
+        self.ms = t.microsecond // 100000
 
     # 時間をカウント
     def cnt_tmr(self):
@@ -45,7 +54,6 @@ class Time:
         elif self.ms < tm.ms:
             return -1
         return 0  # 同じの場合、0を返す
-
 
     # 時間をチェック
     def chk_tmr(self):
