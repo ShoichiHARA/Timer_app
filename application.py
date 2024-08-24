@@ -355,7 +355,6 @@ class ChanColorWin(tk.Frame):
         if b is not None:
             self.clr[2] = b
         self.ccd = f"#{self.clr[0]:02X}{self.clr[1]:02X}{self.clr[2]:02X}"
-        self.dsp.configure(bg=self.ccd)
 
     # スライドバー移動
     def ch_sc(self, n):
@@ -363,6 +362,7 @@ class ChanColorWin(tk.Frame):
         self.clr[1] = self.sc_g.get()
         self.clr[2] = self.sc_b.get()
         self.c_code()
+        self.dsp.configure(bg=self.ccd)
 
     # 決定押下
     def ps_ok(self):
