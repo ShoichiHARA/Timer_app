@@ -1,6 +1,5 @@
 import tkinter as tk
 # from tkinter import ttk
-import datetime
 import language as lg
 import timer as tm
 
@@ -21,11 +20,7 @@ class MainWin(tk.Frame):
         self.set = Setting()                # 設定
         self.lg = lg.Language(self.set.lg)  # 言語
         self.keys = []                      # キーボードの状態
-        self.now = {
-            "y": 0, "m": 0, "d": 0,
-            "h": 0, "min": 0, "sec": 0, "msc": 0
-        }                    # 現在時刻
-        self.nw = tm.Time()
+        self.now = tm.Time()
         self.siz = 10                       # 大きさ
         self.clr = "white"                  # 文字色
         self.bgc = "black"                  # 背景色
@@ -52,7 +47,7 @@ class MainWin(tk.Frame):
         self.ch_app = None
 
         # 現在時刻取得
-        self.get_now()
+        self.now.get_now()
 
     # ウィジェット
     def widgets(self: tk.Tk):
@@ -93,34 +88,6 @@ class MainWin(tk.Frame):
     def bt2_ps(self):
         self.tmr.set_tmr(h=0, m=0, s=0, ms=0)
 
-    # 現在時刻取得
-    def get_now(self):
-        now = datetime.datetime.now()
-        self.now["y"] = now.year
-        self.now["m"] = now.month
-        self.now["d"] = now.day
-        self.now["h"] = now.hour
-        self.now["min"] = now.minute
-        self.now["sec"] = now.second
-        self.now["msc"] = now.microsecond // 100000
-
-    # 現在時刻カウント
-    def cnt_now(self):
-        self.now["msc"] += 1                               # +1 -> 100ms
-        if self.now["msc"] >= 10:                          # 1000ms超えた場合
-            self.now["sec"] += self.now["msc"] // 10       # 繰り上げ
-            self.now["msc"] -= self.now["msc"] // 10 * 10  # 繰り上げ分減算
-            if self.now["sec"] >= 60:                          # 60秒超えた場合
-                self.now["min"] += self.now["sec"] // 60       # 繰り上げ
-                self.now["sec"] -= self.now["sec"] // 60 * 60  # 繰り上げ分減算
-                if self.now["min"] >= 60:                          # 60分超えた場合
-                    self.now["h"] += self.now["min"] // 60         # 繰り上げ
-                    self.now["min"] -= self.now["min"] // 60 * 60  # 繰り上げ分減算
-        if self.now["min"] == 0:
-            if self.now["sec"] == 0:
-                if self.now["msc"] == 0:
-                    self.get_now()
-
     # イベント
     def event(self):
         def m_press(e):  # マウスボタン押した場合
@@ -140,10 +107,8 @@ class MainWin(tk.Frame):
                 return
             self.keys.append(e.keysym)
             if e.keysym == "space":
-                self.now = datetime.datetime.now()
-                print(self.now)
-                self.nw.get_now()
-                print(self.nw.out_txt())
+                self.now.get_now()
+                print(self.now.out_txt())
 
         def k_release(e):  # キーボード離した場合
             self.keys.remove(e.keysym)
@@ -184,19 +149,13 @@ class TMWin(tk.Frame):
     def re_frm(self):
         self.cvs.delete("all")    # 表示リセット
         if self.mw.cnt:  # カウントが有効の場合
-            # pnm = self.mw.now["msc"]  # 前回のミリ秒
-            pnm = self.mw.nw.ms
-            # self.mw.get_now()         # 現在時刻取得
-            self.mw.nw.get_now()
-            # if pnm != self.mw.now["msc"]:  # ミリ秒が進んでいる場合
-            if pnm != self.mw.nw.ms:
+            pnm = self.mw.now.ms  # 前回のミリ秒
+            self.mw.now.get_now()         # 現在時刻取得
+            if pnm != self.mw.now.ms:  # ミリ秒が進んでいる場合
                 self.mw.tmr.cnt_tmr()      # 時間カウント
         self.mw.tmr.out_seg(self.cvs, self.mw.clr, self.mw.bgc, self.wwd/2, self.whg/2, self.mw.siz)
 
-        # self.seg.set_num(self.mw.now["msc"])
         # self.seg.place(self.wwd/2, self.whg/2, self.mw.siz)
-
-        # print(datetime.datetime.now())
 
         self.master.after(10, self.re_frm)  # 0.01s後再描画
 

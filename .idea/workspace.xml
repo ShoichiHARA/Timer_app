@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="08/24&#10;時間比較関数を作成">
+    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="08/24&#10;時間クラスに現在時刻取得関数を追加">
       <change beforePath="$PROJECT_DIR$/application.py" beforeDir="false" afterPath="$PROJECT_DIR$/application.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/timer.py" beforeDir="false" afterPath="$PROJECT_DIR$/timer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -259,7 +258,15 @@
       <option name="project" value="LOCAL" />
       <updated>1724509155442</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="08/24&#10;時間クラスに現在時刻取得関数を追加">
+      <option name="closed" value="true" />
+      <created>1724510036947</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1724510036947</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -295,6 +302,7 @@
     <MESSAGE value="08/22&#10;アプリケーション実行に&#10;関係ないクラスを&#10;別ファイルに移動" />
     <MESSAGE value="08/23&#10;色変更ウインドウ完成" />
     <MESSAGE value="08/24&#10;時間比較関数を作成" />
-    <option name="LAST_COMMIT_MESSAGE" value="08/24&#10;時間比較関数を作成" />
+    <MESSAGE value="08/24&#10;時間クラスに現在時刻取得関数を追加" />
+    <option name="LAST_COMMIT_MESSAGE" value="08/24&#10;時間クラスに現在時刻取得関数を追加" />
   </component>
 </project>
