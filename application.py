@@ -61,6 +61,7 @@ class MainWin(tk.Frame):
         self.bt3.pack()
         self.ftb.pack()
 
+    # 表の生成
     def table(self: tk.Tk):
         for i in range(5):
             self.tab_txt.append([""] * 4)
@@ -72,29 +73,48 @@ class MainWin(tk.Frame):
         self.tab_txt[2][2] = "#ff0000"
         print(self.tab_txt)
 
+        # 一行目
         col = []
         for i in range(4):
-            col.append(tk.Label(self.ftb, bd=2, width=7, height=1, text=self.tab_txt[0][i], font=("", 10)))
+            col.append(
+                tk.Label(
+                    self.ftb, bd=2, width=7, height=1, bg="gray",
+                    text=self.tab_txt[0][i], font=("", 9)
+                )
+            )
         self.tab.append(col)
 
+        # 二行目以降
         for i in range(1, 5):
             col = []
             for j in range(4):
-                col.append(tk.Label(self.ftb, bd=2, width=7, height=1, text=self.tab_txt[i][j], font=("", 10)))
-
-                if j in [2, 3]:
-                    try:
-                        self.tab[i][j].configure(bg=self.tab_txt[i][j])
-                    except:
-                        pass
-                print(str(i) + ", " + str(j), ", " + self.tab_txt[i][j])
+                col.append(tk.Label(self.ftb, bd=2, width=7, height=1, font=("", 9)))
             self.tab.append(col)
-        print(str(len(self.tab)) + ", " + str(len(self.tab[0])))
+        # print(str(len(self.tab)) + ", " + str(len(self.tab[0])))
+        # print(self.tab)
+        self.upd_tab()
 
         # 表の配置
         for i in range(5):
             for j in range(4):
-                self.tab[i][j].grid(row=i+1, column=j+1, padx=1, pady=1)
+                # print(str(i) + ", " + str(j))
+                self.tab[i][j].grid(row=i, column=j, padx=1, pady=1)
+                # self.tab[i][j].bind("<Button-1>", lambda event: self.clk_tab(i, j))
+        self.tab[2][3].bind("<Button-1>", lambda event: self.clk_tab(2, 3))
+
+    def clk_tab(self, x, y):
+        print("x=" + str(x) + ", y=" + str(y))
+        self.ch_win()
+        self.tab_txt[x][y] = self.clr
+
+    # 表の更新
+    def upd_tab(self):
+        for i in range(1, 5):
+            for j in range(4):
+                self.tab[i][j].configure(text=self.tab_txt[i][j])
+                if j in [2, 3]:
+                    if self.tab_txt[i][j] != "":
+                        self.tab[i][j].configure(bg=self.tab_txt[i][j])
 
     # 終了
     def exit(self):
@@ -371,6 +391,8 @@ class ChanColorWin(tk.Frame):
     # 決定押下
     def ps_ok(self):
         print(self.ccd)
+        self.mw.clr = self.ccd
+        self.mw.upd_tab()
         self.master.destroy()
 
     # 取消押下

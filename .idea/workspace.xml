@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="08/24&#10;時間クラスの現在時刻取得関数を使用&#10;不要部分の削除">
+    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="08/25&#10;表作成">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application.py" beforeDir="false" afterPath="$PROJECT_DIR$/application.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/language.py" beforeDir="false" afterPath="$PROJECT_DIR$/language.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -276,7 +275,15 @@
       <option name="project" value="LOCAL" />
       <updated>1724510580506</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="08/25&#10;表作成">
+      <option name="closed" value="true" />
+      <created>1724597884439</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1724597884439</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -314,6 +321,7 @@
     <MESSAGE value="08/24&#10;時間比較関数を作成" />
     <MESSAGE value="08/24&#10;時間クラスに現在時刻取得関数を追加" />
     <MESSAGE value="08/24&#10;時間クラスの現在時刻取得関数を使用&#10;不要部分の削除" />
-    <option name="LAST_COMMIT_MESSAGE" value="08/24&#10;時間クラスの現在時刻取得関数を使用&#10;不要部分の削除" />
+    <MESSAGE value="08/25&#10;表作成" />
+    <option name="LAST_COMMIT_MESSAGE" value="08/25&#10;表作成" />
   </component>
 </project>
