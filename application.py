@@ -25,6 +25,9 @@ class MainWin(tk.Frame):
         self.clr = "white"                  # 文字色
         self.bgc = "black"                  # 背景色
         self.cnt = False                    # カウントアップ
+        self.ftb = tk.Frame(self.master, bg="black")    # 表用のフレーム
+        self.tab = []                       # 表
+        self.tab_txt = []                   # 表の文字列
         self.tmr = tm.Time()                # タイマー
         # self.tmr = Time1(clr=self.clr, bgc=self.bgc)  # タイマー
 
@@ -37,6 +40,7 @@ class MainWin(tk.Frame):
         self.master.title(self.lg.mwn)       # ウインドウタイトル
         self.master.geometry("400x300")      # ウインドウサイズ
         self.master.resizable(False, False)  # サイズ変更禁止
+        self.table()                         # 表作成
         self.widgets()                       # ウィジェット
         self.event()                         # イベント
 
@@ -55,6 +59,42 @@ class MainWin(tk.Frame):
         self.bt1.pack()
         self.bt2.pack()
         self.bt3.pack()
+        self.ftb.pack()
+
+    def table(self: tk.Tk):
+        for i in range(5):
+            self.tab_txt.append([""] * 4)
+        self.tab_txt[0][0] = "No."
+        self.tab_txt[0][1] = self.lg.tim
+        self.tab_txt[0][2] = self.lg.clr
+        self.tab_txt[0][3] = self.lg.bgc
+        self.tab_txt[1][3] = "#00ff00"
+        self.tab_txt[2][2] = "#ff0000"
+        print(self.tab_txt)
+
+        col = []
+        for i in range(4):
+            col.append(tk.Label(self.ftb, bd=2, width=7, height=1, text=self.tab_txt[0][i], font=("", 10)))
+        self.tab.append(col)
+
+        for i in range(1, 5):
+            col = []
+            for j in range(4):
+                col.append(tk.Label(self.ftb, bd=2, width=7, height=1, text=self.tab_txt[i][j], font=("", 10)))
+
+                if j in [2, 3]:
+                    try:
+                        self.tab[i][j].configure(bg=self.tab_txt[i][j])
+                    except:
+                        pass
+                print(str(i) + ", " + str(j), ", " + self.tab_txt[i][j])
+            self.tab.append(col)
+        print(str(len(self.tab)) + ", " + str(len(self.tab[0])))
+
+        # 表の配置
+        for i in range(5):
+            for j in range(4):
+                self.tab[i][j].grid(row=i+1, column=j+1, padx=1, pady=1)
 
     # 終了
     def exit(self):
