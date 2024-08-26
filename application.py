@@ -35,7 +35,7 @@ class MainWin(tk.Frame):
         self.bt0 = tk.Button(self.master, text="Button", command=self.tm_win)  # ボタン1
         self.bt1 = tk.Button(self.master, text=self.lg.stt, command=self.bt1_ps)   # ボタン2
         self.bt2 = tk.Button(self.master, text=self.lg.rst, command=self.bt2_ps)   # ボタン3
-        self.bt3 = tk.Button(self.master, text="Button", command=self.ch_win)
+        self.bt3 = tk.Button(self.master, text="Button")
 
         # ウインドウの定義
         self.master.title(self.lg.mwn)       # ウインドウタイトル
@@ -96,9 +96,14 @@ class MainWin(tk.Frame):
             self.tab[i].bind("<Button-1>", partial(self.clk_tab, i=i))
         # self.tab[2][3].bind("<Button-1>", lambda event: self.clk_tab(2, 3))
 
-    def clk_tab(self, i):
-        print("x=" + str(i%4) + ", y=" + str(i//4))
-        # self.ch_win()
+    def clk_tab(self, e,  i):
+        x = i % 4
+        y = i // 4
+        print("x=" + str(x) + ", y=" + str(y))
+        if y == 1:
+            self.ch_tm_win()
+        elif y in [2, 3]:
+            self.ch_cl_win()
         # self.tab_txt[i] = self.clr
 
     # 表の更新
@@ -122,8 +127,17 @@ class MainWin(tk.Frame):
             self.tm_mas = tk.Toplevel(self.master)
             self.tm_app = TMWin(self.tm_mas, self)
 
-    # 変更ウインドウ表示
-    def ch_win(self):
+    # 時間変更ウインドウ表示
+    def ch_tm_win(self):
+        if self.ch_mas is None:
+            self.ch_mas = tk.Toplevel(self.master)
+            self.ch_app = ChanTimeWin(self.ch_mas, self)
+        elif not self.ch_mas.winfo_exists():
+            self.ch_mas = tk.Toplevel(self.master)
+            self.ch_app = ChanTimeWin(self.ch_mas, self)
+
+    # 色変更ウインドウ表示
+    def ch_cl_win(self):
         if self.ch_mas is None:
             self.ch_mas = tk.Toplevel(self.master)
             self.ch_app = ChanColorWin(self.ch_mas, self)
