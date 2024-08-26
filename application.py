@@ -1,5 +1,6 @@
 import tkinter as tk
 # from tkinter import ttk
+from functools import partial
 import language as lg
 import timer as tm
 
@@ -27,7 +28,7 @@ class MainWin(tk.Frame):
         self.cnt = False                    # カウントアップ
         self.ftb = tk.Frame(self.master, bg="black")    # 表用のフレーム
         self.tab = []                       # 表
-        self.tab_txt = []                   # 表の文字列
+        self.tab_txt = [""] * 20            # 表の文字列
         self.tmr = tm.Time()                # タイマー
         # self.tmr = Time1(clr=self.clr, bgc=self.bgc)  # タイマー
 
@@ -63,58 +64,50 @@ class MainWin(tk.Frame):
 
     # 表の生成
     def table(self: tk.Tk):
-        for i in range(5):
-            self.tab_txt.append([""] * 4)
-        self.tab_txt[0][0] = "No."
-        self.tab_txt[0][1] = self.lg.tim
-        self.tab_txt[0][2] = self.lg.clr
-        self.tab_txt[0][3] = self.lg.bgc
-        self.tab_txt[1][3] = "#00ff00"
-        self.tab_txt[2][2] = "#ff0000"
+        # for i in range(5):
+        #     self.tab_txt.append([""] * 4)
+        self.tab_txt[0] = "No."
+        self.tab_txt[1] = self.lg.tim
+        self.tab_txt[2] = self.lg.clr
+        self.tab_txt[3] = self.lg.bgc
+        self.tab_txt[7] = "#00ff00"
+        self.tab_txt[10] = "#ff0000"
         print(self.tab_txt)
 
         # 一行目
-        col = []
         for i in range(4):
-            col.append(
+            self.tab.append(
                 tk.Label(
                     self.ftb, bd=2, width=7, height=1, bg="gray",
-                    text=self.tab_txt[0][i], font=("", 9)
+                    text=self.tab_txt[i], font=("", 9)
                 )
             )
-        self.tab.append(col)
 
         # 二行目以降
-        for i in range(1, 5):
-            col = []
-            for j in range(4):
-                col.append(tk.Label(self.ftb, bd=2, width=7, height=1, font=("", 9)))
-            self.tab.append(col)
+        for i in range(4, 20):
+            self.tab.append(tk.Label(self.ftb, bd=2, width=7, height=1, font=("", 9)))
         # print(str(len(self.tab)) + ", " + str(len(self.tab[0])))
         # print(self.tab)
         self.upd_tab()
 
         # 表の配置
-        for i in range(5):
-            for j in range(4):
-                # print(str(i) + ", " + str(j))
-                self.tab[i][j].grid(row=i, column=j, padx=1, pady=1)
-                # self.tab[i][j].bind("<Button-1>", lambda event: self.clk_tab(i, j))
-        self.tab[2][3].bind("<Button-1>", lambda event: self.clk_tab(2, 3))
+        for i in range(20):
+            self.tab[i].grid(row=i//4, column=i%4, padx=1, pady=1)
+            self.tab[i].bind("<Button-1>", partial(self.clk_tab, i=i))
+        # self.tab[2][3].bind("<Button-1>", lambda event: self.clk_tab(2, 3))
 
-    def clk_tab(self, x, y):
-        print("x=" + str(x) + ", y=" + str(y))
-        self.ch_win()
-        self.tab_txt[x][y] = self.clr
+    def clk_tab(self, i):
+        print("x=" + str(i%4) + ", y=" + str(i//4))
+        # self.ch_win()
+        # self.tab_txt[i] = self.clr
 
     # 表の更新
     def upd_tab(self):
-        for i in range(1, 5):
-            for j in range(4):
-                self.tab[i][j].configure(text=self.tab_txt[i][j])
-                if j in [2, 3]:
-                    if self.tab_txt[i][j] != "":
-                        self.tab[i][j].configure(bg=self.tab_txt[i][j])
+        for i in range(4, 20):
+            self.tab[i].configure(text=self.tab_txt[i])
+            if i%4 in [2, 3]:
+                if self.tab_txt[i] != "":
+                    self.tab[i].configure(bg=self.tab_txt[i])
 
     # 終了
     def exit(self):
