@@ -29,6 +29,7 @@ class MainWin(tk.Frame):
         self.ftb = tk.Frame(self.master, bg="black")    # 表用のフレーム
         self.tab = []                       # 表
         self.tab_txt = [""] * 20            # 表の文字列
+        self.tab_xy = 0                     # 表選択座標
         self.tmr = tm.Time()                # タイマー
         # self.tmr = Time1(clr=self.clr, bgc=self.bgc)  # タイマー
 
@@ -97,14 +98,15 @@ class MainWin(tk.Frame):
         # self.tab[2][3].bind("<Button-1>", lambda event: self.clk_tab(2, 3))
 
     def clk_tab(self, e,  i):
+        self.tab_xy = i
         x = i % 4
         y = i // 4
         print("x=" + str(x) + ", y=" + str(y))
-        if y == 1:
-            self.ch_tm_win()
-        elif y in [2, 3]:
-            self.ch_cl_win()
-        # self.tab_txt[i] = self.clr
+        if y != 0:
+            if x == 1:  # 時間列
+                self.ch_tm_win()
+            elif x in [2, 3]:  # 文字色列、背景色列
+                self.ch_cl_win()
 
     # 表の更新
     def upd_tab(self):
@@ -324,6 +326,8 @@ class ChanTimeWin(tk.Frame):
     # 決定押下
     def ps_ok(self):
         self.mw.tmr = self.tmr
+        self.mw.tab_txt[self.mw.tab_xy] = self.tmr.out_txt()
+        self.mw.upd_tab()
         self.master.destroy()
 
     # 取消押下
@@ -397,8 +401,7 @@ class ChanColorWin(tk.Frame):
 
     # 決定押下
     def ps_ok(self):
-        print(self.ccd)
-        self.mw.clr = self.ccd
+        self.mw.tab_txt[self.mw.tab_xy] = self.ccd
         self.mw.upd_tab()
         self.master.destroy()
 
