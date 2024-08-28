@@ -9,6 +9,9 @@ import timer as tm
 class Setting:
     def __init__(self):
         self.lg = "JPN"
+        self.clr0 = "black"
+        self.bgc0 = "white"
+        self.row = 6
 
 
 # メインウインドウクラス
@@ -23,15 +26,16 @@ class MainWin(tk.Frame):
         self.keys = []                      # キーボードの状態
         self.now = tm.Time()
         self.siz = 10                       # 大きさ
-        self.clr = "white"                  # 文字色
-        self.bgc = "black"                  # 背景色
+        self.clr = self.set.clr0            # 文字色
+        self.bgc = self.set.bgc0            # 背景色
         self.cnt = False                    # カウントアップ
         self.ftb = tk.Frame(self.master, bg="black")    # 表用のフレーム
         self.tab = []                       # 表
-        self.tab_txt = [""] * 20            # 表の文字列
+        self.tab_num = self.set.row * 4     # 表行列数
+        self.tab_txt = [""] * self.tab_num  # 表の文字列
         self.tab_xy = 0                     # 表選択座標
         self.tmr = tm.Time()                # タイマー
-        # self.tmr = Time1(clr=self.clr, bgc=self.bgc)  # タイマー
+        self.set_tmr = tm.Time()            # 設定用タイマー
 
         self.bt0 = tk.Button(self.master, text="Button", command=self.tm_win)  # ボタン1
         self.bt1 = tk.Button(self.master, text=self.lg.stt, command=self.bt1_ps)   # ボタン2
@@ -65,15 +69,13 @@ class MainWin(tk.Frame):
 
     # 表の生成
     def table(self: tk.Tk):
-        # for i in range(5):
-        #     self.tab_txt.append([""] * 4)
         self.tab_txt[0] = "No."
-        self.tab_txt[1] = self.lg.tim
-        self.tab_txt[2] = self.lg.clr
-        self.tab_txt[3] = self.lg.bgc
-        self.tab_txt[7] = "#00ff00"
-        self.tab_txt[10] = "#ff0000"
-        print(self.tab_txt)
+        self.tab_txt[1] = self.lg.tim  # 列名：時間
+        self.tab_txt[2] = self.lg.clr  # 列名：文字色
+        self.tab_txt[3] = self.lg.bgc  # 列名：背景色
+        self.tab_txt[5] = self.set_tmr.out_txt()  # タイマー初期値
+        self.tab_txt[6] = self.set.clr0           # 文字色初期値
+        self.tab_txt[7] = self.set.bgc0           # 背景色初期値
 
         # 一行目
         for i in range(4):
@@ -85,17 +87,14 @@ class MainWin(tk.Frame):
             )
 
         # 二行目以降
-        for i in range(4, 20):
+        for i in range(4, self.tab_num):
             self.tab.append(tk.Label(self.ftb, bd=2, width=7, height=1, font=("", 9)))
-        # print(str(len(self.tab)) + ", " + str(len(self.tab[0])))
-        # print(self.tab)
         self.upd_tab()
 
         # 表の配置
-        for i in range(20):
+        for i in range(self.tab_num):
             self.tab[i].grid(row=i//4, column=i%4, padx=1, pady=1)
             self.tab[i].bind("<Button-1>", partial(self.clk_tab, i=i))
-        # self.tab[2][3].bind("<Button-1>", lambda event: self.clk_tab(2, 3))
 
     def clk_tab(self, e,  i):
         self.tab_xy = i
@@ -110,11 +109,22 @@ class MainWin(tk.Frame):
 
     # 表の更新
     def upd_tab(self):
-        for i in range(4, 20):
+        for i in range(4, self.tab_num):
             self.tab[i].configure(text=self.tab_txt[i])
-            if i%4 in [2, 3]:
-                if self.tab_txt[i] != "":
-                    self.tab[i].configure(bg=self.tab_txt[i])
+            if i%4 in [2, 3]:  # 色の行
+                if self.tab_txt[i] != "":  # 空白でない場合
+                    self.tab[i].configure(bg=self.tab_txt[i])  # ラベル色変更
+
+        # 番号付け
+        for i in range(1, self.tab_num/4):
+            if self.tab_txt[i*4+1] == "":
+                pass
+            elif self.tab_txt[i*4+2] == "":
+                pass
+            elif self.tab_txt[i*4+3] == "":
+                pass
+            else:
+                self.tab_txt[i] = str(i)
 
     # 終了
     def exit(self):

@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="08/27&#10;表の座標取得に成功">
+    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="08/28&#10;別ウインドウから表の設定">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application.py" beforeDir="false" afterPath="$PROJECT_DIR$/application.py" afterDir="false" />
     </list>
@@ -307,7 +307,15 @@
       <option name="project" value="LOCAL" />
       <updated>1724709145525</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="08/28&#10;別ウインドウから表の設定">
+      <option name="closed" value="true" />
+      <created>1724853082742</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1724853082742</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -322,7 +330,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="08/10&#10;イベント関数の土台" />
     <MESSAGE value="08/10&#10;サブウインドウ表示" />
     <MESSAGE value="08/10&#10;７セグ表示" />
     <MESSAGE value="08/11&#10;７セグ&#10;原点を中心へ" />
@@ -347,6 +354,7 @@
     <MESSAGE value="08/25&#10;表作成中" />
     <MESSAGE value="08/25&#10;表のリストを一次化" />
     <MESSAGE value="08/27&#10;表の座標取得に成功" />
-    <option name="LAST_COMMIT_MESSAGE" value="08/27&#10;表の座標取得に成功" />
+    <MESSAGE value="08/28&#10;別ウインドウから表の設定" />
+    <option name="LAST_COMMIT_MESSAGE" value="08/28&#10;別ウインドウから表の設定" />
   </component>
 </project>
