@@ -9,8 +9,8 @@ import timer as tm
 class Setting:
     def __init__(self):
         self.lg = "JPN"
-        self.clr0 = "black"
-        self.bgc0 = "white"
+        self.clr0 = "#000000"
+        self.bgc0 = "#FFFFFF"
         self.row = 6
 
 
@@ -69,6 +69,18 @@ class MainWin(tk.Frame):
 
     # 表の生成
     def table(self: tk.Tk):
+        # 表の選択
+        def clk_tab(e, xy):
+            self.tab_xy = xy
+            x = xy % 4
+            y = xy // 4
+            # print("x=" + str(x) + ", y=" + str(y))
+            if y != 0:
+                if x == 1:  # 時間列
+                    self.ch_tm_win()
+                elif x in [2, 3]:  # 文字色列、背景色列
+                    self.ch_cl_win()
+
         self.tab_txt[0] = "No."
         self.tab_txt[1] = self.lg.tim  # 列名：時間
         self.tab_txt[2] = self.lg.clr  # 列名：文字色
@@ -81,7 +93,7 @@ class MainWin(tk.Frame):
         for i in range(4):
             self.tab.append(
                 tk.Label(
-                    self.ftb, bd=2, width=7, height=1, bg="gray",
+                    self.ftb, bd=2, width=7, height=1, bg="silver",
                     text=self.tab_txt[i], font=("", 9)
                 )
             )
@@ -94,29 +106,12 @@ class MainWin(tk.Frame):
         # 表の配置
         for i in range(self.tab_num):
             self.tab[i].grid(row=i//4, column=i%4, padx=1, pady=1)
-            self.tab[i].bind("<Button-1>", partial(self.clk_tab, i=i))
-
-    def clk_tab(self, e,  i):
-        self.tab_xy = i
-        x = i % 4
-        y = i // 4
-        print("x=" + str(x) + ", y=" + str(y))
-        if y != 0:
-            if x == 1:  # 時間列
-                self.ch_tm_win()
-            elif x in [2, 3]:  # 文字色列、背景色列
-                self.ch_cl_win()
+            self.tab[i].bind("<Button-1>", partial(clk_tab, xy=i))
 
     # 表の更新
     def upd_tab(self):
-        for i in range(4, self.tab_num):
-            self.tab[i].configure(text=self.tab_txt[i])
-            if i%4 in [2, 3]:  # 色の行
-                if self.tab_txt[i] != "":  # 空白でない場合
-                    self.tab[i].configure(bg=self.tab_txt[i])  # ラベル色変更
-
         # 番号付け
-        for i in range(1, self.tab_num/4):
+        for i in range(1, self.tab_num//4):
             if self.tab_txt[i*4+1] == "":
                 pass
             elif self.tab_txt[i*4+2] == "":
@@ -124,7 +119,15 @@ class MainWin(tk.Frame):
             elif self.tab_txt[i*4+3] == "":
                 pass
             else:
-                self.tab_txt[i] = str(i)
+                print(i)
+                self.tab_txt[i*4] = str(i)
+
+        # 表の表示
+        for i in range(4, self.tab_num):
+            self.tab[i].configure(text=self.tab_txt[i])
+            if i%4 in [2, 3]:  # 色の行
+                if self.tab_txt[i] != "":  # 空白でない場合
+                    self.tab[i].configure(bg=self.tab_txt[i])  # ラベル色変更
 
     # 終了
     def exit(self):
