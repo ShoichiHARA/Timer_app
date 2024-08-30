@@ -16,14 +16,13 @@ class Language:
                 self.stt = output(i, ["Start", "開始"])
                 self.stp = output(i, ["Stop", "停止"])
                 self.rst = output(i, ["Reset", "初期化"])
-                self.prb = output(i, ["Practice Board", "実習盤"])
-                self.ioa = output(i, ["I/O Allocation", "入出力割付表"])
                 self.hlp = output(i, ["Help", "ヘルプ"])
                 self.tim = output(i, ["Time", "時間"])
                 self.clr = output(i, ["tx color", "文字色"])
                 self.bgc = output(i, ["bg color", "背景色"])
                 self.ook = output(i, ["ok", "決定"])
                 self.ccl = output(i, ["cancel", "取消"])
+                self.del = output(i, ["delete", "削除"])
                 break
 
 
