@@ -22,6 +22,13 @@ class Time:
         if ms is not None:
             self.ms = ms
 
+    # 文字列から時間をセット
+    def inp_txt(self, txt):
+        self.h = int(txt[0]) * 10 + int(txt[1])
+        self.m = int(txt[3]) * 10 + int(txt[4])
+        self.s = int(txt[6]) * 10 + int(txt[7])
+        self.ms = int(txt[9])
+
     # 現在時刻を取得
     def get_now(self):
         t = datetime.datetime.now()
