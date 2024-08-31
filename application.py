@@ -8,7 +8,7 @@ import timer as tm
 # 設定クラス
 class Setting:
     def __init__(self):
-        self.lg = "JPN"
+        self.lg = "ENG"
         self.clr0 = "#000000"
         self.bgc0 = "#FFFFFF"
         self.row = 6
@@ -25,7 +25,6 @@ class MainWin(tk.Frame):
         self.lg = lg.Language(self.set.lg)  # 言語
         self.keys = []                      # キーボードの状態
         self.now = tm.Time()                # 現在時刻
-        self.siz = 10                       # 大きさ
         self.clr = self.set.clr0            # 文字色
         self.bgc = self.set.bgc0            # 背景色
         self.cnt = False                    # カウントアップ
@@ -39,10 +38,20 @@ class MainWin(tk.Frame):
         self.tmr = tm.Time()                # タイマー
         self.set_tmr = tm.Time()            # 設定用タイマー
 
-        self.bt0 = tk.Button(self.master, text="Button", command=self.tm_win)  # ボタン1
-        self.bt1 = tk.Button(self.master, text=self.lg.stt, command=self.bt1_ps)   # ボタン2
-        self.bt2 = tk.Button(self.master, text=self.lg.rst, command=self.bt2_ps)   # ボタン3
-        self.bt3 = tk.Button(self.master, text="Button")
+        self.bt_dp = tk.Button(
+            self.master, text=self.lg.viw, width=20, command=self.tm_win
+        )  # 表示ボタン
+        self.bt_ss = tk.Button(
+            self.master, text=self.lg.stt, font=("", 15),
+            width=10, height=2, command=self.ps_ss
+        )   # 開始/停止ボタン
+        self.bt_rs = tk.Button(
+            self.master, text=self.lg.rst, font=("", 15),
+            width=10, height=2, command=self.ps_rs
+        )   # 初期化ボタン
+        self.bt_cv = tk.Button(
+            self.master, text=self.lg.ccv, width=20, command=self.ps_cv
+        )  # 現在値変更ボタン
 
         # ウインドウの定義
         self.master.title(self.lg.mwn)       # ウインドウタイトル
@@ -64,10 +73,10 @@ class MainWin(tk.Frame):
 
     # ウィジェット
     def widgets(self: tk.Tk):
-        self.bt0.pack()
-        self.bt1.pack()
-        self.bt2.pack()
-        self.bt3.pack()
+        self.bt_dp.place(x=60, y=100)
+        self.bt_ss.place(x=80, y=20)
+        self.bt_rs.place(x=230, y=20)
+        self.bt_cv.place(x=220, y=100)
         self.lst.place(x=10, y=150)   # 設定表タイトル
         self.fst.place(x=10, y=170)   # 設定表
         self.lrv.place(x=250, y=150)  # 予約表タイトル
@@ -216,15 +225,22 @@ class MainWin(tk.Frame):
             self.ch_mas = tk.Toplevel(self.master)
             self.ch_app = ChanColorWin(self.ch_mas, self)
 
-    def bt1_ps(self):
+    # 開始/停止ボタン押下
+    def ps_ss(self):
         self.cnt = not self.cnt
         if self.cnt:
-            self.bt1.configure(text=self.lg.stp)
+            self.bt_ss.configure(text=self.lg.stp)
         else:
-            self.bt1.configure(text=self.lg.stt)
+            self.bt_ss.configure(text=self.lg.stt)
 
-    def bt2_ps(self):
+    # 初期化ボタン押下
+    def ps_rs(self):
         self.tmr.set_tmr(h=0, m=0, s=0, ms=0)
+
+    # 現在値変更ボタン押下
+    def ps_cv(self):
+        self.pxy = 0
+        self.ch_tm_win()
 
     # イベント
     def event(self):
@@ -269,6 +285,7 @@ class TMWin(tk.Frame):
         self.mw = mw                        # メインウインドウ
         self.wwd = 400                      # ウインドウ幅
         self.whg = 300                      # ウインドウ高
+        self.siz = self.wwd // 110          # 文字サイズ
         self.cvs = tk.Canvas(self.master, bg=self.mw.bgc)  # キャンバス
 
         # ウインドウの定義
@@ -291,7 +308,7 @@ class TMWin(tk.Frame):
             self.mw.now.get_now()         # 現在時刻取得
             if pnm != self.mw.now.ms:  # ミリ秒が進んでいる場合
                 self.mw.tmr.cnt_tmr()      # 時間カウント
-        self.mw.tmr.out_seg(self.cvs, self.mw.clr, self.mw.bgc, self.wwd/2, self.whg/2, self.mw.siz)
+        self.mw.tmr.out_seg(self.cvs, self.mw.clr, self.mw.bgc, self.wwd/2, self.whg/2, self.siz)
 
         # self.seg.place(self.wwd/2, self.whg/2, self.mw.siz)
 
@@ -303,7 +320,7 @@ class TMWin(tk.Frame):
             self.e = e  # エラー処理(仮)
             self.wwd = self.master.winfo_width()
             self.whg = self.master.winfo_height()
-            self.mw.siz = self.wwd // 110
+            self.siz = self.wwd // 110
 
         self.bind("<Configure>", win_size)
 
@@ -417,7 +434,10 @@ class ChanTimeWin(tk.Frame):
     # 決定押下
     def ps_ok(self):
         self.mw.set_tmr = self.tmr
-        self.mw.upd_tab(self.tmr.out_txt())
+        if self.mw.pxy == 0:
+            self.mw.tmr = self.tmr
+        elif self.mw.pxy >= 1000:
+            self.mw.upd_tab(self.tmr.out_txt())
         self.master.destroy()
 
     # 削除押下
