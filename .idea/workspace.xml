@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="08/31&#10;不要なもの削除">
+    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="08/31&#10;予約表完成">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application.py" beforeDir="false" afterPath="$PROJECT_DIR$/application.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/language.py" beforeDir="false" afterPath="$PROJECT_DIR$/language.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -371,7 +372,15 @@
       <option name="project" value="LOCAL" />
       <updated>1725070976598</updated>
     </task>
-    <option name="localTasksCounter" value="36" />
+    <task id="LOCAL-00036" summary="08/31&#10;予約表完成">
+      <option name="closed" value="true" />
+      <created>1725091129691</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1725091129691</updated>
+    </task>
+    <option name="localTasksCounter" value="37" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -386,7 +395,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="08/16&#10;背景色を指定可" />
     <MESSAGE value="08/16&#10;カウントリセット関数の作成&#10;文字色、背景色をMWクラスで管理" />
     <MESSAGE value="08/16&#10;描画キャンパスは&#10;描画する関数で指定" />
     <MESSAGE value="08/16&#10;スタート、ストップ、リセットが可能" />
@@ -411,6 +419,7 @@
     <MESSAGE value="08/29&#10;アプリケーションクラスの変数を減らしたい" />
     <MESSAGE value="08/31&#10;設定表関数を改良&#10;変数減らした" />
     <MESSAGE value="08/31&#10;不要なもの削除" />
-    <option name="LAST_COMMIT_MESSAGE" value="08/31&#10;不要なもの削除" />
+    <MESSAGE value="08/31&#10;予約表完成" />
+    <option name="LAST_COMMIT_MESSAGE" value="08/31&#10;予約表完成" />
   </component>
 </project>

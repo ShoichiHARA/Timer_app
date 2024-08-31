@@ -29,8 +29,10 @@ class MainWin(tk.Frame):
         self.clr = self.set.clr0            # 文字色
         self.bgc = self.set.bgc0            # 背景色
         self.cnt = False                    # カウントアップ
+        self.lst = tk.Label(self.master, text=self.lg.ccr)  # 設定表のラベル
         self.fst = None                     # 設定表のフレーム
         self.set_tab = []                   # 設定表
+        self.lrv = tk.Label(self.master, text=self.lg.rss)  # 予約表のラベル
         self.frv = None                     # 予約表のフレーム
         self.rsv_tab = []                   # 予約表
         self.pxy = 0                        # 表選択座標
@@ -44,9 +46,9 @@ class MainWin(tk.Frame):
 
         # ウインドウの定義
         self.master.title(self.lg.mwn)       # ウインドウタイトル
-        self.master.geometry("400x300")      # ウインドウサイズ
+        self.master.geometry("430x300")      # ウインドウサイズ
         self.master.resizable(False, False)  # サイズ変更禁止
-        # self.set_table()                     # 設定表
+        self.set_table()                     # 設定表
         self.rsv_table()                     # 予約表
         self.widgets()                       # ウィジェット
         self.event()                         # イベント
@@ -66,8 +68,10 @@ class MainWin(tk.Frame):
         self.bt1.pack()
         self.bt2.pack()
         self.bt3.pack()
-        # self.fst.pack()
-        self.frv.pack()
+        self.lst.place(x=10, y=150)   # 設定表タイトル
+        self.fst.place(x=10, y=170)   # 設定表
+        self.lrv.place(x=250, y=150)  # 予約表タイトル
+        self.frv.place(x=250, y=170)  # 予約表
 
     # 設定表の生成
     def set_table(self: tk.Tk):
@@ -79,7 +83,9 @@ class MainWin(tk.Frame):
             # print("x=" + str(x) + ", y=" + str(y))
             if y != 0:
                 if x == 1:  # 時間列
-                    self.ch_tm_win()
+                    if y > 1:  # 最初の時間は変更不可
+                        print(self.set_tmr.out_txt())
+                        self.ch_tm_win()
                 elif x in [2, 3]:  # 文字色列、背景色列
                     self.ch_cl_win()
 
@@ -164,7 +170,7 @@ class MainWin(tk.Frame):
         elif 2000 <= self.pxy < 3000:
             # 変更セルの座標
             pxy = self.pxy - 2000
-            x = pxy % 3
+            # x = pxy % 3
             y = pxy // 3
 
             # 表の文字変更
@@ -308,8 +314,8 @@ class ChanTimeWin(tk.Frame):
 
         # 定義
         self.mw = mw  # メインウインドウ
-        self.tmr = tm.Time()
-        self.dsp = tk.Label(master=master, text="00:00:00.0", font=("", 60, ))
+        self.tmr = self.mw.set_tmr
+        self.dsp = tk.Label(master=master, text=self.tmr.out_txt(), font=("", 60, ))
         self.bt_ch = [None] * 14
         self.bt_ch[0] = tk.Button(self.master, text=" ↑ ", command=lambda: self.ps_ch("a"))
         self.bt_ch[1] = tk.Button(self.master, text=" ↓ ", command=lambda: self.ps_ch("b"))
@@ -325,8 +331,17 @@ class ChanTimeWin(tk.Frame):
         self.bt_ch[11] = tk.Button(self.master, text=" ↓ ", command=lambda: self.ps_ch("l"))
         self.bt_ch[12] = tk.Button(self.master, text=" ↑ ", command=lambda: self.ps_ch("m"))
         self.bt_ch[13] = tk.Button(self.master, text=" ↓ ", command=lambda: self.ps_ch("n"))
+        self.bt_nw = tk.Button(
+            self.master, width=10, text=self.mw.lg.now, command=self.ps_nw
+        )
+        self.bt_rs = tk.Button(
+            self.master, width=10, text=self.mw.lg.rst, command=self.ps_rs
+        )
         self.bt_ok = tk.Button(
             self.master, width=10, text=self.mw.lg.ook, command=self.ps_ok
+        )
+        self.bt_dl = tk.Button(
+            self.master, width=10, text=self.mw.lg.dlt, command=self.ps_dl
         )
         self.bt_cn = tk.Button(
             self.master, width=10, text=self.mw.lg.ccl, command=self.ps_cn
@@ -340,7 +355,10 @@ class ChanTimeWin(tk.Frame):
 
     def widgets(self: tk.Tk):
         self.dsp.place(x=40, y=80)
-        self.bt_ok.place(x=200, y=250)
+        self.bt_nw.place(x=120, y=210)
+        self.bt_rs.place(x=210, y=210)
+        self.bt_ok.place(x=120, y=250)
+        self.bt_dl.place(x=210, y=250)
         self.bt_cn.place(x=300, y=250)
 
         p = [
@@ -384,10 +402,25 @@ class ChanTimeWin(tk.Frame):
         self.tmr.chk_tmr()
         self.dsp.configure(text=self.tmr.out_txt())
 
+    # 現在時刻押下
+    def ps_nw(self):
+        self.tmr.get_now()
+        self.dsp.configure(text=self.tmr.out_txt())
+
+    # 初期化押下
+    def ps_rs(self):
+        self.tmr.set_tmr(h=0, m=0, s=0, ms=0)
+        self.dsp.configure(text=self.tmr.out_txt())
+
     # 決定押下
     def ps_ok(self):
         self.mw.set_tmr = self.tmr
         self.mw.upd_tab(self.tmr.out_txt())
+        self.master.destroy()
+
+    # 削除押下
+    def ps_dl(self):
+        self.mw.upd_tab("")
         self.master.destroy()
 
     # 取消押下
