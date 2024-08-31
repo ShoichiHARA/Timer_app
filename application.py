@@ -153,7 +153,9 @@ class MainWin(tk.Frame):
 
                 # セルの色付け
                 if x in [2, 3]:
-                    if txt != "":
+                    if txt == "":
+                        self.set_tab[pxy].configure(bg="SystemButtonFace")
+                    else:
                         self.set_tab[pxy].configure(bg=txt)
 
             # 行の番号付け
@@ -456,12 +458,15 @@ class ChanColorWin(tk.Frame):
         self.bt_ok = tk.Button(
             self.master, width=10, text=self.mw.lg.ook, command=self.ps_ok
         )
+        self.bt_dl = tk.Button(
+            self.master, width=10, text=self.mw.lg.dlt, command=self.ps_dl
+        )
         self.bt_cn = tk.Button(
             self.master, width=10, text=self.mw.lg.ccl, command=self.ps_cn
         )
 
         # ウインドウの定義
-        self.master.title(self.mw.lg.mwn)
+        self.master.title(self.mw.lg.ccr)
         self.master.geometry("400x300")
         self.master.resizable(False, False)
         self.widgets()
@@ -471,7 +476,8 @@ class ChanColorWin(tk.Frame):
         self.sc_g.place(x=50, y=100)
         self.sc_b.place(x=50, y=150)
         self.dsp.place(x=280, y=80)
-        self.bt_ok.place(x=200, y=250)
+        self.bt_ok.place(x=120, y=250)
+        self.bt_dl.place(x=210, y=250)
         self.bt_cn.place(x=300, y=250)
 
     # カラーコード変換
@@ -495,6 +501,11 @@ class ChanColorWin(tk.Frame):
     # 決定押下
     def ps_ok(self):
         self.mw.upd_tab(self.ccd)
+        self.master.destroy()
+
+    # 削除押下
+    def ps_dl(self):
+        self.mw.upd_tab("")
         self.master.destroy()
 
     # 取消押下
