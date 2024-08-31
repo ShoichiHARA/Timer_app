@@ -24,20 +24,14 @@ class MainWin(tk.Frame):
         self.set = Setting()                # 設定
         self.lg = lg.Language(self.set.lg)  # 言語
         self.keys = []                      # キーボードの状態
-        self.now = tm.Time()
+        self.now = tm.Time()                # 現在時刻
         self.siz = 10                       # 大きさ
         self.clr = self.set.clr0            # 文字色
         self.bgc = self.set.bgc0            # 背景色
         self.cnt = False                    # カウントアップ
-        self.ftb = tk.Frame(self.master, bg="black")    # 表用のフレーム
-        self.set_tab = []                       # 表
-        self.set_tab_num = self.set.row * 4     # 表行列数
-        self.set_tab_txt = [""] * self.set_tab_num  # 表の文字列
-        self.set_tab_xy = 0                     # 表選択座標
+        self.fst = None                     # 設定表用のフレーム
+        self.set_tab = []                   # 設定表
         self.rsv_tab = []
-        self.rsv_tab_num = self.set.row * 3
-        self.rsv_tab_txt = [""] * self.rsv_tab_num  # 予約表の文字列
-        self.rsv_tab_xy = 0                     # 予約表選択座標
         self.pxy = 0  # 選択座標
         self.tmr = tm.Time()                # タイマー
         self.set_tmr = tm.Time()            # 設定用タイマー
@@ -70,7 +64,7 @@ class MainWin(tk.Frame):
         self.bt1.pack()
         self.bt2.pack()
         self.bt3.pack()
-        self.ftb.pack()
+        self.fst.pack()
 
     # 設定表の生成
     def set_table(self: tk.Tk):
@@ -88,9 +82,10 @@ class MainWin(tk.Frame):
                     self.ch_cl_win()
 
         # ラベルを表状に生成
-        for i in range(self.set_tab_num):
+        self.fst = tk.Frame(self.master, bg="black")  # フレーム
+        for i in range(self.set.row*4):
             self.set_tab.append(
-                tk.Label(self.ftb, bd=2, width=7, height=1,font=("", 9))
+                tk.Label(self.fst, bd=2, width=7, height=1,font=("", 9))
             )  # ラベルの生成
             self.set_tab[i].grid(row=i//4, column=i%4, padx=1, pady=1)  # ラベルを配置
             self.set_tab[i].bind("<Button-1>", partial(clk_tab, xy=i))  # ラベルに関数を設定
@@ -106,35 +101,6 @@ class MainWin(tk.Frame):
         self.set_tab[5].configure(text="00:00:00.0")
         self.set_tab[6].configure(text=self.set.clr0, bg=self.set.clr0)
         self.set_tab[7].configure(text=self.set.bgc0, bg=self.set.bgc0)
-
-        """
-        self.set_tab_txt[0] = "No."
-        self.set_tab_txt[1] = self.lg.tim  # 列名：時間
-        self.set_tab_txt[2] = self.lg.clr  # 列名：文字色
-        self.set_tab_txt[3] = self.lg.bgc  # 列名：背景色
-        self.set_tab_txt[5] = self.set_tmr.out_txt()  # タイマー初期値
-        self.set_tab_txt[6] = self.set.clr0           # 文字色初期値
-        self.set_tab_txt[7] = self.set.bgc0           # 背景色初期値
-
-        # 一行目
-        for i in range(4):
-            self.set_tab.append(
-                tk.Label(
-                    self.ftb, bd=2, width=7, height=1, bg="silver",
-                    text=self.set_tab_txt[i], font=("", 9)
-                )
-            )
-
-        # 二行目以降
-        for i in range(4, self.set_tab_num):
-            self.set_tab.append(tk.Label(self.ftb, bd=2, width=7, height=1, font=("", 9)))
-        self.upd_tab()  # 表を更新して表示
-
-        # 表の配置
-        for i in range(self.set_tab_num):
-            self.set_tab[i].grid(row=i//4, column=i%4, padx=1, pady=1)
-            self.set_tab[i].bind("<Button-1>", partial(clk_tab, xy=i))
-        """
 
     # 表の更新
     def upd_tab1(self, txt=None):
@@ -373,7 +339,6 @@ class ChanTimeWin(tk.Frame):
     # 決定押下
     def ps_ok(self):
         self.mw.set_tmr = self.tmr
-        # self.mw.set_tab_txt[self.mw.set_tab_xy] = self.tmr.out_txt()
         self.mw.upd_tab1(self.tmr.out_txt())
         self.master.destroy()
 
@@ -448,7 +413,6 @@ class ChanColorWin(tk.Frame):
 
     # 決定押下
     def ps_ok(self):
-        # self.mw.set_tab_txt[self.mw.set_tab_xy] = self.ccd
         self.mw.upd_tab1(self.ccd)
         self.master.destroy()
 
