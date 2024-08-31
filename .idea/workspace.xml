@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="08/29&#10;変数名の変更">
+    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="08/29&#10;アプリケーションクラスの変数を減らしたい">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application.py" beforeDir="false" afterPath="$PROJECT_DIR$/application.py" afterDir="false" />
     </list>
@@ -347,7 +347,15 @@
       <option name="project" value="LOCAL" />
       <updated>1724937270197</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="08/29&#10;アプリケーションクラスの変数を減らしたい">
+      <option name="closed" value="true" />
+      <created>1725029694456</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1725029694456</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -362,7 +370,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="08/11&#10;ウインドウサイズ取得" />
     <MESSAGE value="08/12&#10;時間表示" />
     <MESSAGE value="08/12&#10;文字サイズの自動変更" />
     <MESSAGE value="08/16&#10;背景色を指定可" />
@@ -387,6 +394,7 @@
     <MESSAGE value="08/29&#10;言葉追加" />
     <MESSAGE value="08/29&#10;表クリック関数を移動" />
     <MESSAGE value="08/29&#10;変数名の変更" />
-    <option name="LAST_COMMIT_MESSAGE" value="08/29&#10;変数名の変更" />
+    <MESSAGE value="08/29&#10;アプリケーションクラスの変数を減らしたい" />
+    <option name="LAST_COMMIT_MESSAGE" value="08/29&#10;アプリケーションクラスの変数を減らしたい" />
   </component>
 </project>
