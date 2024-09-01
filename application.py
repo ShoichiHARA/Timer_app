@@ -124,6 +124,7 @@ class MainWin(tk.Frame):
 
     # 現在値変更ボタン押下
     def ps_cv(self):
+        self.set_tmr.inp_txt(self.tmr.out_txt())
         self.ch_tm_win("ccv")
 
     # イベント
@@ -200,6 +201,8 @@ class SetTab:
         if self.y != 0:  # タイトル行でない
             if self.x == 1:  # 時間列
                 if self.y > 1:  # 最初の時間は変更不可
+                    if self.tab[xy]["text"] != "":
+                        self.mw.set_tmr.inp_txt(self.tab[xy]["text"])
                     self.mw.ch_tm_win("set")  # 時間設定ウインドウ表示
             elif self.x in [2, 3]:  # 文字色列、背景色列
                 self.mw.ch_cl_win("set")
@@ -278,6 +281,8 @@ class RsvTab:
         # クリック有効範囲
         if self.y != 0:  # タイトル行でない場合
             if self.x != 0:  # 番号列でない場合
+                if self.tab[xy]["text"] != "":
+                    self.mw.set_tmr.inp_txt(self.tab[xy]["text"])
                 self.mw.ch_tm_win("rsv")
 
     # 表の更新
@@ -418,6 +423,10 @@ class ChanTimeWin(tk.Frame):
         self.bt_cn = tk.Button(
             self.master, width=10, text=self.mw.lg.ccl, command=self.ps_cn
         )
+
+        # ボタンの無効化
+        if self.typ == "ccv":
+            self.bt_dl.configure(state=tk.DISABLED)
 
         # ウインドウの定義
         self.master.title(self.mw.lg.mwn)    # ウインドウタイトル

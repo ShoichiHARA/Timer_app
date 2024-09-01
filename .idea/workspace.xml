@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="09/01&#10;設定表色削除の無効化">
+    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="09/01&#10;予約時間にタイマー動作成功">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application.py" beforeDir="false" afterPath="$PROJECT_DIR$/application.py" afterDir="false" />
     </list>
@@ -459,7 +459,15 @@
       <option name="project" value="LOCAL" />
       <updated>1725195275837</updated>
     </task>
-    <option name="localTasksCounter" value="47" />
+    <task id="LOCAL-00047" summary="09/01&#10;予約時間にタイマー動作成功">
+      <option name="closed" value="true" />
+      <created>1725199530495</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1725199530495</updated>
+    </task>
+    <option name="localTasksCounter" value="48" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -474,7 +482,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="08/24&#10;時間クラスに現在時刻取得関数を追加" />
     <MESSAGE value="08/24&#10;時間クラスの現在時刻取得関数を使用&#10;不要部分の削除" />
     <MESSAGE value="08/25&#10;表作成" />
     <MESSAGE value="08/25&#10;表作成中" />
@@ -499,6 +506,7 @@
     <MESSAGE value="09/01&#10;メインウインドウクラス変数減らした" />
     <MESSAGE value="09/01&#10;設定で色の変更成功" />
     <MESSAGE value="09/01&#10;設定表色削除の無効化" />
-    <option name="LAST_COMMIT_MESSAGE" value="09/01&#10;設定表色削除の無効化" />
+    <MESSAGE value="09/01&#10;予約時間にタイマー動作成功" />
+    <option name="LAST_COMMIT_MESSAGE" value="09/01&#10;予約時間にタイマー動作成功" />
   </component>
 </project>
