@@ -48,19 +48,25 @@ class Time:
             return 1       # 1を返す
         elif self.h < tm.h:  # 引数より自身の方が小さい場合
             return -1        # -1を返す
-        elif self.m > tm.h:
+        elif self.m > tm.m:
             return 1
         elif self.m < tm.m:
             return -1
         elif self.s > tm.s:
             return 1
-        elif self.s < -1:
+        elif self.s < tm.s:
             return -1
         elif self.ms > tm.ms:
             return 1
         elif self.ms < tm.ms:
             return -1
         return 0  # 同じの場合、0を返す
+
+    # 文字列から時間を比較
+    def cmp_txt(self, txt):
+        tmr = Time()
+        tmr.inp_txt(txt)
+        return self.cmp_tmr(tmr)
 
     # 時間をチェック
     def chk_tmr(self):

@@ -8,7 +8,7 @@ import timer as tm
 # 設定クラス
 class Setting:
     def __init__(self):
-        self.lg = "ENG"
+        self.lg = "JPN"
         self.clr0 = "#000000"
         self.bgc0 = "#FFFFFF"
         self.row = 6
@@ -308,9 +308,10 @@ class TMWin(tk.Frame):
             self.mw.now.get_now()         # 現在時刻取得
             if pnm != self.mw.now.ms:  # ミリ秒が進んでいる場合
                 self.mw.tmr.cnt_tmr()      # 時間カウント
-        self.mw.tmr.out_seg(self.cvs, self.mw.clr, self.mw.bgc, self.wwd/2, self.whg/2, self.siz)
-
-        # self.seg.place(self.wwd/2, self.whg/2, self.mw.siz)
+        self.mw.tmr.out_seg(
+            self.cvs, self.mw.clr, self.mw.bgc,
+            self.wwd/2, self.whg/2, self.siz
+        )
 
         self.master.after(10, self.re_frm)  # 0.01s後再描画
 
