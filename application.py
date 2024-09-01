@@ -30,7 +30,6 @@ class MainWin(tk.Frame):
         self.cnt = False                    # カウントアップ
         self.lst = tk.Label(self.master, text=self.lg.ccr)  # 設定表のラベル
         self.lrv = tk.Label(self.master, text=self.lg.rss)  # 予約表のラベル
-        self.pxy = 0                        # 表選択座標
         self.set_tab = SetTab(self)         # 設定表
         self.rsv_tab = RsvTab(self)         # 予約表
         self.tmr = tm.Time()                # タイマー
@@ -92,22 +91,22 @@ class MainWin(tk.Frame):
             self.tm_app = TMWin(self.tm_mas, self)
 
     # 時間変更ウインドウ表示
-    def ch_tm_win(self):
+    def ch_tm_win(self, typ):
         if self.ch_mas is None:
             self.ch_mas = tk.Toplevel(self.master)
-            self.ch_app = ChanTimeWin(self.ch_mas, self)
+            self.ch_app = ChanTimeWin(self.ch_mas, self, typ)
         elif not self.ch_mas.winfo_exists():
             self.ch_mas = tk.Toplevel(self.master)
-            self.ch_app = ChanTimeWin(self.ch_mas, self)
+            self.ch_app = ChanTimeWin(self.ch_mas, self, typ)
 
     # 色変更ウインドウ表示
-    def ch_cl_win(self):
+    def ch_cl_win(self, typ):
         if self.ch_mas is None:
             self.ch_mas = tk.Toplevel(self.master)
-            self.ch_app = ChanColorWin(self.ch_mas, self)
+            self.ch_app = ChanColorWin(self.ch_mas, self, typ)
         elif not self.ch_mas.winfo_exists():
             self.ch_mas = tk.Toplevel(self.master)
-            self.ch_app = ChanColorWin(self.ch_mas, self)
+            self.ch_app = ChanColorWin(self.ch_mas, self, typ)
 
     # 開始/停止ボタン押下
     def ps_ss(self):
@@ -123,8 +122,7 @@ class MainWin(tk.Frame):
 
     # 現在値変更ボタン押下
     def ps_cv(self):
-        self.pxy = 0
-        self.ch_tm_win()
+        self.ch_tm_win("ccv")
 
     # イベント
     def event(self):
@@ -192,7 +190,6 @@ class SetTab:
     # 表クリック時動作
     def click(self, e, xy):
         # 座標
-        self.mw.pxy = xy + 1000
         self.x = xy % 4
         self.y = xy // 4
 
@@ -200,9 +197,9 @@ class SetTab:
         if self.y != 0:  # タイトル行でない
             if self.x == 1:  # 時間列
                 if self.y > 1:  # 最初の時間は変更不可
-                    self.mw.ch_tm_win()  # 時間設定ウインドウ表示
+                    self.mw.ch_tm_win("set")  # 時間設定ウインドウ表示
             elif self.x in [2, 3]:  # 文字色列、背景色列
-                self.mw.ch_cl_win()
+                self.mw.ch_cl_win("set")
 
     # 表の更新
     def update(self, txt):
@@ -259,14 +256,13 @@ class RsvTab:
     # 表クリック時動作
     def click(self, e, xy):
         # 座標
-        self.mw.pxy = xy + 2000
         self.x = xy % 3
         self.y = xy // 3
 
         # クリック有効範囲
         if self.y != 0:  # タイトル行でない場合
             if self.x != 0:  # 番号列でない場合
-                self.mw.ch_tm_win()
+                self.mw.ch_tm_win("rsv")
 
     # 表の更新
     def update(self, txt):
@@ -339,12 +335,13 @@ class TMWin(tk.Frame):
 
 # 時間変更ウインドウ
 class ChanTimeWin(tk.Frame):
-    def __init__(self: tk.Tk, master, mw):
+    def __init__(self: tk.Tk, master, mw, typ):
         super().__init__(master)
         self.pack()
 
         # 定義
         self.mw = mw  # メインウインドウ
+        self.typ = typ  # 呼び出された種類
         self.tmr = self.mw.set_tmr
         self.dsp = tk.Label(master=master, text=self.tmr.out_txt(), font=("", 60, ))
         self.bt_ch = [None] * 14
@@ -446,19 +443,19 @@ class ChanTimeWin(tk.Frame):
     # 決定押下
     def ps_ok(self):
         self.mw.set_tmr = self.tmr
-        if self.mw.pxy == 0:
+        if self.typ == "ccv":
             self.mw.tmr = self.tmr
-        elif 1000 <= self.mw.pxy < 2000:
+        elif self.typ == "set":
             self.mw.set_tab.update(self.tmr.out_txt())
-        elif 2000 <= self.mw.pxy < 3000:
+        elif self.typ == "rsv":
             self.mw.rsv_tab.update(self.tmr.out_txt())
         self.master.destroy()
 
     # 削除押下
     def ps_dl(self):
-        if 1000 <= self.mw.pxy < 2000:
+        if self.typ == "set":
             self.mw.set_tab.update("")
-        elif 2000 <= self.mw.pxy < 3000:
+        elif self.typ == "rsv":
             self.mw.rsv_tab.update("")
         self.master.destroy()
 
@@ -469,12 +466,13 @@ class ChanTimeWin(tk.Frame):
 
 # 色変更ウインドウ
 class ChanColorWin(tk.Frame):
-    def __init__(self: tk.Tk, master, mw):
+    def __init__(self: tk.Tk, master, mw, typ):
         super().__init__(master)
         self.pack()
 
         # 定義
         self.mw = mw
+        self.typ = typ  # 呼び出された種類
         self.clr = [0, 0, 0]  # r, g, b
         self.ccd = "black"
         self.sc_r = tk.Scale(
@@ -537,18 +535,14 @@ class ChanColorWin(tk.Frame):
 
     # 決定押下
     def ps_ok(self):
-        if 1000 <= self.mw.pxy < 2000:
+        if self.typ == "set":
             self.mw.set_tab.update(self.ccd)
-        elif 2000 <= self.mw.pxy < 3000:
-            self.mw.rsv_tab.update(self.ccd)
         self.master.destroy()
 
     # 削除押下
     def ps_dl(self):
-        if 1000 <= self.mw.pxy < 2000:
+        if self.typ == "set":
             self.mw.set_tab.update("")
-        elif 2000 <= self.mw.pxy < 3000:
-            self.mw.rsv_tab.update("")
         self.master.destroy()
 
     # 取消押下
