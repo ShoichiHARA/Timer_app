@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="09/01&#10;表設定時に既値を表示">
-      <change afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
+    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="09/02&#10;exe化">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/exe.win-amd64-3.12/main.exe" beforeDir="false" afterPath="$PROJECT_DIR$/build/exe.win-amd64-3.12/main.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -475,7 +476,15 @@
       <option name="project" value="LOCAL" />
       <updated>1725201577210</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="09/02&#10;exe化">
+      <option name="closed" value="true" />
+      <created>1725202842523</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1725202842523</updated>
+    </task>
+    <option name="localTasksCounter" value="50" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -490,7 +499,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="08/25&#10;表作成" />
     <MESSAGE value="08/25&#10;表作成中" />
     <MESSAGE value="08/25&#10;表のリストを一次化" />
     <MESSAGE value="08/27&#10;表の座標取得に成功" />
@@ -515,6 +523,7 @@
     <MESSAGE value="09/01&#10;設定表色削除の無効化" />
     <MESSAGE value="09/01&#10;予約時間にタイマー動作成功" />
     <MESSAGE value="09/01&#10;表設定時に既値を表示" />
-    <option name="LAST_COMMIT_MESSAGE" value="09/01&#10;表設定時に既値を表示" />
+    <MESSAGE value="09/02&#10;exe化" />
+    <option name="LAST_COMMIT_MESSAGE" value="09/02&#10;exe化" />
   </component>
 </project>

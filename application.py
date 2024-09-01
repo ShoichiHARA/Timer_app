@@ -1,5 +1,4 @@
 import tkinter as tk
-# from tkinter import ttk
 from functools import partial
 import language as lg
 import timer as tm
@@ -364,6 +363,7 @@ class TMWin(tk.Frame):
 
         # 7セグ表示
         clr, bgc = self.mw.set_tab.crt_set(self.mw.tmr)
+        self.cvs.configure(bg=bgc)
         self.mw.tmr.out_seg(
             self.cvs, clr, bgc,
             self.wwd/2, self.whg/2, self.siz
