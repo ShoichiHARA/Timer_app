@@ -29,12 +29,11 @@ class MainWin(tk.Frame):
         self.bgc = self.set.bgc0            # 背景色
         self.cnt = False                    # カウントアップ
         self.lst = tk.Label(self.master, text=self.lg.ccr)  # 設定表のラベル
-        self.fst = None                     # 設定表のフレーム
-        self.set_tab = []                   # 設定表
         self.lrv = tk.Label(self.master, text=self.lg.rss)  # 予約表のラベル
         self.frv = None                     # 予約表のフレーム
         self.rsv_tab = []                   # 予約表
         self.pxy = 0                        # 表選択座標
+        self.set_tab = SetTable(self)       # 設定表
         self.tmr = tm.Time()                # タイマー
         self.set_tmr = tm.Time()            # 設定用タイマー
 
@@ -57,7 +56,6 @@ class MainWin(tk.Frame):
         self.master.title(self.lg.mwn)       # ウインドウタイトル
         self.master.geometry("430x300")      # ウインドウサイズ
         self.master.resizable(False, False)  # サイズ変更禁止
-        self.set_table()                     # 設定表
         self.rsv_table()                     # 予約表
         self.widgets()                       # ウィジェット
         self.event()                         # イベント
@@ -78,46 +76,9 @@ class MainWin(tk.Frame):
         self.bt_rs.place(x=230, y=20)
         self.bt_cv.place(x=220, y=100)
         self.lst.place(x=10, y=150)   # 設定表タイトル
-        self.fst.place(x=10, y=170)   # 設定表
+        self.set_tab.frm.place(x=10, y=170)  # 設定表
         self.lrv.place(x=250, y=150)  # 予約表タイトル
         self.frv.place(x=250, y=170)  # 予約表
-
-    # 設定表の生成
-    def set_table(self: tk.Tk):
-        # 表の選択
-        def clk_tab(e, xy):
-            self.pxy = xy + 1000
-            x = xy % 4
-            y = xy // 4
-            # print("x=" + str(x) + ", y=" + str(y))
-            if y != 0:
-                if x == 1:  # 時間列
-                    if y > 1:  # 最初の時間は変更不可
-                        print(self.set_tmr.out_txt())
-                        self.ch_tm_win()
-                elif x in [2, 3]:  # 文字色列、背景色列
-                    self.ch_cl_win()
-
-        # ラベルを表状に生成
-        self.fst = tk.Frame(self.master, bg="black")  # フレーム
-        for i in range(self.set.row*4):
-            self.set_tab.append(
-                tk.Label(self.fst, bd=2, width=7, height=1, font=("", 9))
-            )  # ラベルの生成
-            self.set_tab[i].grid(row=i//4, column=i%4, padx=1, pady=1)  # ラベルを配置
-            self.set_tab[i].bind("<Button-1>", partial(clk_tab, xy=i))  # ラベルに関数を設定
-            if i < 4:  # 1行目
-                self.set_tab[i].configure(bg="silver")  # 色変更
-
-        # 列名ラベル設定
-        self.set_tab[0].configure(text="No.")
-        self.set_tab[1].configure(text=self.lg.tim)
-        self.set_tab[2].configure(text=self.lg.clr)
-        self.set_tab[3].configure(text=self.lg.bgc)
-        self.set_tab[4].configure(text="1")
-        self.set_tab[5].configure(text="00:00:00.0")
-        self.set_tab[6].configure(text=self.set.clr0, bg=self.set.clr0)
-        self.set_tab[7].configure(text=self.set.bgc0, bg=self.set.bgc0)
 
     # 予約表の生成
     def rsv_table(self: tk.Tk):
@@ -148,37 +109,8 @@ class MainWin(tk.Frame):
 
     # 表の更新
     def upd_tab(self, txt=None):
-        # 設定表から
-        if 1000 <= self.pxy < 2000:
-            # 変更セルの座標
-            pxy = self.pxy - 1000
-            x = pxy % 4
-            y = pxy // 4
-
-            # 表の文字変更
-            if txt is not None:
-                # 表の文字変更
-                self.set_tab[pxy].configure(text=txt)
-
-                # セルの色付け
-                if x in [2, 3]:
-                    if txt == "":
-                        self.set_tab[pxy].configure(bg="SystemButtonFace")
-                    else:
-                        self.set_tab[pxy].configure(bg=txt)
-
-            # 行の番号付け
-            if self.set_tab[y*4+1]["text"] == "":  # 時間列が空白の場合
-                pass
-            elif self.set_tab[y*4+2]["text"] == "":  # 文字色列が空白の場合
-                pass
-            elif self.set_tab[y*4+3]["text"] == "":  # 背景色列が空白の場合
-                pass
-            else:  # 列に空白がない場合
-                self.set_tab[y*4].configure(text=str(y))
-
         # 予約表から
-        elif 2000 <= self.pxy < 3000:
+        if 2000 <= self.pxy < 3000:
             # 変更セルの座標
             pxy = self.pxy - 2000
             # x = pxy % 3
@@ -273,6 +205,75 @@ class MainWin(tk.Frame):
         self.master.bind("<ButtonRelease>", m_release)
         self.master.bind("<KeyPress>", k_press)
         self.master.bind("<KeyRelease>", k_release)
+
+
+# 設定表
+class SetTable:
+    def __init__(self: tk.Tk, mw):
+        # super().__init__(master)
+        # self.pack()
+
+        # 定義
+        self.x = None
+        self.y = None
+        self.mw = mw
+        self.frm = tk.Frame(self.mw.master, bg="black")  # フレーム
+        self.tab = []
+
+        # ラベルを表状に生成
+        for i in range(self.mw.set.row*4):
+            self.tab.append(
+                tk.Label(self.frm, bd=2, width=7, height=1, font=("", 9))
+            )  # ラベルの生成
+            self.tab[i].grid(row=i//4, column=i%4, padx=1, pady=1)  # ラベルを配置
+            self.tab[i].bind("<Button-1>", partial(self.click, xy=i))  # 関数を設定
+
+        # 列名ラベル設定
+        self.tab[0].configure(text="No.", bg="silver")
+        self.tab[1].configure(text=self.mw.lg.tim, bg="silver")
+        self.tab[2].configure(text=self.mw.lg.clr, bg="silver")
+        self.tab[3].configure(text=self.mw.lg.bgc, bg="silver")
+        self.tab[4].configure(text="1")
+        self.tab[5].configure(text="00:00:00.0")
+        self.tab[6].configure(text=self.mw.set.clr0, bg=self.mw.set.clr0)
+        self.tab[7].configure(text=self.mw.set.bgc0, bg=self.mw.set.bgc0)
+
+    # 表クリック時動作
+    def click(self, e, xy):
+        # 座標
+        self.mw.pxy = xy + 1000
+        self.x = xy % 4
+        self.y = xy // 4
+
+        # クリック有効範囲
+        if self.y != 0:  # タイトル行でない
+            if self.x == 1:  # 時間列
+                if self.y > 1:  # 最初の時間は変更不可
+                    self.mw.ch_tm_win()  # 時間設定ウインドウ表示
+            elif self.x in [2, 3]:  # 文字色列、背景色列
+                self.mw.ch_cl_win()
+
+    # 表の更新
+    def update(self, txt):
+        # 表の文字変更
+        self.tab[self.y*4+self.x].configure(text=txt)
+
+        # セルの色付け
+        if self.x in [2, 3]:
+            if txt == "":
+                self.tab[self.y*4+self.x].configure(bg="SystemButtonFace")
+            else:
+                self.tab[self.y*4+self.x].configure(bg=txt)
+
+        # 行の番号付け
+        if self.tab[self.y*4+1]["text"] == "":  # 時間列が空白の場合
+            self.tab[self.y*4].configure(text="")
+        elif self.tab[self.y*4+2]["text"] == "":  # 文字色列が空白の場合
+            self.tab[self.y*4].configure(text="")
+        elif self.tab[self.y*4+3]["text"] == "":  # 背景色が空白の場合
+            self.tab[self.y*4].configure(text="")
+        else:  # 行に空白がない場合
+            self.tab[self.y*4].configure(text=str(self.y))
 
 
 # 表示ウインドウ
@@ -438,12 +439,12 @@ class ChanTimeWin(tk.Frame):
         if self.mw.pxy == 0:
             self.mw.tmr = self.tmr
         elif self.mw.pxy >= 1000:
-            self.mw.upd_tab(self.tmr.out_txt())
+            self.mw.set_tab.update(self.tmr.out_txt())
         self.master.destroy()
 
     # 削除押下
     def ps_dl(self):
-        self.mw.upd_tab("")
+        self.mw.set_tab.update("")
         self.master.destroy()
 
     # 取消押下
@@ -521,12 +522,12 @@ class ChanColorWin(tk.Frame):
 
     # 決定押下
     def ps_ok(self):
-        self.mw.upd_tab(self.ccd)
+        self.mw.set_tab.update(self.ccd)
         self.master.destroy()
 
     # 削除押下
     def ps_dl(self):
-        self.mw.upd_tab("")
+        self.mw.set_tab.update("")
         self.master.destroy()
 
     # 取消押下
