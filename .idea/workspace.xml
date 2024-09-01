@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="09/01&#10;メインウインドウクラス変数減らした">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="09/01&#10;設定で色の変更成功">
       <change beforePath="$PROJECT_DIR$/application.py" beforeDir="false" afterPath="$PROJECT_DIR$/application.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -443,7 +442,15 @@
       <option name="project" value="LOCAL" />
       <updated>1725190437256</updated>
     </task>
-    <option name="localTasksCounter" value="45" />
+    <task id="LOCAL-00045" summary="09/01&#10;設定で色の変更成功">
+      <option name="closed" value="true" />
+      <created>1725194633911</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1725194633911</updated>
+    </task>
+    <option name="localTasksCounter" value="46" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -458,7 +465,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="08/23&#10;色変更ウインドウ完成" />
     <MESSAGE value="08/24&#10;時間比較関数を作成" />
     <MESSAGE value="08/24&#10;時間クラスに現在時刻取得関数を追加" />
     <MESSAGE value="08/24&#10;時間クラスの現在時刻取得関数を使用&#10;不要部分の削除" />
@@ -483,6 +489,7 @@
     <MESSAGE value="09/01&#10;設定表をクラス化" />
     <MESSAGE value="09/01&#10;予約表をクラス化" />
     <MESSAGE value="09/01&#10;メインウインドウクラス変数減らした" />
-    <option name="LAST_COMMIT_MESSAGE" value="09/01&#10;メインウインドウクラス変数減らした" />
+    <MESSAGE value="09/01&#10;設定で色の変更成功" />
+    <option name="LAST_COMMIT_MESSAGE" value="09/01&#10;設定で色の変更成功" />
   </component>
 </project>

@@ -527,6 +527,10 @@ class ChanColorWin(tk.Frame):
             self.master, width=10, text=self.mw.lg.ccl, command=self.ps_cn
         )
 
+        # ボタンの無効化
+        if self.mw.set_tab.y*4+self.mw.set_tab.x in [6, 7]:
+            self.bt_dl.configure(state=tk.DISABLED)
+
         # ウインドウの定義
         self.master.title(self.mw.lg.ccr)
         self.master.geometry("400x300")
