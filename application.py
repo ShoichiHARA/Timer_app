@@ -118,6 +118,7 @@ class MainWin(tk.Frame):
 
     # 初期化ボタン押下
     def ps_rs(self):
+        self.set_tab.crt = 0
         self.tmr.set_tmr(h=0, m=0, s=0, ms=0)
 
     # 現在値変更ボタン押下
@@ -166,6 +167,7 @@ class SetTab:
         self.mw = mw
         self.x = None
         self.y = None
+        self.crt = 0  # 現在の設定
         self.frm = tk.Frame(self.mw.master, bg="black")  # フレーム
         self.tab = []
 
@@ -227,6 +229,22 @@ class SetTab:
         self.x = None
         self.y = None
 
+    # 現在の設定
+    def crt_set(self, tmr):
+        for i in range(self.set.row-1):
+            row = self.crt + 4  # 現在の次の行
+            if self.crt+4 > len(self.tab):  # 最終行の場合
+                row = 4  # 最初の行
+            if self.tab[row]["text"] == "":  # 現在の次が空白の場合
+                break
+            if tmr.cmp_txt(self.tab[self.crt+5]["text"]) == 0:  # 次の時間と同じ場合
+                self.crt += 4  # 現在行更新
+                if self.crt > len(self.tab):  # 最終行を超えた場合
+                    self.crt = 4
+            else:
+                break
+        return self.tab[self.crt+2]["text"], self.tab[self.crt+3]["text"]
+
 
 # 予約表
 class RsvTab:
@@ -281,6 +299,10 @@ class RsvTab:
         self.x = None
         self.y = None
 
+    # 現在の予約
+    def crt_rsv(self, tmr):
+        pass
+
 
 # 表示ウインドウ
 class TMWin(tk.Frame):
@@ -293,6 +315,8 @@ class TMWin(tk.Frame):
         self.wwd = 400                      # ウインドウ幅
         self.whg = 300                      # ウインドウ高
         self.siz = self.wwd // 110          # 文字サイズ
+        self.clr = self.mw.set.clr0         # 文字色
+        self.bgc = self.mw.set.bgc0         # 背景色
         self.cvs = tk.Canvas(self.master, bg=self.mw.bgc)  # キャンバス
 
         # ウインドウの定義
@@ -315,8 +339,11 @@ class TMWin(tk.Frame):
             self.mw.now.get_now()         # 現在時刻取得
             if pnm != self.mw.now.ms:  # ミリ秒が進んでいる場合
                 self.mw.tmr.cnt_tmr()      # 時間カウント
+
+        # 7セグ表示
+        clr, bgc = self.mw.set_tab.crt_set(self.mw.tmr)
         self.mw.tmr.out_seg(
-            self.cvs, self.mw.clr, self.mw.bgc,
+            self.cvs, clr, bgc,
             self.wwd/2, self.whg/2, self.siz
         )
 
