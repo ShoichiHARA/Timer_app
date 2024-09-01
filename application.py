@@ -119,6 +119,7 @@ class MainWin(tk.Frame):
     # 初期化ボタン押下
     def ps_rs(self):
         self.set_tab.crt = 0
+        self.rsv_tab.crt = 3
         self.tmr.set_tmr(h=0, m=0, s=0, ms=0)
 
     # 現在値変更ボタン押下
@@ -167,7 +168,7 @@ class SetTab:
         self.mw = mw
         self.x = None
         self.y = None
-        self.crt = 0  # 現在の設定
+        self.crt = 0  # 現在の設定行
         self.frm = tk.Frame(self.mw.master, bg="black")  # フレーム
         self.tab = []
 
@@ -231,18 +232,14 @@ class SetTab:
 
     # 現在の設定
     def crt_set(self, tmr):
-        for i in range(self.set.row-1):
-            row = self.crt + 4  # 現在の次の行
-            if self.crt+4 > len(self.tab):  # 最終行の場合
-                row = 4  # 最初の行
-            if self.tab[row]["text"] == "":  # 現在の次が空白の場合
-                break
-            if tmr.cmp_txt(self.tab[self.crt+5]["text"]) == 0:  # 次の時間と同じ場合
-                self.crt += 4  # 現在行更新
-                if self.crt > len(self.tab):  # 最終行を超えた場合
-                    self.crt = 4
-            else:
-                break
+        row = self.crt + 4  # 現在の次の行
+        if row >= self.mw.set.row*4:  # 最終行の場合
+            pass
+        elif self.tab[row]["text"] == "":  # 現在の次が空白の場合
+            pass
+        elif tmr.cmp_txt(self.tab[row+1]["text"]) == 0:  # 次の時間と同じ場合
+            self.crt += 4  # 現在行更新
+            self.crt_set(tmr)  # もう一度関数実行
         return self.tab[self.crt+2]["text"], self.tab[self.crt+3]["text"]
 
 
@@ -255,6 +252,7 @@ class RsvTab:
         self.mw = mw
         self.x = None
         self.y = None
+        self.crt = 3  # 現在の予約行
         self.frm = tk.Frame(self.mw.master, bg="black")  # フレーム
         self.tab = []
 
@@ -301,7 +299,19 @@ class RsvTab:
 
     # 現在の予約
     def crt_rsv(self, tmr):
-        pass
+        if self.crt >= self.mw.set.row*3:  # 最終行を超えた場合
+            pass
+        elif self.tab[self.crt]["text"] == "":  # 現在が空白の場合
+            pass
+        elif self.mw.cnt is False:  # タイマーが止まっている場合
+            if tmr.cmp_txt(self.tab[self.crt+1]["text"]) == 0:  # 現在の時間と同じ場合
+                self.mw.cnt = True  # カウント開始
+                self.crt_rsv(tmr)  # もう一度関数実行
+        elif self.mw.cnt is True:  # タイマーが動いている場合
+            if tmr.cmp_txt(self.tab[self.crt+2]["text"]) == 0:  # 現在の時間と同じ場合
+                self.mw.cnt = False  # カウント停止
+                self.crt += 3
+                self.crt_rsv(tmr)  # もう一度関数実行
 
 
 # 表示ウインドウ
@@ -334,11 +344,18 @@ class TMWin(tk.Frame):
     # 画面更新
     def re_frm(self):
         self.cvs.delete("all")    # 表示リセット
+
+        # 現在時刻取得
+        pnm = self.mw.now.ms  # 前回のミリ秒
+        self.mw.now.get_now()  # 現在時刻取得
+
+        # タイマーカウント
         if self.mw.cnt:  # カウントが有効の場合
-            pnm = self.mw.now.ms  # 前回のミリ秒
-            self.mw.now.get_now()         # 現在時刻取得
             if pnm != self.mw.now.ms:  # ミリ秒が進んでいる場合
                 self.mw.tmr.cnt_tmr()      # 時間カウント
+
+        # 予約を確認
+        self.mw.rsv_tab.crt_rsv(self.mw.now)
 
         # 7セグ表示
         clr, bgc = self.mw.set_tab.crt_set(self.mw.tmr)
