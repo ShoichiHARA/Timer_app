@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="09/01&#10;予約時間にタイマー動作成功">
+    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="09/01&#10;表設定時に既値を表示">
+      <change afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application.py" beforeDir="false" afterPath="$PROJECT_DIR$/application.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -467,7 +467,15 @@
       <option name="project" value="LOCAL" />
       <updated>1725199530495</updated>
     </task>
-    <option name="localTasksCounter" value="48" />
+    <task id="LOCAL-00048" summary="09/01&#10;表設定時に既値を表示">
+      <option name="closed" value="true" />
+      <created>1725201577210</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1725201577210</updated>
+    </task>
+    <option name="localTasksCounter" value="49" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -482,7 +490,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="08/24&#10;時間クラスの現在時刻取得関数を使用&#10;不要部分の削除" />
     <MESSAGE value="08/25&#10;表作成" />
     <MESSAGE value="08/25&#10;表作成中" />
     <MESSAGE value="08/25&#10;表のリストを一次化" />
@@ -507,6 +514,7 @@
     <MESSAGE value="09/01&#10;設定で色の変更成功" />
     <MESSAGE value="09/01&#10;設定表色削除の無効化" />
     <MESSAGE value="09/01&#10;予約時間にタイマー動作成功" />
-    <option name="LAST_COMMIT_MESSAGE" value="09/01&#10;予約時間にタイマー動作成功" />
+    <MESSAGE value="09/01&#10;表設定時に既値を表示" />
+    <option name="LAST_COMMIT_MESSAGE" value="09/01&#10;表設定時に既値を表示" />
   </component>
 </project>
