@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 
 # 時間クラス
@@ -30,7 +30,7 @@ class Time:
 
     # 現在時刻を取得
     def get_now(self):
-        t = datetime.datetime.now()
+        t = datetime.now()
         self.h = t.hour
         self.m = t.minute
         self.s = t.second

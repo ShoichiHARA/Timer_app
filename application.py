@@ -308,13 +308,19 @@ class RsvTab:
         elif self.tab[self.crt]["text"] == "":  # 現在が空白の場合
             pass
         elif self.mw.cnt is False:  # タイマーが止まっている場合
-            if tmr.cmp_txt(self.tab[self.crt+1]["text"]) == 0:  # 現在の時間と同じ場合
+            if self.tab[self.crt+1]["text"] == "":  # 空欄の場合
+                pass
+            elif tmr.cmp_txt(self.tab[self.crt+1]["text"]) == 0:  # 現在の時間と同じ場合
                 self.mw.cnt = True  # カウント開始
+                self.mw.bt_ss.configure(text=self.lg.stp)  # ボタン停止表示
                 self.crt_rsv(tmr)  # もう一度関数実行
         elif self.mw.cnt is True:  # タイマーが動いている場合
-            if tmr.cmp_txt(self.tab[self.crt+2]["text"]) == 0:  # 現在の時間と同じ場合
+            if self.tab[self.crt+2]["text"] == "":  # 空欄の場合
+                pass
+            elif tmr.cmp_txt(self.tab[self.crt+2]["text"]) == 0:  # 現在の時間と同じ場合
                 self.mw.cnt = False  # カウント停止
-                self.crt += 3
+                self.mw.bt_ss.configure(text=self.lg.stt)  # ボタン開始表示
+                self.crt += 3  # 次の行へ
                 self.crt_rsv(tmr)  # もう一度関数実行
 
 

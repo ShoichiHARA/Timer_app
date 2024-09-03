@@ -1,5 +1,10 @@
 import application as app
 
+"""
+exe化は、以下のコマンドをターミナルで実行
+pyinstaller main.py --onefile --noconsole
+"""
+
 
 def main():
     app.application()
