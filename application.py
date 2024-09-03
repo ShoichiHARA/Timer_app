@@ -117,7 +117,7 @@ class MainWin(tk.Frame):
 
     # 初期化ボタン押下
     def ps_rs(self):
-        self.set_tab.crt = 0
+        self.set_tab.crt = 4
         self.rsv_tab.crt = 3
         self.tmr.set_tmr(h=0, m=0, s=0, ms=0)
 
@@ -168,7 +168,7 @@ class SetTab:
         self.mw = mw
         self.x = None
         self.y = None
-        self.crt = 0  # 現在の設定行
+        self.crt = 4  # 現在の設定行
         self.frm = tk.Frame(self.mw.master, bg="black")  # フレーム
         self.tab = []
 
@@ -503,7 +503,7 @@ class ChanTimeWin(tk.Frame):
     def ps_ok(self):
         self.mw.set_tmr = self.tmr
         if self.typ == "ccv":
-            self.mw.tmr = self.tmr
+            self.mw.tmr.inp_txt(self.tmr.out_txt())
         elif self.typ == "set":
             self.mw.set_tab.update(self.tmr.out_txt())
         elif self.typ == "rsv":
