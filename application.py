@@ -10,6 +10,7 @@ class Setting:
         self.lg = "JPN"
         self.clr0 = "#000000"
         self.bgc0 = "#FFFFFF"
+        self.rwc0 = "#00FF00"
         self.row = 6
 
 
@@ -117,6 +118,8 @@ class MainWin(tk.Frame):
 
     # 初期化ボタン押下
     def ps_rs(self):
+        self.set_tab.tab[self.set_tab.crt].configure(bg="SystemButtonFace")
+        self.rsv_tab.tab[self.rsv_tab.crt].configure(bg="SystemButtonFace")
         self.set_tab.crt = 4
         self.rsv_tab.crt = 3
         self.tmr.set_tmr(h=0, m=0, s=0, ms=0)
@@ -185,7 +188,7 @@ class SetTab:
         self.tab[1].configure(text=self.lg.tim, bg="silver")
         self.tab[2].configure(text=self.lg.clr, bg="silver")
         self.tab[3].configure(text=self.lg.bgc, bg="silver")
-        self.tab[4].configure(text="1")
+        self.tab[4].configure(text="1", bg=self.set.rwc0)
         self.tab[5].configure(text="00:00:00.0")
         self.tab[6].configure(text=self.set.clr0, bg=self.set.clr0)
         self.tab[7].configure(text=self.set.bgc0, bg=self.set.bgc0)
@@ -234,6 +237,7 @@ class SetTab:
 
     # 現在の設定
     def crt_set(self, tmr):
+        self.tab[self.crt].configure(bg="SystemButtonFace")  # 現在の行の色取消
         row = self.crt + 4  # 現在の次の行
         if row >= self.mw.set.row*4:  # 最終行の場合
             pass
@@ -242,6 +246,7 @@ class SetTab:
         elif tmr.cmp_txt(self.tab[row+1]["text"]) == 0:  # 次の時間と同じ場合
             self.crt += 4  # 現在行更新
             self.crt_set(tmr)  # もう一度関数実行
+        self.tab[self.crt].configure(bg=self.set.rwc0)  # 現在の行に色付け
         return self.tab[self.crt+2]["text"], self.tab[self.crt+3]["text"]
 
 
@@ -303,7 +308,8 @@ class RsvTab:
 
     # 現在の予約
     def crt_rsv(self, tmr):
-        if self.crt >= self.mw.set.row*3:  # 最終行を超えた場合
+        self.tab[self.crt].configure(bg="SystemButtonFace")  # 現在の行の色取消
+        if self.crt >= self.set.row*3:  # 最終行を超えた場合
             pass
         elif self.tab[self.crt]["text"] == "":  # 現在が空白の場合
             pass
@@ -320,8 +326,10 @@ class RsvTab:
             elif tmr.cmp_txt(self.tab[self.crt+2]["text"]) == 0:  # 現在の時間と同じ場合
                 self.mw.cnt = False  # カウント停止
                 self.mw.bt_ss.configure(text=self.lg.stt)  # ボタン開始表示
-                self.crt += 3  # 次の行へ
-                self.crt_rsv(tmr)  # もう一度関数実行
+                if self.tab[self.crt+3]["text"] != "":  # 現在の次が空白でない場合
+                    self.crt += 3  # 次の行へ
+                    self.crt_rsv(tmr)  # もう一度関数実行
+        self.tab[self.crt].configure(bg=self.set.rwc0)  # 現在の行に色付け
 
 
 # 表示ウインドウ
@@ -335,9 +343,7 @@ class TMWin(tk.Frame):
         self.wwd = 400                      # ウインドウ幅
         self.whg = 300                      # ウインドウ高
         self.siz = self.wwd // 110          # 文字サイズ
-        self.clr = self.mw.set.clr0         # 文字色
-        self.bgc = self.mw.set.bgc0         # 背景色
-        self.cvs = tk.Canvas(self.master, bg=self.mw.bgc)  # キャンバス
+        self.cvs = tk.Canvas(self.master, bg=self.mw.set.bgc0)  # キャンバス
 
         # ウインドウの定義
         self.master.title(self.mw.lg.twn)
