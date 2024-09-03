@@ -12,6 +12,7 @@ class Setting:
         self.bgc0 = "#FFFFFF"
         self.rwc0 = "#00FF00"
         self.row = 6
+        self.ccd = {"white": "#FFFFFF", "black": "#000000"}
 
 
 # メインウインドウクラス
@@ -34,6 +35,7 @@ class MainWin(tk.Frame):
         self.rsv_tab = RsvTab(self)         # 予約表
         self.tmr = tm.Time()                # タイマー
         self.set_tmr = tm.Time()            # 設定用タイマー
+        self.set_clr = self.set.clr0        # 設定用カラーコード
 
         self.bt_dp = tk.Button(
             self.master, text=self.lg.viw, width=20, command=self.tm_win
@@ -203,10 +205,12 @@ class SetTab:
         if self.y != 0:  # タイトル行でない
             if self.x == 1:  # 時間列
                 if self.y > 1:  # 最初の時間は変更不可
-                    if self.tab[xy]["text"] != "":
-                        self.mw.set_tmr.inp_txt(self.tab[xy]["text"])
+                    if self.tab[xy]["text"] != "":  # 既に入力されていた場合
+                        self.mw.set_tmr.inp_txt(self.tab[xy]["text"])  # クラス保存設定値を変更
                     self.mw.ch_tm_win("set")  # 時間設定ウインドウ表示
             elif self.x in [2, 3]:  # 文字色列、背景色列
+                if self.tab[xy]["text"] != "":  # 既に入力されている場合
+                    self.mw.set_clr = self.tab[xy]["text"]  # クラス保存設定値を変更
                 self.mw.ch_cl_win("set")
 
     # 表の更新
@@ -536,10 +540,11 @@ class ChanColorWin(tk.Frame):
         self.pack()
 
         # 定義
+        self.set = Setting()  # 設定
         self.mw = mw
         self.typ = typ  # 呼び出された種類
-        self.clr = [0, 0, 0]  # r, g, b
         self.ccd = "black"
+        self.clr = self.c_num(self.mw.set_clr)  # r, g, b
         self.sc_r = tk.Scale(
             self.master, from_=0, to=255, length=200,
             orient="horizontal", command=self.ch_sc
@@ -565,6 +570,11 @@ class ChanColorWin(tk.Frame):
             self.master, width=10, text=self.mw.lg.ccl, command=self.ps_cn
         )
 
+        # スケール初期値
+        self.sc_r.set(self.clr[0])
+        self.sc_g.set(self.clr[1])
+        self.sc_b.set(self.clr[2])
+
         # ボタンの無効化
         if self.mw.set_tab.y*4+self.mw.set_tab.x in [6, 7]:
             self.bt_dl.configure(state=tk.DISABLED)
@@ -586,20 +596,31 @@ class ChanColorWin(tk.Frame):
 
     # カラーコード変換
     def c_code(self, r=None, g=None, b=None):
-        if r is not None:
-            self.clr[0] = r
-        if g is not None:
-            self.clr[1] = g
-        if b is not None:
-            self.clr[2] = b
-        self.ccd = f"#{self.clr[0]:02X}{self.clr[1]:02X}{self.clr[2]:02X}"
+        if r is None:
+            r = self.clr[0]
+        if g is None:
+            g = self.clr[1]
+        if b is None:
+            b = self.clr[2]
+        return f"#{r:02X}{g:02X}{b:02X}"
+
+    # カラーコード逆変換
+    def c_num(self, ccd=None):
+        if ccd is None:
+            ccd = self.ccd
+        if ccd in self.set.ccd:
+            ccd = self.set.ccd[ccd]
+        r = int(ccd[1], 16) * 16 + int(ccd[2], 16)
+        g = int(ccd[3], 16) * 16 + int(ccd[4], 16)
+        b = int(ccd[5], 16) * 16 + int(ccd[6], 16)
+        return [r, g, b]
 
     # スライドバー移動
     def ch_sc(self, n):
         self.clr[0] = self.sc_r.get()
         self.clr[1] = self.sc_g.get()
         self.clr[2] = self.sc_b.get()
-        self.c_code()
+        self.ccd = self.c_code()
         self.dsp.configure(bg=self.ccd)
 
     # 決定押下
