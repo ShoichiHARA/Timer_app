@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="09/02&#10;exe化">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/exe.win-amd64-3.12/main.exe" beforeDir="false" afterPath="$PROJECT_DIR$/build/exe.win-amd64-3.12/main.exe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
-    </list>
+    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="09/03&#10;色が設定されている場合、スケールを移動&#10;pyinstallerでexe化&#10;リリースv2.0" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -39,10 +35,11 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Python.main.executor": "Run",
+    "Python.setup.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Users/shoic/PycharmProjects/Timer_app",
+    "last_opened_file_path": "C:/Users/shoic/PycharmProjects/Sequential_Control",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>
@@ -51,8 +48,30 @@
       <recent name="C:\Users\shoic\PycharmProjects\Timer_app" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.main">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="Timer_app" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="setup" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="Timer_app" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -66,7 +85,7 @@
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/setup.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -75,6 +94,10 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Python.main" />
+      <item itemvalue="Python.setup" />
+    </list>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -91,46 +114,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1723038717059</updated>
-    </task>
-    <task id="LOCAL-00001" summary="08/07&#10;タイマーアプリケーションの&#10;開発開始">
-      <option name="closed" value="true" />
-      <created>1723038773664</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1723038773664</updated>
-    </task>
-    <task id="LOCAL-00002" summary="08/08&#10;アプリケーションの土台">
-      <option name="closed" value="true" />
-      <created>1723068618277</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1723068618279</updated>
-    </task>
-    <task id="LOCAL-00003" summary="08/10&#10;イベント関数の土台">
-      <option name="closed" value="true" />
-      <created>1723279378885</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1723279378885</updated>
-    </task>
-    <task id="LOCAL-00004" summary="08/10&#10;サブウインドウ表示">
-      <option name="closed" value="true" />
-      <created>1723288553548</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1723288553548</updated>
-    </task>
-    <task id="LOCAL-00005" summary="08/10&#10;７セグ表示">
-      <option name="closed" value="true" />
-      <created>1723307710464</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1723307710464</updated>
     </task>
     <task id="LOCAL-00006" summary="08/11&#10;７セグ&#10;原点を中心へ">
       <option name="closed" value="true" />
@@ -484,7 +467,47 @@
       <option name="project" value="LOCAL" />
       <updated>1725202842523</updated>
     </task>
-    <option name="localTasksCounter" value="50" />
+    <task id="LOCAL-00050" summary="09/02&#10;リリースv1.0">
+      <option name="closed" value="true" />
+      <created>1725210519630</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1725210519631</updated>
+    </task>
+    <task id="LOCAL-00051" summary="09/03&#10;停止予約のみを登録するとまっさらになるバグ修正&#10;予約時刻で開始させたときボタン文字を変更">
+      <option name="closed" value="true" />
+      <created>1725368250389</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1725368250389</updated>
+    </task>
+    <task id="LOCAL-00052" summary="09/03&#10;現在値変更を確定すると表示ウインドウが直接変わるバグ修正">
+      <option name="closed" value="true" />
+      <created>1725369028779</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1725369028779</updated>
+    </task>
+    <task id="LOCAL-00053" summary="09/03&#10;設定、予約表の現在行に色を設定">
+      <option name="closed" value="true" />
+      <created>1725372036006</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1725372036006</updated>
+    </task>
+    <task id="LOCAL-00054" summary="09/03&#10;色が設定されている場合、スケールを移動&#10;pyinstallerでexe化&#10;リリースv2.0">
+      <option name="closed" value="true" />
+      <created>1725376816918</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1725376816918</updated>
+    </task>
+    <option name="localTasksCounter" value="55" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -499,11 +522,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="08/25&#10;表作成中" />
-    <MESSAGE value="08/25&#10;表のリストを一次化" />
-    <MESSAGE value="08/27&#10;表の座標取得に成功" />
-    <MESSAGE value="08/28&#10;別ウインドウから表の設定" />
-    <MESSAGE value="08/28&#10;表の行番号付け" />
     <MESSAGE value="08/29&#10;言葉追加" />
     <MESSAGE value="08/29&#10;表クリック関数を移動" />
     <MESSAGE value="08/29&#10;変数名の変更" />
@@ -524,6 +542,11 @@
     <MESSAGE value="09/01&#10;予約時間にタイマー動作成功" />
     <MESSAGE value="09/01&#10;表設定時に既値を表示" />
     <MESSAGE value="09/02&#10;exe化" />
-    <option name="LAST_COMMIT_MESSAGE" value="09/02&#10;exe化" />
+    <MESSAGE value="09/02&#10;リリースv1.0" />
+    <MESSAGE value="09/03&#10;停止予約のみを登録するとまっさらになるバグ修正&#10;予約時刻で開始させたときボタン文字を変更" />
+    <MESSAGE value="09/03&#10;現在値変更を確定すると表示ウインドウが直接変わるバグ修正" />
+    <MESSAGE value="09/03&#10;設定、予約表の現在行に色を設定" />
+    <MESSAGE value="09/03&#10;色が設定されている場合、スケールを移動&#10;pyinstallerでexe化&#10;リリースv2.0" />
+    <option name="LAST_COMMIT_MESSAGE" value="09/03&#10;色が設定されている場合、スケールを移動&#10;pyinstallerでexe化&#10;リリースv2.0" />
   </component>
 </project>

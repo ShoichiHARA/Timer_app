@@ -43,7 +43,7 @@ class Time:
 
     # 時間をコピー
     def cpy_tmr(self, tm):
-        self.set_tmr(h=tm.h, m=tm.m, s=tm.s, ms=self.ms)
+        self.set_tmr(h=tm.h, m=tm.m, s=tm.s, ms=tm.ms)
 
     # 時間を比較
     def cmp_tmr(self, tm):

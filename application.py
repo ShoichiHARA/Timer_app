@@ -128,7 +128,7 @@ class MainWin(tk.Frame):
 
     # 現在値変更ボタン押下
     def ps_cv(self):
-        self.set_tmr.inp_txt(self.tmr.out_txt())
+        self.set_tmr.cpy_tmr(self.tmr)
         self.ch_tm_win("ccv")
 
     # イベント
