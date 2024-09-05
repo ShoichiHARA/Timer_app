@@ -41,6 +41,10 @@ class Time:
         self.ms += 1
         self.chk_tmr()
 
+    # 時間をコピー
+    def cpy_tmr(self, tm):
+        self.set_tmr(h=tm.h, m=tm.m, s=tm.s, ms=self.ms)
+
     # 時間を比較
     def cmp_tmr(self, tm):
         if self.h > tm.h:  # 引数より自身の方が大きい場合
