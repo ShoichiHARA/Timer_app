@@ -8,6 +8,7 @@ class Time:
         self.m = 0
         self.s = 0
         self.ms = 0  # 100msで1
+        self.n = 0
         self.set_tmr(h, m, s, ms)
 
     # 時間をセット
@@ -21,12 +22,30 @@ class Time:
         if ms is not None:
             self.ms = ms
 
+    # int型から時間をセット
+    def set_int(self, n):
+        self.n = n
+        self.ms = n % 100
+        n = n // 100
+        self.s = n % 60
+        n = n // 60
+        self.m = n % 60
+        n = n // 60
+        self.h = n % 100
+
     # 文字列から時間をセット
     def inp_txt(self, txt):
-        self.h = int(txt[0]) * 10 + int(txt[1])
-        self.m = int(txt[3]) * 10 + int(txt[4])
-        self.s = int(txt[6]) * 10 + int(txt[7])
-        self.ms = int(txt[9])
+        try:
+            self.h = int(txt[0]) * 10 + int(txt[1])
+            self.m = int(txt[3]) * 10 + int(txt[4])
+            self.s = int(txt[6]) * 10 + int(txt[7])
+            self.ms = int(txt[9])
+            return 0
+        except IndexError as err:
+            print(err)
+        except ValueError as err:
+            print(err)
+            return 1
 
     # 現在時刻を取得
     def get_now(self):
@@ -37,8 +56,8 @@ class Time:
         self.ms = t.microsecond // 100000
 
     # 時間をカウント
-    def cnt_tmr(self):
-        self.ms += 1
+    def cnt_tmr(self, c=1):
+        self.ms += c
         self.chk_tmr()
 
     # 時間をコピー
@@ -106,6 +125,15 @@ class Time:
         t = t + str(self.s).zfill(2) + "." + str(self.ms)
         return t
 
+    # int型出力
+    def out_int(self):
+        n = self.ms
+        n += self.s * 100
+        n += self.m * 6000
+        n += self.h * 360000
+        self.n = n
+        return n
+
     # 7セグ出力
     def out_seg(self, cvs, c, b, x, y, s):
         # セグの定義
@@ -145,6 +173,84 @@ class Time:
             fill=c, width=0
         )
         seg_ms.place(cvs, 45*s+x, y, s)
+
+
+# 新時間クラス
+class Time1:
+    def __init__(self, n=0):
+        self.n = n  # 00:00:00.00 ～ 99:59:59.99をint型に
+
+    # int型から時間を登録
+    def set_int(self, n: int):
+        self.n = n
+
+    # テキストから時間を登録
+    def set_txt(self, t: str):
+        try:
+            self.n = int(t[9]) * 10 + int(t[10])  # ms
+            self.n += (int(t[6]) * 10 + int(t[7])) * 100  # s
+            self.n += (int(t[3]) * 10 + int(t[4])) * 6000  # m
+            self.n += (int(t[0]) * 10 + int(t[1])) * 360000  # h
+            return 0
+        except IndexError as err:
+            print(err)
+            return 901
+        except ValueError as err:
+            print(err)
+            return 902
+
+    # 現在時刻取得
+    def get_now(self):
+        n = datetime.now()
+        self.n = n.microsecond // 10000
+        self.n += n.second * 100
+        self.n += n.minute * 6000
+        self.n += n.hour * 360000
+
+    # テキスト出力
+    def out_txt(self):
+        n = self.n
+        t = str(n%100)            # ---------ms
+        n = n // 100
+        t = str(n%60) + "." + t   # ------ss.ms
+        n = n // 60
+        t = str(n%60) + ":" + t   # ---mm:ss.ms
+        n = n // 60
+        t = str(n%100) + ":" + t  # hh:mm:ss.ms
+        return t
+
+    # 7セグ出力
+    def out_seg(self, cvs, c, b, x, y, s):
+        # 表示数値の決定
+        if self.n < 180000:  # 30m未満
+            n = [
+                self.n // 6000 % 60 // 10, self.n // 6000 % 10,  # 10m, 1m
+                self.n // 100 % 60 // 10, self.n // 100 % 10,  # 10s, 1s
+                self.n % 100 // 10, self.n % 10  # 0.1s, 0.01s
+            ]
+        else:
+            n = [
+                self.n // 3600000, self.n // 360000 % 10,  # 10h, 1h
+                self.n // 6000 % 60 // 10, self.n // 6000 % 10,  # 10m, 1m
+                self.n // 100 % 60 // 10, self.n // 100 % 10,  # 10s, 1s
+            ]
+
+        print(n)
+
+        # セグの定義
+        seg = []
+        x = [-45*s+x, -33*s+x, -15*s+x, -3*s+x, 15*s*x, 27*s+x]
+
+        # セグの配置
+        for i in range(6):
+            seg.append(SevenSeg(num=n[i], clr=c, bgc=b))
+            seg[i].place(cvs, x[i], y, s)
+
+        # コロン, カンマの配置
+        if self.n < 180000:  # 30m未満
+            pass
+        else:
+            pass
 
 
 # 7セグクラス

@@ -372,7 +372,8 @@ class TMWin(tk.Frame):
         # タイマーカウント
         if self.mw.cnt:  # カウントが有効の場合
             if pnm != self.mw.now.ms:  # ミリ秒が進んでいる場合
-                self.mw.tmr.cnt_tmr()      # 時間カウント
+                c = self.mw.now.ms - pnm
+                self.mw.tmr.cnt_tmr(c)      # 時間カウント
 
         # 予約を確認
         self.mw.rsv_tab.crt_rsv(self.mw.now)
