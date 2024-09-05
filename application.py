@@ -12,7 +12,7 @@ class Setting:
         self.bgc0 = "#FFFFFF"
         self.rwc0 = "#00FF00"
         self.row = 6
-        self.ccd = {"white": "#FFFFFF", "black": "#000000"}
+        self.ccd = {"white": "#FFFFFF", "black": "#000000", "red": "#FF0000", "green": "#00FF00", "blue": "#0000FF"}
 
 
 # メインウインドウクラス
@@ -625,6 +625,7 @@ class ChanColorWin(tk.Frame):
 
     # 決定押下
     def ps_ok(self):
+        self.mw.set_clr = self.ccd
         if self.typ == "set":
             self.mw.set_tab.update(self.ccd)
         self.master.destroy()
