@@ -37,11 +37,11 @@ class MainWin(tk.Frame):
         # self.tmr = tm.Time()                # タイマー
         self.tmr = tm.Time1()
         # self.set_tmr = tm.Time()            # 設定用タイマー
-        self.set_tmr = tm.Time()
+        self.set_tmr = tm.Time1()
         self.set_clr = self.set.clr0        # 設定用カラーコード
 
         self.bt_dp = tk.Button(
-            self.master, text=self.lg.viw, width=20, command=self.tm_win
+            self.master, text=self.lg.viw, width=20, command=self.viw_win
         )  # 表示ボタン
         self.bt_ss = tk.Button(
             self.master, text=self.lg.stt, font=("", 15),
@@ -63,10 +63,10 @@ class MainWin(tk.Frame):
         self.event()                         # イベント
 
         # サブウインドウの定義
-        self.tm_mas = None  # タイマー表示マスター
-        self.tm_app = None
-        self.ch_mas = None  # タイマー文字変更マスター
-        self.ch_app = None
+        self.viw_mas = None  # 表示マスター
+        self.viw_app = None
+        self.chg_mas = None  # 変更マスター
+        self.chg_app = None
 
         # 現在時刻取得
         self.now.get_now()
@@ -87,7 +87,7 @@ class MainWin(tk.Frame):
         self.master.destroy()
 
     # 表示ウインドウ表示
-    def tm_win(self):
+    def viw_win(self):
         if self.tm_mas is None:
             self.tm_mas = tk.Toplevel(self.master)
             self.tm_app = TMWin(self.tm_mas, self)
@@ -96,7 +96,7 @@ class MainWin(tk.Frame):
             self.tm_app = TMWin(self.tm_mas, self)
 
     # 時間変更ウインドウ表示
-    def ch_tm_win(self, typ):
+    def tim_win(self, typ, tim: tm.Time1):
         if self.ch_mas is None:
             self.ch_mas = tk.Toplevel(self.master)
             self.ch_app = ChanTimeWin(self.ch_mas, self, typ)
@@ -105,7 +105,7 @@ class MainWin(tk.Frame):
             self.ch_app = ChanTimeWin(self.ch_mas, self, typ)
 
     # 色変更ウインドウ表示
-    def ch_cl_win(self, typ):
+    def clr_win(self, typ, clr: str):
         if self.ch_mas is None:
             self.ch_mas = tk.Toplevel(self.master)
             self.ch_app = ChanColorWin(self.ch_mas, self, typ)
@@ -134,7 +134,7 @@ class MainWin(tk.Frame):
     def ps_cv(self):
         # self.set_tmr.cpy_tmr(self.tmr)
         self.set_tmr.n = self.tmr.n
-        self.ch_tm_win("ccv")
+        self.tim_win("ccv", self.tmr)
 
     # イベント
     def event(self):
@@ -169,7 +169,7 @@ class MainWin(tk.Frame):
         self.master.bind("<KeyRelease>", k_release)
 
 
-# 設定表
+# 設定表クラス
 class SetTab:
     def __init__(self: tk.Tk, mw):
         # 定義
@@ -181,6 +181,8 @@ class SetTab:
         self.crt = 4  # 現在の設定行
         self.frm = tk.Frame(self.mw.master, bg="black")  # フレーム
         self.tab = []
+        self.tmr = tm.Time1()  # 控え用の時間
+        self.clr = self.set.clr0  # 控え用の色
 
         # ラベルを表状に生成
         for i in range(self.set.row*4):
@@ -213,11 +215,11 @@ class SetTab:
                     if self.tab[xy]["text"] != "":  # 既に入力されていた場合
                         # self.mw.set_tmr.inp_txt(self.tab[xy]["text"])  # クラス保存設定値を変更
                         self.mw.set_tmr.set_txt(self.tab[xy]["text"])
-                    self.mw.ch_tm_win("set")  # 時間設定ウインドウ表示
+                    self.mw.tim_win("set", self.tmr)  # 時間設定ウインドウ表示
             elif self.x in [2, 3]:  # 文字色列、背景色列
                 if self.tab[xy]["text"] != "":  # 既に入力されている場合
                     self.mw.set_clr = self.tab[xy]["text"]  # クラス保存設定値を変更
-                self.mw.ch_cl_win("set")
+                self.mw.clr_win("set", self.clr)  # 色変更ウインドウ表示
 
     # 表の更新
     def update(self, txt):
@@ -253,14 +255,15 @@ class SetTab:
             pass
         elif self.tab[row]["text"] == "":  # 現在の次が空白の場合
             pass
-        elif tmr.cmp_txt(self.tab[row+1]["text"]) == 0:  # 次の時間と同じ場合
+        # elif tmr.cmp_txt(self.tab[row+1]["text"]) == 0:  # 次の時間と同じ場合
+        elif self.tab[row+1]["text"] == tmr.out_txt():
             self.crt += 4  # 現在行更新
             self.crt_set(tmr)  # もう一度関数実行
         self.tab[self.crt].configure(bg=self.set.rwc0)  # 現在の行に色付け
         return self.tab[self.crt+2]["text"], self.tab[self.crt+3]["text"]
 
 
-# 予約表
+# 予約表クラス
 class RsvTab:
     def __init__(self: tk.Tk, mw):
         # 定義
@@ -271,7 +274,8 @@ class RsvTab:
         self.y = None
         self.crt = 3  # 現在の予約行
         self.frm = tk.Frame(self.mw.master, bg="black")  # フレーム
-        self.tab = []
+        self.tab = []  # 予約表
+        self.tmr = tm.Time1()  # 控え用の時間
 
         # ラベルを表状に生成
         for i in range(self.set.row*3):
@@ -298,7 +302,7 @@ class RsvTab:
                 if self.tab[xy]["text"] != "":
                     # self.mw.set_tmr.inp_txt(self.tab[xy]["text"])
                     self.mw.set_tmr.set_txt(self.tab[xy]["text"])
-                self.mw.ch_tm_win("rsv")
+                self.mw.tim_win("rsv", self.tmr)  # 時間変更ウインドウ表示
 
     # 表の更新
     def update(self, txt):
@@ -329,16 +333,18 @@ class RsvTab:
                 pass
             # elif tmr.cmp_txt(self.tab[self.crt+1]["text"]) == 0:  # 現在の時間と同じ場合
             elif self.tab[self.crt+1]["text"] == tmr.out_txt():
-                self.mw.cnt = True  # カウント開始
-                self.mw.bt_ss.configure(text=self.lg.stp)  # ボタン停止表示
+                # self.mw.cnt = True  # カウント開始
+                # self.mw.bt_ss.configure(text=self.lg.stp)  # ボタン停止表示
+                self.mw.ps_ss()
                 self.crt_rsv(tmr)  # もう一度関数実行
         elif self.mw.cnt is True:  # タイマーが動いている場合
             if self.tab[self.crt+2]["text"] == "":  # 空欄の場合
                 pass
             # elif tmr.cmp_txt(self.tab[self.crt+2]["text"]) == 0:  # 現在の時間と同じ場合
             elif self.tab[self.crt+2]["text"] == tmr.out_txt():
-                self.mw.cnt = False  # カウント停止
-                self.mw.bt_ss.configure(text=self.lg.stt)  # ボタン開始表示
+                # self.mw.cnt = False  # カウント停止
+                # self.mw.bt_ss.configure(text=self.lg.stt)  # ボタン開始表示
+                self.mw.ps_ss()
                 if self.tab[self.crt+3]["text"] != "":  # 現在の次が空白でない場合
                     self.crt += 3  # 次の行へ
                     self.crt_rsv(tmr)  # もう一度関数実行
@@ -396,7 +402,7 @@ class TMWin(tk.Frame):
             self.wwd/2, self.whg/2, self.siz
         )
 
-        self.master.after(10, self.re_frm)  # 0.01s後再描画
+        self.master.after(5, self.re_frm)  # 0.005s後再描画
 
     # イベント
     def event(self):
@@ -540,7 +546,8 @@ class ChanTimeWin(tk.Frame):
     def ps_ok(self):
         self.mw.set_tmr = self.tmr
         if self.typ == "ccv":
-            self.mw.tmr.inp_txt(self.tmr.out_txt())
+            # self.mw.tmr.inp_txt(self.tmr.out_txt())
+            self.mw.tmr.n = self.tmr.n
         elif self.typ == "set":
             self.mw.set_tab.update(self.tmr.out_txt())
         elif self.typ == "rsv":
