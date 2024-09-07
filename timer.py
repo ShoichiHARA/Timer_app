@@ -210,13 +210,13 @@ class Time1:
     # テキスト出力
     def out_txt(self):
         n = self.n
-        t = str(n%100)            # ---------ms
+        t = str(n%100).zfill(2)            # ---------ms
         n = n // 100
-        t = str(n%60) + "." + t   # ------ss.ms
+        t = str(n%60).zfill(2) + "." + t   # ------ss.ms
         n = n // 60
-        t = str(n%60) + ":" + t   # ---mm:ss.ms
+        t = str(n%60).zfill(2) + ":" + t   # ---mm:ss.ms
         n = n // 60
-        t = str(n%100) + ":" + t  # hh:mm:ss.ms
+        t = str(n%100).zfill(2) + ":" + t  # hh:mm:ss.ms
         return t
 
     # 7セグ出力
@@ -235,11 +235,9 @@ class Time1:
                 self.n // 100 % 60 // 10, self.n // 100 % 10,  # 10s, 1s
             ]
 
-        print(n)
-
         # セグの定義
         seg = []
-        x = [-45*s+x, -33*s+x, -15*s+x, -3*s+x, 15*s*x, 27*s+x]
+        x = [-45*s+x, -33*s+x, -15*s+x, -3*s+x, 15*s+x, 27*s+x]
 
         # セグの配置
         for i in range(6):

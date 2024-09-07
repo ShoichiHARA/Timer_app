@@ -88,30 +88,30 @@ class MainWin(tk.Frame):
 
     # 表示ウインドウ表示
     def viw_win(self):
-        if self.tm_mas is None:
-            self.tm_mas = tk.Toplevel(self.master)
-            self.tm_app = TMWin(self.tm_mas, self)
-        elif not self.tm_mas.winfo_exists():
-            self.tm_mas = tk.Toplevel(self.master)
-            self.tm_app = TMWin(self.tm_mas, self)
+        if self.viw_mas is None:
+            self.viw_mas = tk.Toplevel(self.master)
+            self.viw_app = ViewWin(self.viw_mas, self)
+        elif not self.viw_mas.winfo_exists():
+            self.viw_mas = tk.Toplevel(self.master)
+            self.viw_app = ViewWin(self.viw_mas, self)
 
     # 時間変更ウインドウ表示
     def tim_win(self, typ, tim: tm.Time1):
-        if self.ch_mas is None:
-            self.ch_mas = tk.Toplevel(self.master)
-            self.ch_app = ChanTimeWin(self.ch_mas, self, typ)
-        elif not self.ch_mas.winfo_exists():
-            self.ch_mas = tk.Toplevel(self.master)
-            self.ch_app = ChanTimeWin(self.ch_mas, self, typ)
+        if self.chg_mas is None:
+            self.chg_mas = tk.Toplevel(self.master)
+            self.chg_app = ChanTimeWin(self.chg_mas, self, typ)
+        elif not self.chg_mas.winfo_exists():
+            self.chg_mas = tk.Toplevel(self.master)
+            self.chg_app = ChanTimeWin(self.chg_mas, self, typ)
 
     # 色変更ウインドウ表示
     def clr_win(self, typ, clr: str):
-        if self.ch_mas is None:
-            self.ch_mas = tk.Toplevel(self.master)
-            self.ch_app = ChanColorWin(self.ch_mas, self, typ)
-        elif not self.ch_mas.winfo_exists():
-            self.ch_mas = tk.Toplevel(self.master)
-            self.ch_app = ChanColorWin(self.ch_mas, self, typ)
+        if self.chg_mas is None:
+            self.chg_mas = tk.Toplevel(self.master)
+            self.chg_app = ChanColorWin(self.chg_mas, self, typ)
+        elif not self.chg_mas.winfo_exists():
+            self.chg_mas = tk.Toplevel(self.master)
+            self.chg_app = ChanColorWin(self.chg_mas, self, typ)
 
     # 開始/停止ボタン押下
     def ps_ss(self):
@@ -198,7 +198,7 @@ class SetTab:
         self.tab[2].configure(text=self.lg.clr, bg="silver")
         self.tab[3].configure(text=self.lg.bgc, bg="silver")
         self.tab[4].configure(text="1", bg=self.set.rwc0)
-        self.tab[5].configure(text="00:00:00.0")
+        self.tab[5].configure(text="00:00:00.00")
         self.tab[6].configure(text=self.set.clr0, bg=self.set.clr0)
         self.tab[7].configure(text=self.set.bgc0, bg=self.set.bgc0)
 
@@ -352,7 +352,7 @@ class RsvTab:
 
 
 # 表示ウインドウ
-class TMWin(tk.Frame):
+class ViewWin(tk.Frame):
     def __init__(self: tk.Tk, master, mw):
         super().__init__(master)
         self.pack()
