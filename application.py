@@ -404,40 +404,34 @@ class ChanTimeWin(tk.Frame):
         self.pack()
 
         # 定義
+        self.set = Setting()                # 設定
+        self.lg = lg.Language(self.set.lg)  # 言語
         self.mw = mw  # メインウインドウ
         self.typ = typ  # 呼び出された種類
         self.tmr = tm.Time(self.mw.set_tmr.n)
         self.dsp = tk.Label(master=master, text=self.tmr.out_txt(), font=("", 60, ))
-        self.bt_ch = [None] * 14
-        self.bt_ch[0] = tk.Button(self.master, text=" ↑ ", command=lambda: self.ps_ch("a"))
-        self.bt_ch[1] = tk.Button(self.master, text=" ↓ ", command=lambda: self.ps_ch("b"))
-        self.bt_ch[2] = tk.Button(self.master, text=" ↑ ", command=lambda: self.ps_ch("c"))
-        self.bt_ch[3] = tk.Button(self.master, text=" ↓ ", command=lambda: self.ps_ch("d"))
-        self.bt_ch[4] = tk.Button(self.master, text=" ↑ ", command=lambda: self.ps_ch("e"))
-        self.bt_ch[5] = tk.Button(self.master, text=" ↓ ", command=lambda: self.ps_ch("f"))
-        self.bt_ch[6] = tk.Button(self.master, text=" ↑ ", command=lambda: self.ps_ch("g"))
-        self.bt_ch[7] = tk.Button(self.master, text=" ↓ ", command=lambda: self.ps_ch("h"))
-        self.bt_ch[8] = tk.Button(self.master, text=" ↑ ", command=lambda: self.ps_ch("i"))
-        self.bt_ch[9] = tk.Button(self.master, text=" ↓ ", command=lambda: self.ps_ch("j"))
-        self.bt_ch[10] = tk.Button(self.master, text=" ↑ ", command=lambda: self.ps_ch("k"))
-        self.bt_ch[11] = tk.Button(self.master, text=" ↓ ", command=lambda: self.ps_ch("l"))
-        self.bt_ch[12] = tk.Button(self.master, text=" ↑ ", command=lambda: self.ps_ch("m"))
-        self.bt_ch[13] = tk.Button(self.master, text=" ↓ ", command=lambda: self.ps_ch("n"))
-        self.bt_nw = tk.Button(
-            self.master, width=10, text=self.mw.lg.now, command=self.ps_nw
-        )
-        self.bt_rs = tk.Button(
-            self.master, width=10, text=self.mw.lg.rst, command=self.ps_rs
-        )
-        self.bt_ok = tk.Button(
-            self.master, width=10, text=self.mw.lg.ook, command=self.ps_ok
-        )
-        self.bt_dl = tk.Button(
-            self.master, width=10, text=self.mw.lg.dlt, command=self.ps_dl
-        )
-        self.bt_cn = tk.Button(
-            self.master, width=10, text=self.mw.lg.ccl, command=self.ps_cn
-        )
+        self.bt_nw = tk.Button(self.master, width=10, text=self.lg.now, command=self.ps_nw)
+        self.bt_rs = tk.Button(self.master, width=10, text=self.lg.rst, command=self.ps_rs)
+        self.bt_ok = tk.Button(self.master, width=10, text=self.lg.ook, command=self.ps_ok)
+        self.bt_dl = tk.Button(self.master, width=10, text=self.lg.dlt, command=self.ps_dl)
+        self.bt_cn = tk.Button(self.master, width=10, text=self.lg.ccl, command=self.ps_cn)
+
+        # 変更ボタン
+        lst = [360000, -360000, 6000, -6000, 100, -100, 1, -1]
+        self.bt_ch = [None] * 8
+        for i in range(8):
+            if i % 2 == 0:
+                self.bt_ch[i] = tk.Button(
+                    self.master, text="↑", width=10,
+                    repeatdelay=1000, repeatinterval=50,
+                    command=partial(self.ps_ch, n=lst[i])
+                )
+            else:
+                self.bt_ch[i] = tk.Button(
+                    self.master, text="↓", width=10,
+                    repeatdelay=1000, repeatinterval=50,
+                    command=partial(self.ps_ch, n=lst[i])
+                )
 
         # ボタンの無効化
         if self.typ == "ccv":
@@ -450,51 +444,22 @@ class ChanTimeWin(tk.Frame):
         self.widgets()
 
     def widgets(self: tk.Tk):
-        self.dsp.place(x=40, y=80)
-        self.bt_nw.place(x=120, y=210)
-        self.bt_rs.place(x=210, y=210)
-        self.bt_ok.place(x=120, y=250)
-        self.bt_dl.place(x=210, y=250)
-        self.bt_cn.place(x=300, y=250)
+        self.dsp.place(x=15, y=80)      # 時間表示
+        self.bt_nw.place(x=120, y=210)  # 現在時刻ボタン
+        self.bt_rs.place(x=210, y=210)  # 初期化ボタン
+        self.bt_ok.place(x=120, y=250)  # 決定ボタン
+        self.bt_dl.place(x=210, y=250)  # 削除ボタン
+        self.bt_cn.place(x=300, y=250)  # 取消ボタン
 
         p = [
-            [48, 60], [48, 165], [88, 60], [88, 165],
-            [144, 60], [144, 165], [184, 60], [184, 165],
-            [240, 60], [240, 165], [280, 60], [280, 165],
-            [336, 60], [336, 165]
+            [18, 60], [18, 165], [114, 60], [114, 165],
+            [210, 60], [210, 165], [306, 60], [306, 165]
         ]
-        for i in range(14):
+        for i in range(8):
             self.bt_ch[i].place(x=p[i][0], y=p[i][1])
 
-    def ps_ch(self, e):
-        if e == "a":  # 時間十の位を増加
-            self.tmr.n += 3600000
-        elif e == "b":  # 時間十の位を減少
-            self.tmr.n -= 3600000
-        elif e == "c":  # 時間一の位を増加
-            self.tmr.n += 360000
-        elif e == "d":  # 時間一の位を減少
-            self.tmr.n -= 360000
-        elif e == "e":  # 分十の位を増加
-            self.tmr.n += 60000
-        elif e == "f":  # 分十の位を減少
-            self.tmr.n -= 60000
-        elif e == "g":  # 分一の位を増加
-            self.tmr.n += 6000
-        elif e == "h":  # 分一の位を減少
-            self.tmr.n -= 6000
-        elif e == "i":  # 秒十の位を増加
-            self.tmr.n += 1000
-        elif e == "j":  # 秒十の位を減少
-            self.tmr.n -= 1000
-        elif e == "k":  # 秒一の位を増加
-            self.tmr.n += 100
-        elif e == "l":  # 秒一の位を減少
-            self.tmr.n -= 100
-        elif e == "m":  # ミリ秒を増加
-            self.tmr.n += 10
-        elif e == "n":  # ミリ秒を減少
-            self.tmr.n -= 10
+    def ps_ch(self, n):
+        self.tmr.n += n
         self.tmr.n = self.tmr.n % 36000000
         self.dsp.configure(text=self.tmr.out_txt())
 
@@ -556,9 +521,7 @@ class ChanColorWin(tk.Frame):
             self.master, from_=0, to=255, length=200,
             orient="horizontal", command=self.ch_sc
         )
-        self.dsp = tk.Label(
-            self.master, width=10, height=6, bg=self.ccd
-        )
+        self.dsp = tk.Label(self.master, width=10, height=6, bg=self.ccd)
         self.bt_ok = tk.Button(
             self.master, width=10, text=self.mw.lg.ook, command=self.ps_ok
         )
