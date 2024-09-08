@@ -2,6 +2,7 @@ import tkinter as tk
 from functools import partial
 import language as lg
 import timer as tm
+import command as cm
 
 
 # 設定クラス
@@ -12,7 +13,10 @@ class Setting:
         self.bgc0 = "#FFFFFF"
         self.rwc0 = "#00FF00"
         self.row = 6
-        self.ccd = {"white": "#FFFFFF", "black": "#000000", "red": "#FF0000", "green": "#00FF00", "blue": "#0000FF"}
+        self.ccd = {
+            "white": "#FFFFFF", "black": "#000000",
+            "red": "#FF0000", "green": "#00FF00", "blue": "#0000FF"
+        }
 
 
 # メインウインドウクラス
@@ -36,6 +40,7 @@ class MainWin(tk.Frame):
         self.tmr = tm.Time()                # 表示時間
         self.set_tmr = tm.Time()            # 設定用時間
         self.set_clr = self.set.clr0        # 設定用カラーコード
+        self.etr = tk.Entry(self.master, width=50)  # コマンド入力欄
 
         self.bt_dp = tk.Button(
             self.master, text=self.lg.viw, width=20, command=self.viw_win
@@ -88,18 +93,20 @@ class MainWin(tk.Frame):
         if self.viw_mas is None:
             self.viw_mas = tk.Toplevel(self.master)
             self.viw_app = ViewWin(self.viw_mas, self)
+            self.viw_mas.focus_set()
         elif not self.viw_mas.winfo_exists():
             self.viw_mas = tk.Toplevel(self.master)
             self.viw_app = ViewWin(self.viw_mas, self)
+            self.viw_mas.focus_set()
 
     # 時間変更ウインドウ表示
     def tim_win(self, typ, tim: tm.Time):
         if self.chg_mas is None:
             self.chg_mas = tk.Toplevel(self.master)
-            self.chg_app = ChanTimeWin(self.chg_mas, self, typ)
+            self.chg_app = ChanTimeWin(self.chg_mas, self, typ, tim)
         elif not self.chg_mas.winfo_exists():
             self.chg_mas = tk.Toplevel(self.master)
-            self.chg_app = ChanTimeWin(self.chg_mas, self, typ)
+            self.chg_app = ChanTimeWin(self.chg_mas, self, typ, tim)
 
     # 色変更ウインドウ表示
     def clr_win(self, typ, clr: str):
@@ -111,7 +118,7 @@ class MainWin(tk.Frame):
             self.chg_app = ChanColorWin(self.chg_mas, self, typ)
 
     # 開始/停止ボタン押下
-    def ps_ss(self):
+    def ps_ss(self, e=None):
         self.cnt = not self.cnt
         if self.cnt:
             self.bt_ss.configure(text=self.lg.stp)
@@ -131,6 +138,29 @@ class MainWin(tk.Frame):
         self.set_tmr.n = self.tmr.n
         self.tim_win("ccv", self.tmr)
 
+    # コマンド入力(仮)
+    def in_cd(self, e):
+        cm.command(self, self.etr.get())
+
+        """
+        cmd = self.etr.get().split()
+        err = 0
+
+        # 現在値変更
+        if cmd[0] == "tmr":
+            err = self.tmr.set_txt(cmd[1])
+
+        # 表示ウインドウ表示
+        elif cmd[0] == "view":
+            self.viw_win()
+        else:
+            err = 999
+
+        # エラー処理
+        if err != 0:
+            print("err", err)
+        """
+
     # イベント
     def event(self):
         def m_press(e):  # マウスボタン押した場合
@@ -149,8 +179,16 @@ class MainWin(tk.Frame):
             if e.keysym in self.keys:
                 return
             self.keys.append(e.keysym)
+            if e.keysym == "return":
+                pass
+            if "c" in self.keys:
+                if "m" in self.keys:
+                    if "d" in self.keys:
+                        self.etr.place(x=65, y=0)
+                        self.etr.focus_set()
+                        self.etr.bind("<Key-Return>", self.in_cd)
             if e.keysym == "space":
-                self.ps_ss()
+                pass
 
         def k_release(e):  # キーボード離した場合
             self.keys.remove(e.keysym)
@@ -395,11 +433,12 @@ class ViewWin(tk.Frame):
             self.siz = self.wwd // 85
 
         self.bind("<Configure>", win_size)
+        self.master.bind("<KeyPress-space>", self.mw.ps_ss)
 
 
 # 時間変更ウインドウ
 class ChanTimeWin(tk.Frame):
-    def __init__(self: tk.Tk, master, mw, typ):
+    def __init__(self: tk.Tk, master, mw, typ, tmr):
         super().__init__(master)
         self.pack()
 
@@ -408,7 +447,7 @@ class ChanTimeWin(tk.Frame):
         self.lg = lg.Language(self.set.lg)  # 言語
         self.mw = mw  # メインウインドウ
         self.typ = typ  # 呼び出された種類
-        self.tmr = tm.Time(self.mw.set_tmr.n)
+        self.tmr = tmr
         self.dsp = tk.Label(master=master, text=self.tmr.out_txt(), font=("", 60, ))
         self.bt_nw = tk.Button(self.master, width=10, text=self.lg.now, command=self.ps_nw)
         self.bt_rs = tk.Button(self.master, width=10, text=self.lg.rst, command=self.ps_rs)
