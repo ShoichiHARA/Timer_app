@@ -237,7 +237,7 @@ class Time1:
 
         # セグの定義
         seg = []
-        x = [-45*s+x, -33*s+x, -15*s+x, -3*s+x, 15*s+x, 27*s+x]
+        x = [-36*s+x, -24*s+x, -6*s+x, 6*s+x, 24*s+x, 36*s+x]
 
         # セグの配置
         for i in range(6):

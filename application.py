@@ -361,7 +361,7 @@ class ViewWin(tk.Frame):
         self.mw = mw                        # メインウインドウ
         self.wwd = 400                      # ウインドウ幅
         self.whg = 300                      # ウインドウ高
-        self.siz = self.wwd // 110          # 文字サイズ
+        self.siz = self.wwd // 85           # 文字サイズ
         self.cvs = tk.Canvas(self.master, bg=self.mw.set.bgc0)  # キャンバス
 
         # ウインドウの定義
@@ -410,7 +410,7 @@ class ViewWin(tk.Frame):
             self.e = e  # エラー処理(仮)
             self.wwd = self.master.winfo_width()
             self.whg = self.master.winfo_height()
-            self.siz = self.wwd // 110
+            self.siz = self.wwd // 85
 
         self.bind("<Configure>", win_size)
 
