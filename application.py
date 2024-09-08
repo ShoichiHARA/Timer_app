@@ -402,7 +402,8 @@ class ViewWin(tk.Frame):
             self.wwd/2, self.whg/2, self.siz
         )
 
-        self.master.after(5, self.re_frm)  # 0.005s後再描画
+        self.master.after(2, self.re_frm)  # 0.002s後再描画
+        # self.re_frm()
 
     # イベント
     def event(self):

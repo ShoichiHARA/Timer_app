@@ -235,6 +235,25 @@ class Time1:
                 self.n // 100 % 60 // 10, self.n // 100 % 10,  # 10s, 1s
             ]
 
+        # コロン, カンマの配置
+        cvs.create_rectangle(
+            -16*s+x, -4*s+y, -14*s+x, -2*s+y, fill=c, width=0
+        )
+        cvs.create_rectangle(
+            -16*s+x, 2*s+y, -14*s+x, 4*s+y, fill=c, width=0
+        )
+        if self.n < 180000:  # 30m未満
+            cvs.create_rectangle(
+                14*s+x, 6*s+y, 16*s+x, 8*s+y, fill=c, width=0
+            )
+        else:
+            cvs.create_rectangle(
+                14*s+x, -4*s+y, 16*s+x, -2*s+y, fill=c, width=0
+            )
+            cvs.create_rectangle(
+                14*s+x, 2*s+y, 16*s+x, 4*s+y, fill=c, width=0
+            )
+
         # セグの定義
         seg = []
         x = [-36*s+x, -24*s+x, -6*s+x, 6*s+x, 24*s+x, 36*s+x]
@@ -243,12 +262,6 @@ class Time1:
         for i in range(6):
             seg.append(SevenSeg(num=n[i], clr=c, bgc=b))
             seg[i].place(cvs, x[i], y, s)
-
-        # コロン, カンマの配置
-        if self.n < 180000:  # 30m未満
-            pass
-        else:
-            pass
 
 
 # 7セグクラス
