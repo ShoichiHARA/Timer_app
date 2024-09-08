@@ -7,6 +7,10 @@ def command(mw, cmd: str):
     if cmd[0] == "rsv":
         pass
 
+    # 設定
+    elif cmd[0] == "set":
+        pass
+
     # 現在値変更
     elif cmd[0] == "tmr":
         err = mw.tmr.set_txt(cmd[1])
