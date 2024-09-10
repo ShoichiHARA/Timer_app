@@ -1,5 +1,13 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+import tkinter as tk
+
+if TYPE_CHECKING:
+    from application import MainWin
+
+
 # コマンド入力
-def command(mw, cmd: str):
+def command(mw: MainWin, cmd: str):
     cmd = cmd.split()
     err = 0
 
@@ -24,5 +32,9 @@ def command(mw, cmd: str):
     if err != 0:
         print("err", err)
     else:
-        mw.etr.configure(textvariable="")  # 入力欄を初期化したい
+        print("else")
+        mw.etr.delete(0, "end")
+        # mw.master.attributes("-topmost", True)
+        # mw.master.attributes("-topmost", False)
+        mw.master.focus_set()
         mw.etr.focus_set()  # 入力欄にフォーカスを設定したい
