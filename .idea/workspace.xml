@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="09/06&#10;時間クラス改造中&#10;int型で取り扱い" />
+    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="09/10&#10;入力欄の初期化できた&#10;色変更ウインドウの変数と関数削除" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -114,70 +114,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1723038717059</updated>
-    </task>
-    <task id="LOCAL-00009" summary="08/12&#10;時間表示">
-      <option name="closed" value="true" />
-      <created>1723389270921</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1723389270921</updated>
-    </task>
-    <task id="LOCAL-00010" summary="08/12&#10;文字サイズの自動変更">
-      <option name="closed" value="true" />
-      <created>1723418663799</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1723418663799</updated>
-    </task>
-    <task id="LOCAL-00011" summary="08/16&#10;背景色を指定可">
-      <option name="closed" value="true" />
-      <created>1723800651840</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1723800651840</updated>
-    </task>
-    <task id="LOCAL-00012" summary="08/16&#10;カウントリセット関数の作成&#10;文字色、背景色をMWクラスで管理">
-      <option name="closed" value="true" />
-      <created>1723802110926</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1723802110926</updated>
-    </task>
-    <task id="LOCAL-00013" summary="08/16&#10;描画キャンパスは&#10;描画する関数で指定">
-      <option name="closed" value="true" />
-      <created>1723813496590</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1723813496590</updated>
-    </task>
-    <task id="LOCAL-00014" summary="08/16&#10;スタート、ストップ、リセットが可能">
-      <option name="closed" value="true" />
-      <created>1723814459088</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1723814459088</updated>
-    </task>
-    <task id="LOCAL-00015" summary="08/16&#10;変更画面のウインドウ作成">
-      <option name="closed" value="true" />
-      <created>1723905835220</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1723905835220</updated>
-    </task>
-    <task id="LOCAL-00016" summary="08/20&#10;時間を変更">
-      <option name="closed" value="true" />
-      <created>1724079697730</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1724079697730</updated>
     </task>
     <task id="LOCAL-00017" summary="08/20&#10;時間変更ウインドウの完成">
       <option name="closed" value="true" />
@@ -507,7 +443,71 @@
       <option name="project" value="LOCAL" />
       <updated>1725553299918</updated>
     </task>
-    <option name="localTasksCounter" value="58" />
+    <task id="LOCAL-00058" summary="09/06&#10;サイズ変更がわからない">
+      <option name="closed" value="true" />
+      <created>1725714439974</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1725714439974</updated>
+    </task>
+    <task id="LOCAL-00059" summary="09/08&#10;サイズ変更成功">
+      <option name="closed" value="true" />
+      <created>1725779175273</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1725779175273</updated>
+    </task>
+    <task id="LOCAL-00060" summary="09/08&#10;表示画面コロンコンマを設置">
+      <option name="closed" value="true" />
+      <created>1725791397328</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1725791397328</updated>
+    </task>
+    <task id="LOCAL-00061" summary="09/08&#10;不要なもの削除&#10;spaceで開始停止">
+      <option name="closed" value="true" />
+      <created>1725793259032</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1725793259032</updated>
+    </task>
+    <task id="LOCAL-00062" summary="09/08&#10;時間設定画面の調整">
+      <option name="closed" value="true" />
+      <created>1725800805635</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1725800805635</updated>
+    </task>
+    <task id="LOCAL-00063" summary="09/09&#10;コマンド関数の作成開始&#10;入力欄を初期化したい&#10;入力欄にフォーカスを設定したい">
+      <option name="closed" value="true" />
+      <created>1725810721287</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1725810721287</updated>
+    </task>
+    <task id="LOCAL-00064" summary="09/09&#10;コマンド作成予定&#10;exe化">
+      <option name="closed" value="true" />
+      <created>1725811055456</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1725811055456</updated>
+    </task>
+    <task id="LOCAL-00065" summary="09/10&#10;入力欄の初期化できた&#10;色変更ウインドウの変数と関数削除">
+      <option name="closed" value="true" />
+      <created>1725973480993</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1725973480993</updated>
+    </task>
+    <option name="localTasksCounter" value="66" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -522,14 +522,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="08/29&#10;アプリケーションクラスの変数を減らしたい" />
-    <MESSAGE value="08/31&#10;設定表関数を改良&#10;変数減らした" />
-    <MESSAGE value="08/31&#10;不要なもの削除" />
-    <MESSAGE value="08/31&#10;予約表完成" />
-    <MESSAGE value="08/31&#10;時間変更ウインドウボタン追加" />
-    <MESSAGE value="08/31&#10;色変更ウインドウボタン追加" />
-    <MESSAGE value="08/31&#10;メインウインドウボタン配置" />
-    <MESSAGE value="08/31&#10;時間クラスの時間を文字列で登録" />
     <MESSAGE value="09/01&#10;時間クラスの時間と文字列を比較" />
     <MESSAGE value="09/01&#10;設定表をクラス化" />
     <MESSAGE value="09/01&#10;予約表をクラス化" />
@@ -547,6 +539,14 @@
     <MESSAGE value="09/05&#10;動作確認終了&#10;異常なし" />
     <MESSAGE value="09/05&#10;時間クラス改造中&#10;int型で取り扱い" />
     <MESSAGE value="09/06&#10;時間クラス改造中&#10;int型で取り扱い" />
-    <option name="LAST_COMMIT_MESSAGE" value="09/06&#10;時間クラス改造中&#10;int型で取り扱い" />
+    <MESSAGE value="09/06&#10;サイズ変更がわからない" />
+    <MESSAGE value="09/08&#10;サイズ変更成功" />
+    <MESSAGE value="09/08&#10;表示画面コロンコンマを設置" />
+    <MESSAGE value="09/08&#10;不要なもの削除&#10;spaceで開始停止" />
+    <MESSAGE value="09/08&#10;時間設定画面の調整" />
+    <MESSAGE value="09/09&#10;コマンド関数の作成開始&#10;入力欄を初期化したい&#10;入力欄にフォーカスを設定したい" />
+    <MESSAGE value="09/09&#10;コマンド作成予定&#10;exe化" />
+    <MESSAGE value="09/10&#10;入力欄の初期化できた&#10;色変更ウインドウの変数と関数削除" />
+    <option name="LAST_COMMIT_MESSAGE" value="09/10&#10;入力欄の初期化できた&#10;色変更ウインドウの変数と関数削除" />
   </component>
 </project>

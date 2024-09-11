@@ -2,8 +2,8 @@ import tkinter as tk
 from tkinter import Button as Bt
 from functools import partial
 import language as lg
-import timer as tm
-import command as cm
+import functions as fc
+import global_val as g
 
 
 # 設定クラス
@@ -14,10 +14,10 @@ class Setting:
         self.bgc0 = "#FFFFFF"
         self.rwc0 = "#00FF00"
         self.row = 6
-        self.ccd = {
-            "white": "#FFFFFF", "black": "#000000",
-            "red": "#FF0000", "green": "#00FF00", "blue": "#0000FF"
-        }
+        # self.ccd = {
+        #     "white": "#FFFFFF", "black": "#000000",
+        #     "red": "#FF0000", "green": "#00FF00", "blue": "#0000FF"
+        # }
 
 
 # メインウインドウクラス
@@ -30,31 +30,30 @@ class MainWin(tk.Frame):
         self.set = Setting()                # 設定
         self.lg = lg.Language(self.set.lg)  # 言語
         self.keys = []                      # キーボードの状態
-        self.now = tm.Time()                # 現在時刻
+        self.now = fc.Time()                # 現在時刻
         self.clr = self.set.clr0            # 文字色
         self.bgc = self.set.bgc0            # 背景色
         self.cnt = False                    # カウントアップ
-        self.lst = tk.Label(self.master, text=self.lg.ccr)  # 設定表のラベル
-        self.lrv = tk.Label(self.master, text=self.lg.rss)  # 予約表のラベル
+        self.lst = tk.Label(self.master, text=g.lg.ccr)  # 設定表のラベル
+        self.lrv = tk.Label(self.master, text=g.lg.rss)  # 予約表のラベル
         self.set_tab = SetTab(self)         # 設定表
         self.rsv_tab = RsvTab(self)         # 予約表
-        self.tmr = tm.Time()                # 表示時間
-        # self.set_tmr = tm.Time()            # 設定用時間
+        self.tmr = fc.Time()                # 表示時間
         self.etr = tk.Entry(self.master, width=50)  # コマンド入力欄
 
-        self.bt_dp = Bt(self.master, text=self.lg.viw, width=20, command=self.viw_win)  # 表示ボタン
+        self.bt_dp = Bt(self.master, text=g.lg.viw, width=20, command=self.viw_win)  # 表示ボタン
         self.bt_ss = Bt(
-            self.master, text=self.lg.stt, font=("", 15),
+            self.master, text=g.lg.stt, font=("", 15),
             width=10, height=2, command=self.ps_ss
         )   # 開始/停止ボタン
         self.bt_rs = tk.Button(
-            self.master, text=self.lg.rst, font=("", 15),
+            self.master, text=g.lg.rst, font=("", 15),
             width=10, height=2, command=self.ps_rs
         )   # 初期化ボタン
-        self.bt_cv = Bt(self.master, text=self.lg.ccv, width=20, command=self.ps_cv)  # 現在値変更ボタン
+        self.bt_cv = Bt(self.master, text=g.lg.ccv, width=20, command=self.ps_cv)  # 現在値変更ボタン
 
         # ウインドウの定義
-        self.master.title(self.lg.mwn)       # ウインドウタイトル
+        self.master.title(g.lg.mwn)          # ウインドウタイトル
         self.master.geometry("430x300")      # ウインドウサイズ
         self.master.resizable(False, False)  # サイズ変更禁止
         self.widgets()                       # ウィジェット
@@ -96,7 +95,7 @@ class MainWin(tk.Frame):
             self.viw_mas.focus_set()
 
     # 時間変更ウインドウ表示
-    def tim_win(self, typ, tim: tm.Time):
+    def tim_win(self, typ, tim: fc.Time):
         if self.chg_mas is None:
             self.chg_mas = tk.Toplevel(self.master)
             self.chg_app = ChanTimeWin(self.chg_mas, self, typ, tim)
@@ -139,7 +138,7 @@ class MainWin(tk.Frame):
 
     # コマンド入力(仮)
     def in_cd(self, e):
-        cm.command(self, self.etr.get())
+        fc.command(self, self.etr.get())
 
     # イベント
     def event(self):
@@ -193,7 +192,7 @@ class SetTab:
         self.crt = 4  # 現在の設定行
         self.frm = tk.Frame(self.mw.master, bg="black")  # フレーム
         self.tab = []
-        self.tmr = tm.Time()  # 控え用の時間
+        self.tmr = fc.Time()  # 控え用の時間
         self.clr = self.set.clr0  # 控え用の色
 
         # ラベルを表状に生成
@@ -285,7 +284,7 @@ class RsvTab:
         self.crt = 3  # 現在の予約行
         self.frm = tk.Frame(self.mw.master, bg="black")  # フレーム
         self.tab = []  # 予約表
-        self.tmr = tm.Time()  # 控え用の時間
+        self.tmr = fc.Time()  # 控え用の時間
 
         # ラベルを表状に生成
         for i in range(self.set.row*3):
@@ -427,7 +426,7 @@ class ChanTimeWin(tk.Frame):
         self.lg = lg.Language(self.set.lg)  # 言語
         self.mw = mw  # メインウインドウ
         self.typ = typ  # 呼び出された種類
-        self.tmr = tm.Time(tmr.n)
+        self.tmr = fc.Time(tmr.n)
         self.dsp = tk.Label(master=master, text=self.tmr.out_txt(), font=("", 60, ))
         self.bt_nw = Bt(self.master, width=10, text=self.lg.now, command=self.ps_nw)
         self.bt_rs = Bt(self.master, width=10, text=self.lg.rst, command=self.ps_rs)
