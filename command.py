@@ -15,9 +15,16 @@ def command(mw: MainWin, cmd: str):
     if cmd[0] == "rsv":
         pass
 
-    # 設定
+    # 色設定
     elif cmd[0] == "set":
-        pass
+        for i in range(len(mw.set_tab)/4):
+            if mw.set_tab.tab[i]["text"] == "":  # 行が未完成の場合
+                for j in range(1, 3):  # 時間、文字色、背景色の順に登録
+                    mw.set_tab.x = j
+                    mw.set_tab.y = i
+                    mw.set_tab.tab[4*i+j].update(cmd[j])  # 入力データが有効か判断する必要あり
+                break
+        mw.set_tab.update()
 
     # 現在値変更
     elif cmd[0] == "tmr":
