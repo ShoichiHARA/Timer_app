@@ -28,7 +28,6 @@ class MainWin(tk.Frame):
 
         # 定義
         self.set = Setting()                # 設定
-        self.lg = lg.Language(self.set.lg)  # 言語
         self.keys = []                      # キーボードの状態
         self.now = fc.Time()                # 現在時刻
         self.clr = self.set.clr0            # 文字色
@@ -120,9 +119,9 @@ class MainWin(tk.Frame):
     def ps_ss(self, e=None):
         self.cnt = not self.cnt
         if self.cnt:
-            self.bt_ss.configure(text=self.lg.stp)
+            self.bt_ss.configure(text=g.lg.stp)
         else:
-            self.bt_ss.configure(text=self.lg.stt)
+            self.bt_ss.configure(text=g.lg.stt)
 
     # 初期化ボタン押下
     def ps_rs(self):
@@ -185,7 +184,6 @@ class SetTab:
     def __init__(self: tk.Tk, mw):
         # 定義
         self.set = Setting()                # 設定
-        self.lg = lg.Language(self.set.lg)  # 言語
         self.mw = mw
         self.x = None
         self.y = None
@@ -193,10 +191,10 @@ class SetTab:
         self.frm = tk.Frame(self.mw.master, bg="black")  # フレーム
         self.tab = []
         self.tmr = fc.Time()  # 控え用の時間
-        self.clr = self.set.clr0  # 控え用の色
+        self.clr = g.clr0  # 控え用の色
 
         # ラベルを表状に生成
-        for i in range(self.set.row*4):
+        for i in range(g.row*4):
             self.tab.append(
                 tk.Label(self.frm, bd=2, width=7, height=1, font=("", 9))
             )  # ラベルの生成
@@ -205,13 +203,13 @@ class SetTab:
 
         # 列名ラベル設定
         self.tab[0].configure(text="No.", bg="silver")
-        self.tab[1].configure(text=self.lg.tim, bg="silver")
-        self.tab[2].configure(text=self.lg.clr, bg="silver")
-        self.tab[3].configure(text=self.lg.bgc, bg="silver")
-        self.tab[4].configure(text="1", bg=self.set.rwc0)
+        self.tab[1].configure(text=g.lg.tim, bg="silver")
+        self.tab[2].configure(text=g.lg.clr, bg="silver")
+        self.tab[3].configure(text=g.lg.bgc, bg="silver")
+        self.tab[4].configure(text="1", bg=g.rwc0)
         self.tab[5].configure(text="00:00:00.00")
-        self.tab[6].configure(text=self.set.clr0, bg=self.set.clr0)
-        self.tab[7].configure(text=self.set.bgc0, bg=self.set.bgc0)
+        self.tab[6].configure(text=g.clr0, bg=g.clr0)
+        self.tab[7].configure(text=g.bgc0, bg=g.bgc0)
 
     # 表クリック時動作
     def click(self, e, xy):
@@ -261,14 +259,14 @@ class SetTab:
     def crt_set(self, tmr):
         self.tab[self.crt].configure(bg="SystemButtonFace")  # 現在の行の色取消
         row = self.crt + 4  # 現在の次の行
-        if row >= self.mw.set.row*4:  # 最終行の場合
+        if row >= g.row*4:  # 最終行の場合
             pass
         elif self.tab[row]["text"] == "":  # 現在の次が空白の場合
             pass
         elif self.tab[row+1]["text"] == tmr.out_txt():  # 次の時間と同じ場合
             self.crt += 4  # 現在行更新
             self.crt_set(tmr)  # もう一度関数実行
-        self.tab[self.crt].configure(bg=self.set.rwc0)  # 現在の行に色付け
+        self.tab[self.crt].configure(bg=g.rwc0)  # 現在の行に色付け
         return self.tab[self.crt+2]["text"], self.tab[self.crt+3]["text"]
 
 
@@ -277,7 +275,6 @@ class RsvTab:
     def __init__(self: tk.Tk, mw):
         # 定義
         self.set = Setting()                # 設定
-        self.lg = lg.Language(self.set.lg)  # 言語
         self.mw = mw
         self.x = None
         self.y = None
@@ -296,8 +293,8 @@ class RsvTab:
 
         # 列名ラベル設定
         self.tab[0].configure(text="No.", bg="silver")
-        self.tab[1].configure(text=self.lg.stt, bg="silver")
-        self.tab[2].configure(text=self.lg.stp, bg="silver")
+        self.tab[1].configure(text=g.lg.stt, bg="silver")
+        self.tab[2].configure(text=g.lg.stp, bg="silver")
 
     # 表クリック時動作
     def click(self, e, xy):
@@ -332,7 +329,7 @@ class RsvTab:
     # 現在の予約
     def crt_rsv(self, tmr):
         self.tab[self.crt].configure(bg="SystemButtonFace")  # 現在の行の色取消
-        if self.crt >= self.set.row*3:  # 最終行を超えた場合
+        if self.crt >= g.row*3:  # 最終行を超えた場合
             pass
         elif self.tab[self.crt]["text"] == "":  # 現在が空白の場合
             pass
@@ -364,10 +361,10 @@ class ViewWin(tk.Frame):
         self.wwd = 400                      # ウインドウ幅
         self.whg = 300                      # ウインドウ高
         self.siz = self.wwd // 85           # 文字サイズ
-        self.cvs = tk.Canvas(self.master, bg=self.mw.set.bgc0)  # キャンバス
+        self.cvs = tk.Canvas(self.master, bg=g.bgc0)  # キャンバス
 
         # ウインドウの定義
-        self.master.title(self.mw.lg.twn)
+        self.master.title(g.lg.twn)
         self.master.geometry("400x300")
         self.widgets()  # ウィジェット
         self.event()    # イベント
@@ -423,15 +420,14 @@ class ChanTimeWin(tk.Frame):
 
         # 定義
         self.set = Setting()                # 設定
-        self.lg = lg.Language(self.set.lg)  # 言語
         self.mw = mw  # メインウインドウ
         self.typ = typ  # 呼び出された種類
         self.tmr = fc.Time(tmr.n)
         self.dsp = tk.Label(master=master, text=self.tmr.out_txt(), font=("", 60, ))
-        self.bt_nw = Bt(self.master, width=10, text=self.lg.now, command=self.ps_nw)
-        self.bt_rs = Bt(self.master, width=10, text=self.lg.rst, command=self.ps_rs)
-        self.bt_ok = Bt(self.master, width=10, text=self.lg.ook, command=self.ps_ok)
-        self.bt_dl = Bt(self.master, width=10, text=self.lg.dlt, command=self.ps_dl)
+        self.bt_nw = Bt(self.master, width=10, text=g.lg.now, command=self.ps_nw)
+        self.bt_rs = Bt(self.master, width=10, text=g.lg.rst, command=self.ps_rs)
+        self.bt_ok = Bt(self.master, width=10, text=g.lg.ook, command=self.ps_ok)
+        self.bt_dl = Bt(self.master, width=10, text=g.lg.dlt, command=self.ps_dl)
         self.bt_cn = Bt(
             self.master, width=10, text=self.lg.ccl, command=self.master.destroy
         )
@@ -458,7 +454,7 @@ class ChanTimeWin(tk.Frame):
             self.bt_dl.configure(state=tk.DISABLED)
 
         # ウインドウの定義
-        self.master.title(self.mw.lg.mwn)    # ウインドウタイトル
+        self.master.title(g.lg.mwn)    # ウインドウタイトル
         self.master.geometry("400x300")      # ウインドウサイズ
         self.master.resizable(False, False)  # サイズ変更禁止
         self.widgets()
@@ -522,7 +518,6 @@ class ChanColorWin(tk.Frame):
 
         # 定義
         self.set = Setting()                # 設定
-        self.lg = lg.Language(self.set.lg)  # 言語
         self.mw = mw
         self.typ = typ  # 呼び出された種類
         self.ccd = ccd
@@ -539,10 +534,10 @@ class ChanColorWin(tk.Frame):
             orient="horizontal", command=self.ch_sc
         )
         self.dsp = tk.Label(self.master, width=10, height=6, bg=self.ccd)
-        self.bt_ok = Bt(self.master, width=10, text=self.lg.ook, command=self.ps_ok)
-        self.bt_dl = Bt(self.master, width=10, text=self.lg.dlt, command=self.ps_dl)
+        self.bt_ok = Bt(self.master, width=10, text=g.lg.ook, command=self.ps_ok)
+        self.bt_dl = Bt(self.master, width=10, text=g.lg.dlt, command=self.ps_dl)
         self.bt_cn = Bt(
-            self.master, width=10, text=self.lg.ccl, command=self.master.destroy
+            self.master, width=10, text=g.lg.ccl, command=self.master.destroy
         )
 
         # スケール初期値
@@ -555,7 +550,7 @@ class ChanColorWin(tk.Frame):
             self.bt_dl.configure(state=tk.DISABLED)
 
         # ウインドウの定義
-        self.master.title(self.mw.lg.ccr)
+        self.master.title(g.lg.ccr)
         self.master.geometry("400x300")
         self.master.resizable(False, False)
         self.widgets()
