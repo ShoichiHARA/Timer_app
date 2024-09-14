@@ -1,23 +1,8 @@
 import tkinter as tk
 from tkinter import Button as Bt
 from functools import partial
-import language as lg
 import functions as fc
 import global_val as g
-
-
-# 設定クラス
-class Setting:
-    def __init__(self):
-        self.lg = "JPN"
-        self.clr0 = "#000000"
-        self.bgc0 = "#FFFFFF"
-        self.rwc0 = "#00FF00"
-        self.row = 6
-        # self.ccd = {
-        #     "white": "#FFFFFF", "black": "#000000",
-        #     "red": "#FF0000", "green": "#00FF00", "blue": "#0000FF"
-        # }
 
 
 # メインウインドウクラス
@@ -27,11 +12,10 @@ class MainWin(tk.Frame):
         self.pack()               # 配置
 
         # 定義
-        self.set = Setting()                # 設定
         self.keys = []                      # キーボードの状態
         self.now = fc.Time()                # 現在時刻
-        self.clr = self.set.clr0            # 文字色
-        self.bgc = self.set.bgc0            # 背景色
+        self.clr = g.clr0            # 文字色
+        self.bgc = g.bgc0            # 背景色
         self.cnt = False                    # カウントアップ
         self.lst = tk.Label(self.master, text=g.lg.ccr)  # 設定表のラベル
         self.lrv = tk.Label(self.master, text=g.lg.rss)  # 予約表のラベル
@@ -183,7 +167,6 @@ class MainWin(tk.Frame):
 class SetTab:
     def __init__(self: tk.Tk, mw):
         # 定義
-        self.set = Setting()                # 設定
         self.mw = mw
         self.x = None
         self.y = None
@@ -274,7 +257,6 @@ class SetTab:
 class RsvTab:
     def __init__(self: tk.Tk, mw):
         # 定義
-        self.set = Setting()                # 設定
         self.mw = mw
         self.x = None
         self.y = None
@@ -284,7 +266,7 @@ class RsvTab:
         self.tmr = fc.Time()  # 控え用の時間
 
         # ラベルを表状に生成
-        for i in range(self.set.row*3):
+        for i in range(g.row*3):
             self.tab.append(
                 tk.Label(self.frm, bd=2, width=7, height=1, font=("", 9))
             )  # ラベルの生成
@@ -347,7 +329,7 @@ class RsvTab:
                 if self.tab[self.crt+3]["text"] != "":  # 現在の次が空白でない場合
                     self.crt += 3  # 次の行へ
                     self.crt_rsv(tmr)  # もう一度関数実行
-        self.tab[self.crt].configure(bg=self.set.rwc0)  # 現在の行に色付け
+        self.tab[self.crt].configure(bg=g.rwc0)  # 現在の行に色付け
 
 
 # 表示ウインドウ
@@ -419,7 +401,6 @@ class ChanTimeWin(tk.Frame):
         self.pack()
 
         # 定義
-        self.set = Setting()                # 設定
         self.mw = mw  # メインウインドウ
         self.typ = typ  # 呼び出された種類
         self.tmr = fc.Time(tmr.n)
@@ -429,7 +410,7 @@ class ChanTimeWin(tk.Frame):
         self.bt_ok = Bt(self.master, width=10, text=g.lg.ook, command=self.ps_ok)
         self.bt_dl = Bt(self.master, width=10, text=g.lg.dlt, command=self.ps_dl)
         self.bt_cn = Bt(
-            self.master, width=10, text=self.lg.ccl, command=self.master.destroy
+            self.master, width=10, text=g.lg.ccl, command=self.master.destroy
         )
 
         # 変更ボタン
@@ -517,7 +498,6 @@ class ChanColorWin(tk.Frame):
         self.pack()
 
         # 定義
-        self.set = Setting()                # 設定
         self.mw = mw
         self.typ = typ  # 呼び出された種類
         self.ccd = ccd
