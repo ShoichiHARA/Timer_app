@@ -12,28 +12,31 @@ class MainWin(tk.Frame):
         self.pack()               # 配置
 
         # 定義
+        self.wt = Watch(self)
+        self.mn = Menu(self)
         self.keys = []                      # キーボードの状態
         self.now = fc.Time()                # 現在時刻
         self.clr = g.clr0            # 文字色
         self.bgc = g.bgc0            # 背景色
+        self.frm = tk.Frame(self.master, bg="lime")
         self.cnt = False                    # カウントアップ
-        self.lst = tk.Label(self.master, text=g.lg.ccr)  # 設定表のラベル
-        self.lrv = tk.Label(self.master, text=g.lg.rss)  # 予約表のラベル
+        self.lst = tk.Label(self.frm, text=g.lg.ccr)  # 設定表のラベル
+        self.lrv = tk.Label(self.frm, text=g.lg.rss)  # 予約表のラベル
         self.set_tab = SetTab(self)         # 設定表
         self.rsv_tab = RsvTab(self)         # 予約表
         self.tmr = fc.Time()                # 表示時間
-        self.etr = tk.Entry(self.master, width=50)  # コマンド入力欄
+        self.etr = tk.Entry(self.frm, width=50)  # コマンド入力欄
 
-        self.bt_dp = Bt(self.master, text=g.lg.viw, width=20, command=self.viw_win)  # 表示ボタン
+        self.bt_dp = Bt(self.frm, text=g.lg.viw, width=20, command=self.viw_win)  # 表示ボタン
         self.bt_ss = Bt(
-            self.master, text=g.lg.stt, font=("", 15),
+            self.frm, text=g.lg.stt, font=("", 15),
             width=10, height=2, command=self.ps_ss
         )   # 開始/停止ボタン
         self.bt_rs = tk.Button(
-            self.master, text=g.lg.rst, font=("", 15),
+            self.frm, text=g.lg.rst, font=("", 15),
             width=10, height=2, command=self.ps_rs
         )   # 初期化ボタン
-        self.bt_cv = Bt(self.master, text=g.lg.ccv, width=20, command=self.ps_cv)  # 現在値変更ボタン
+        self.bt_cv = Bt(self.frm, text=g.lg.ccv, width=20, command=self.ps_cv)  # 現在値変更ボタン
 
         # ウインドウの定義
         self.master.title(g.lg.mwn)          # ウインドウタイトル
@@ -53,6 +56,7 @@ class MainWin(tk.Frame):
 
     # ウィジェット
     def widgets(self: tk.Tk):
+        self.frm.pack(expand=True)
         self.bt_dp.place(x=60, y=100)
         self.bt_ss.place(x=80, y=20)
         self.bt_rs.place(x=230, y=20)
@@ -161,6 +165,43 @@ class MainWin(tk.Frame):
         self.master.bind("<ButtonRelease>", m_release)
         self.master.bind("<KeyPress>", k_press)
         self.master.bind("<KeyRelease>", k_release)
+
+
+# メニューバークラス
+class Menu:
+    def __init__(self, mw):
+        # 定義
+        self.mw = mw
+        self.bar = tk.Menu(self.mw.master)  # メニューバー
+        self.fil = tk.Menu(self.bar, tearoff=0)  # ファイルメニュー
+        self.wtc = tk.Button(self.bar)  # タイマーメニュー
+        self.set = tk.Menu(self.bar, tearoff=0)  # 設定メニュー
+        self.rsv = tk.Menu(self.bar, tearoff=0)  # 予約メニュー
+        self.hlp = tk.Menu(self.bar, tearoff=0)  # ヘルプメニュー
+
+        # 設定
+        self.mw.master.configure(menu=self.bar)  # メニューバー追加
+        self.bar.add_command(label=g.lg.fil, command=self.hoge)       # ファイルコマンド追加
+        self.bar.add_command(label=g.lg.swc, command=self.mw.wt.widgets)  # タイマーコマンド追加
+        self.bar.add_command(label=g.lg.set, command=self.hoge)  # 設定コマンド追加
+        self.bar.add_command(label=g.lg.rsv, command=self.hoge)  # 予約コマンド追加
+        self.bar.add_command(label=g.lg.hlp, command=self.hoge)  # ヘルプコマンド追加
+
+    def hoge(self):
+        pass
+
+
+# ストップウォッチクラス
+class Watch:
+    def __init__(self, mw):
+        # 定義
+        self.mw = mw
+        self.ssb = tk.Button(self.mw.master)
+
+    def widgets(self):
+        print("hi")
+        self.mw.frm.destroy()
+        # self.ssb.pack()
 
 
 # 設定表クラス

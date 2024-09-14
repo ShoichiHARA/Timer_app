@@ -4,6 +4,7 @@ lg = language.Language("JPN")
 clr0 = "#000000"
 bgc0 = "#FFFFFF"
 rwc0 = "#00FF00"
+md_cmd = False
 row = 6
 ccd = {
     "white": "#FFFFFF", "black": "#000000",
