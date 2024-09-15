@@ -16,23 +16,21 @@ class MainWin(tk.Frame):
         self.now = fc.Time()                # 現在時刻
         self.clr = g.clr0            # 文字色
         self.bgc = g.bgc0            # 背景色
-        self.frm = tk.Frame(self.master, height=300, width=430)
+        self.frm = tk.Frame(self.master, width=400, height=280)
         self.cnt = False                    # カウントアップ
         self.lst = tk.Label(self.frm, text=g.lg.ccr)  # 設定表のラベル
         self.lrv = tk.Label(self.frm, text=g.lg.rss)  # 予約表のラベル
         self.set_tab = SetTab(self)         # 設定表
         self.rsv_tab = RsvTab(self)         # 予約表
         self.tmr = fc.Time()                # 表示時間
-        self.etr = tk.Entry(self.frm, width=50)  # コマンド入力欄
-        self.bt_dp = Bt(self.frm, text=g.lg.viw, width=20, command=self.viw_win)  # 表示ボタン
-        self.bt_cv = Bt(self.frm, text=g.lg.ccv, width=20, command=self.ps_cv)  # 現在値変更ボタン
-
+        self.etr = tk.Entry(self.master, width=50)  # コマンド入力欄
         self.wt = Watch(self)
+        self.st = Setting(self)
         self.mn = Menu(self)
 
         # ウインドウの定義
         self.master.title(g.lg.mwn)          # ウインドウタイトル
-        self.master.geometry("430x300")      # ウインドウサイズ
+        self.master.geometry("400x300")      # ウインドウサイズ
         self.master.resizable(False, False)  # サイズ変更禁止
         self.widgets()                       # ウィジェット
         self.event()                         # イベント
@@ -48,10 +46,6 @@ class MainWin(tk.Frame):
 
     # ウィジェット
     def widgets(self: tk.Tk):
-        # self.bt_dp.place(x=60, y=100)
-        # self.bt_ss.place(x=80, y=20)
-        # self.bt_rs.place(x=230, y=20)
-        # self.bt_cv.place(x=220, y=100)
         self.lst.place(x=10, y=150)   # 設定表タイトル
         self.set_tab.frm.place(x=10, y=170)  # 設定表
         self.lrv.place(x=250, y=150)  # 予約表タイトル
@@ -94,10 +88,6 @@ class MainWin(tk.Frame):
             self.chg_app = ChanColorWin(self.chg_mas, self, typ, clr)
             self.chg_mas.focus_set()
 
-    # 現在値変更ボタン押下
-    def ps_cv(self):
-        self.tim_win("ccv", self.tmr)
-
     # コマンド入力(仮)
     def in_cd(self, e):
         err = fc.command(None, self, self.etr.get())
@@ -127,7 +117,8 @@ class MainWin(tk.Frame):
             if "c" in self.keys:
                 if "m" in self.keys:
                     if "d" in self.keys:
-                        self.etr.place(x=65, y=0)
+                        print("entry")
+                        self.etr.place(x=50, y=280)
                         self.etr.focus_set()
                         self.etr.bind("<Key-Return>", self.in_cd)
             if e.keysym == "space":
@@ -160,7 +151,7 @@ class Menu:
         self.mw.master.configure(menu=self.bar)  # メニューバー追加
         self.bar.add_command(label=g.lg.fil, command=self.hoge)       # ファイルコマンド追加
         self.bar.add_command(label=g.lg.swc, command=self.mw.wt.widgets)  # タイマーコマンド追加
-        self.bar.add_command(label=g.lg.set, command=self.hoge)  # 設定コマンド追加
+        self.bar.add_command(label=g.lg.set, command=self.mw.st.widgets)  # 設定コマンド追加
         self.bar.add_command(label=g.lg.rsv, command=self.hoge)  # 予約コマンド追加
         self.bar.add_command(label=g.lg.hlp, command=self.hoge)  # ヘルプコマンド追加
 
@@ -170,31 +161,57 @@ class Menu:
 
 # ストップウォッチクラス
 class Watch:
-    def __init__(self, mw):
+    def __init__(self, mw: MainWin):
         # 定義
         self.mw = mw
-        self.ssb = tk.Button(self.mw.frm)
-        self.rst = tk.Button(
-            self.mw.frm
-        )   # 初期化ボタン
+        self.wtc = None
+        self.ssb = None
+        self.rst = None
+        self.dsp = None
+
+    def tim_win(self, e):  # コード次第でなくせるかも？
+        self.mw.tim_win("ccv", self.mw.tmr)
 
     def widgets(self):
-        print("hi")
-        # 設定
-        self.ssb.configure(
-            text=g.lg.stt, font=("", 15), width=10, height=2,
+        print("Watch")
+        # 定義
+        self.mw.frm.destroy()  # フレーム破壊
+        self.mw.frm = tk.Frame(self.mw.master, width=400, height=280)  # 新たに生成
+        self.wtc = tk.Label(self.mw.frm, text=self.mw.tmr.out_txt(), font=("", 60))
+        self.wtc.bind("<Button-1>", self.tim_win)
+        self.ssb = tk.Button(
+            self.mw.frm, text=g.lg.stt, font=("", 15), width=15, height=3,
             command=partial(fc.command, e=None, mw=self.mw, cmd="ss")
         )  # 開始/停止ボタン
-        self.rst.configure(
-            text=g.lg.rst, font=("", 15), width=10, height=2,
+        self.rst = tk.Button(
+            self.mw.frm, text=g.lg.rst, font=("", 15), width=15, height=3,
             command=partial(fc.command, e=None, mw=self.mw, cmd="rst")
+        )  # 初期化ボタン
+        self.dsp = tk.Button(
+            self.mw.frm, text=g.lg.viw, font=("", 15), width=32, height=1,
+            command=partial(fc.command, e=None, mw=self.mw, cmd="view")
         )
 
         # 配置
-        self.mw.bt_dp.place(x=60, y=100)  # 表示ボタン
-        self.ssb.place(x=80, y=20)         # 開始/停止ボタン
-        self.rst.place(x=230, y=20)   # 初期化ボタン
-        self.mw.bt_cv.place(x=220, y=100)  # 現在値変更ボタン
+        self.wtc.place(x=15, y=20)    # 現在値
+        self.ssb.place(x=20, y=120)   # 開始/停止ボタン
+        self.rst.place(x=210, y=120)  # 初期化ボタン
+        self.dsp.place(x=22, y=210)   # 表示ボタン
+        self.mw.frm.pack(fill=tk.BOTH)
+
+
+# 設定クラス
+class Setting:
+    def __init__(self, mw: MainWin):
+        self.mw = mw
+
+    def widgets(self):
+        print("Setting")
+        # 定義
+        self.mw.frm.destroy()
+        self.mw.frm = tk.Frame(self.mw.master, width=400, height=280)
+
+        # 配置
         self.mw.frm.pack(fill=tk.BOTH)
 
 
@@ -417,6 +434,7 @@ class ViewWin(tk.Frame):
         self.mw.tmr.out_seg(
             self.cvs, clr, bgc, self.wwd/2, self.whg/2, self.siz
         )  # 7セグ表示
+        self.mw.wt.wtc.configure(text=self.mw.tmr.out_txt())
 
         self.master.after(2, self.re_frm)  # 0.002s後再描画
 
@@ -429,7 +447,6 @@ class ViewWin(tk.Frame):
 
         self.bind("<Configure>", win_size)
         self.master.bind("<KeyPress-space>", partial(fc.command, mw=self.mw, cmd="ss"))
-        # self.master.bind("<KeyPress-space>", fc.command(mw=self.mw, cmd="ss"))
 
 
 # 時間変更ウインドウ

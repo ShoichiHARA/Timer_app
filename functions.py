@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
+from tkinter import colorchooser
 from datetime import datetime
 import global_val as g
 
@@ -187,6 +188,12 @@ class SevenSeg:
 def command(e, mw: MainWin, cmd: str):
     cmd = cmd.split()
     err = 0
+
+    # 色変更ウインドウ
+    if cmd[0] == "clr":
+        clr = colorchooser.askcolor(mw.clr, title=g.lg.ccr)
+        mw.clr = clr[1]
+        print(mw.clr)
 
     # アプリケーション終了
     if cmd[0] == "exit":
