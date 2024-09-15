@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from datetime import datetime
+import global_val as g
 
 if TYPE_CHECKING:
     from application import MainWin
@@ -183,9 +184,21 @@ class SevenSeg:
 
 
 # コマンド入力
-def command(mw: MainWin, cmd: str):
+def command(e, mw: MainWin, cmd: str):
     cmd = cmd.split()
     err = 0
+
+    # アプリケーション終了
+    if cmd[0] == "exit":
+        mw.master.destroy()
+
+    # タイマー初期化
+    elif cmd[0] == "rst":
+        mw.set_tab.tab[mw.set_tab.crt].configure(bg="SystemButtonFace")
+        mw.rsv_tab.tab[mw.rsv_tab.crt].configure(bg="SystemButtonFace")
+        mw.set_tab.crt = 4
+        mw.rsv_tab.crt = 3
+        mw.tmr.set_int(0)
 
     # 予約設定
     if cmd[0] == "rsv":
@@ -202,6 +215,24 @@ def command(mw: MainWin, cmd: str):
                 break
         mw.set_tab.update()
 
+    # タイマー開始/停止
+    elif cmd[0] == "ss":
+        mw.cnt = not mw.cnt
+        if mw.cnt:
+            mw.wt.ssb.configure(text=g.lg.stp)
+        else:
+            mw.wt.ssb.configure(text=g.lg.stt)
+
+    # タイマー開始
+    elif cmd[0] == "start":
+        mw.cnt = True
+        mw.wt.ssb.configure(text=g.lg.stp)
+
+    # タイマー停止
+    elif cmd[0] == "stop":
+        mw.cnt = False
+        mw.wt.ssb.configure(text=g.lg.stt)
+
     # 現在値変更
     elif cmd[0] == "tmr":
         err = mw.tmr.set_txt(cmd[1])
@@ -215,9 +246,10 @@ def command(mw: MainWin, cmd: str):
     if err != 0:
         print("err", err)
     else:
-        print("else")
+        print("cmd OK")
         mw.etr.delete(0, "end")
         # mw.master.attributes("-topmost", True)
         # mw.master.attributes("-topmost", False)
-        mw.master.focus_set()
-        mw.etr.focus_set()  # 入力欄にフォーカスを設定したい
+        # mw.master.focus_set()
+        # mw.etr.focus_set()  # 入力欄にフォーカスを設定したい
+    return err

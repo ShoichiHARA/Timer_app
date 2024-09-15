@@ -12,13 +12,11 @@ class MainWin(tk.Frame):
         self.pack()               # 配置
 
         # 定義
-        self.wt = Watch(self)
-        self.mn = Menu(self)
         self.keys = []                      # キーボードの状態
         self.now = fc.Time()                # 現在時刻
         self.clr = g.clr0            # 文字色
         self.bgc = g.bgc0            # 背景色
-        self.frm = tk.Frame(self.master, bg="lime")
+        self.frm = tk.Frame(self.master, height=300, width=430)
         self.cnt = False                    # カウントアップ
         self.lst = tk.Label(self.frm, text=g.lg.ccr)  # 設定表のラベル
         self.lrv = tk.Label(self.frm, text=g.lg.rss)  # 予約表のラベル
@@ -26,17 +24,11 @@ class MainWin(tk.Frame):
         self.rsv_tab = RsvTab(self)         # 予約表
         self.tmr = fc.Time()                # 表示時間
         self.etr = tk.Entry(self.frm, width=50)  # コマンド入力欄
-
         self.bt_dp = Bt(self.frm, text=g.lg.viw, width=20, command=self.viw_win)  # 表示ボタン
-        self.bt_ss = Bt(
-            self.frm, text=g.lg.stt, font=("", 15),
-            width=10, height=2, command=self.ps_ss
-        )   # 開始/停止ボタン
-        self.bt_rs = tk.Button(
-            self.frm, text=g.lg.rst, font=("", 15),
-            width=10, height=2, command=self.ps_rs
-        )   # 初期化ボタン
         self.bt_cv = Bt(self.frm, text=g.lg.ccv, width=20, command=self.ps_cv)  # 現在値変更ボタン
+
+        self.wt = Watch(self)
+        self.mn = Menu(self)
 
         # ウインドウの定義
         self.master.title(g.lg.mwn)          # ウインドウタイトル
@@ -56,11 +48,10 @@ class MainWin(tk.Frame):
 
     # ウィジェット
     def widgets(self: tk.Tk):
-        self.frm.pack(expand=True)
-        self.bt_dp.place(x=60, y=100)
-        self.bt_ss.place(x=80, y=20)
-        self.bt_rs.place(x=230, y=20)
-        self.bt_cv.place(x=220, y=100)
+        # self.bt_dp.place(x=60, y=100)
+        # self.bt_ss.place(x=80, y=20)
+        # self.bt_rs.place(x=230, y=20)
+        # self.bt_cv.place(x=220, y=100)
         self.lst.place(x=10, y=150)   # 設定表タイトル
         self.set_tab.frm.place(x=10, y=170)  # 設定表
         self.lrv.place(x=250, y=150)  # 予約表タイトル
@@ -103,29 +94,15 @@ class MainWin(tk.Frame):
             self.chg_app = ChanColorWin(self.chg_mas, self, typ, clr)
             self.chg_mas.focus_set()
 
-    # 開始/停止ボタン押下
-    def ps_ss(self, e=None):
-        self.cnt = not self.cnt
-        if self.cnt:
-            self.bt_ss.configure(text=g.lg.stp)
-        else:
-            self.bt_ss.configure(text=g.lg.stt)
-
-    # 初期化ボタン押下
-    def ps_rs(self):
-        self.set_tab.tab[self.set_tab.crt].configure(bg="SystemButtonFace")
-        self.rsv_tab.tab[self.rsv_tab.crt].configure(bg="SystemButtonFace")
-        self.set_tab.crt = 4
-        self.rsv_tab.crt = 3
-        self.tmr.set_int(0)
-
     # 現在値変更ボタン押下
     def ps_cv(self):
         self.tim_win("ccv", self.tmr)
 
     # コマンド入力(仮)
     def in_cd(self, e):
-        fc.command(self, self.etr.get())
+        err = fc.command(None, self, self.etr.get())
+        if err != 0:  # エラー
+            pass
 
     # イベント
     def event(self):
@@ -196,12 +173,29 @@ class Watch:
     def __init__(self, mw):
         # 定義
         self.mw = mw
-        self.ssb = tk.Button(self.mw.master)
+        self.ssb = tk.Button(self.mw.frm)
+        self.rst = tk.Button(
+            self.mw.frm
+        )   # 初期化ボタン
 
     def widgets(self):
         print("hi")
-        self.mw.frm.destroy()
-        # self.ssb.pack()
+        # 設定
+        self.ssb.configure(
+            text=g.lg.stt, font=("", 15), width=10, height=2,
+            command=partial(fc.command, e=None, mw=self.mw, cmd="ss")
+        )  # 開始/停止ボタン
+        self.rst.configure(
+            text=g.lg.rst, font=("", 15), width=10, height=2,
+            command=partial(fc.command, e=None, mw=self.mw, cmd="rst")
+        )
+
+        # 配置
+        self.mw.bt_dp.place(x=60, y=100)  # 表示ボタン
+        self.ssb.place(x=80, y=20)         # 開始/停止ボタン
+        self.rst.place(x=230, y=20)   # 初期化ボタン
+        self.mw.bt_cv.place(x=220, y=100)  # 現在値変更ボタン
+        self.mw.frm.pack(fill=tk.BOTH)
 
 
 # 設定表クラス
@@ -360,13 +354,15 @@ class RsvTab:
             if self.tab[self.crt+1]["text"] == "":  # 空欄の場合
                 pass
             elif self.tab[self.crt+1]["text"] == tmr.out_txt():  # 現在の時間と同じ場合
-                self.mw.ps_ss()    # カウント開始
+                # self.mw.ps_ss()    # カウント開始
+                fc.command(None, self.mw, "start")  # カウント開始
                 self.crt_rsv(tmr)  # もう一度関数実行
         elif self.mw.cnt is True:  # タイマーが動いている場合
             if self.tab[self.crt+2]["text"] == "":  # 空欄の場合
                 pass
             elif self.tab[self.crt+2]["text"] == tmr.out_txt():  # 現在の時間と同じ場合
-                self.mw.ps_ss()  # カウント停止
+                # self.mw.ps_ss()  # カウント停止
+                fc.command(None, self.mw, "stop")  # カウント停止
                 if self.tab[self.crt+3]["text"] != "":  # 現在の次が空白でない場合
                     self.crt += 3  # 次の行へ
                     self.crt_rsv(tmr)  # もう一度関数実行
@@ -432,7 +428,8 @@ class ViewWin(tk.Frame):
             self.siz = self.wwd // 85
 
         self.bind("<Configure>", win_size)
-        self.master.bind("<KeyPress-space>", self.mw.ps_ss)
+        self.master.bind("<KeyPress-space>", partial(fc.command, mw=self.mw, cmd="ss"))
+        # self.master.bind("<KeyPress-space>", fc.command(mw=self.mw, cmd="ss"))
 
 
 # 時間変更ウインドウ
