@@ -207,6 +207,55 @@ class Setting:
         self.mw = mw
         self.add = None
         self.dlt = None
+        self.tit = None
+        self.tab = None
+        self.scr = None
+        self.set = [""] * g.row * 4
+
+    def widgets(self):
+        print("Setting")
+        # 定義
+        self.mw.frm.destroy()
+        self.mw.frm = tk.Frame(self.mw.master, width=400, height=280)
+        self.tit = tk.Canvas(self.mw.frm, width=322, height=25, bg="silver")  # 表タイトル
+        self.tab = tk.Canvas(
+            self.mw.frm, width=322, height=g.row*25+2, bg="pink",
+            scrollregion=(0, 0, 200, 400)
+        )  # 設定表
+        self.scr = tk.Scrollbar(
+            self.mw.frm, orient=tk.VERTICAL, command=self.tab.yview
+        )
+        self.tab.configure(yscrollcommand=self.scr.set)
+
+        # タイトル行設定
+        self.tit.create_text(40, 13, text="No.", font=("", 10))
+        self.tit.create_text(120, 13, text=g.lg.tim, font=("", 10))
+        self.tit.create_text(200, 13, text=g.lg.clr, font=("", 10))
+        self.tit.create_text(280, 13, text=g.lg.bgc, font=("", 10))
+        self.tit.create_rectangle(2, 2, 82, 25)
+        self.tit.create_rectangle(82, 2, 162, 25)
+        self.tit.create_rectangle(162, 2, 242, 25)
+        self.tit.create_rectangle(242, 2, 322, 25)
+
+        print(g.row*4)
+        for i in range(g.row*4):
+            self.tab.create_text(i%4*80+40, i//4*25+13, text=str(i), font=("", 10))
+            self.tab.create_rectangle(i%4*80+2, i//4*25+2, i%4*80+82, i//4*25+27)
+
+        # 配置
+        self.tab.place(x=40, y=55)
+        self.tit.place(x=40, y=20)
+        self.scr.place(x=350, y=55, height=200)
+        self.mw.frm.place(x=0, y=0)
+
+
+# 設定クラス
+class Setting1:
+    def __init__(self, mw: MainWin):
+        # 定義
+        self.mw = mw
+        self.add = None
+        self.dlt = None
         self.frm = None
         self.tab = []
         self.cvs = None
@@ -247,7 +296,7 @@ class Setting:
         # print(self.tab)
 
     def widgets(self):
-        print("Setting")
+        print("Setting1")
         # 定義
         self.mw.frm.destroy()
         self.mw.frm = tk.Frame(self.mw.master, width=400, height=280)
