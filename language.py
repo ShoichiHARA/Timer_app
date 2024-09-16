@@ -27,6 +27,8 @@ class Language:
                 self.tim = output(i, ["Time", "時間"])
                 self.clr = output(i, ["tx color", "文字色"])
                 self.bgc = output(i, ["bg color", "背景色"])
+                self.rad = output(i, ["row add", "行追加"])
+                self.rdl = output(i, ["row del", "行削除"])
                 self.ook = output(i, ["ok", "決定"])
                 self.dlt = output(i, ["delete", "削除"])
                 self.ccl = output(i, ["cancel", "取消"])
