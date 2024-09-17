@@ -210,22 +210,23 @@ class Setting:
         self.tit = None
         self.tab = None
         self.scr = None
-        self.set = [""] * g.row * 4
+        self.row = g.row + 2
+        self.txt = [""] * g.row * 4
 
     def widgets(self):
         print("Setting")
         # 定義
         self.mw.frm.destroy()
         self.mw.frm = tk.Frame(self.mw.master, width=400, height=280)
-        self.tit = tk.Canvas(self.mw.frm, width=322, height=25, bg="silver")  # 表タイトル
+        self.add = tk.Button(self.mw.frm, text=g.lg.rad, command=self.ps_ad)  # 行追加ボタン
+        self.dlt = tk.Button(self.mw.frm, text=g.lg.rdl, command=self.ps_dl)  # 行削除ボタン
+        self.tit = tk.Canvas(self.mw.frm, width=322, height=25, bg="silver")  # タイトル行
+        self.scr = tk.Scrollbar(self.mw.frm, orient=tk.VERTICAL)  # スクロールバー
         self.tab = tk.Canvas(
             self.mw.frm, width=322, height=g.row*25+2, bg="pink",
-            scrollregion=(0, 0, 200, 400)
+            scrollregion=(0, 0, 322, self.row*25+2), yscrollcommand=self.scr.set
         )  # 設定表
-        self.scr = tk.Scrollbar(
-            self.mw.frm, orient=tk.VERTICAL, command=self.tab.yview
-        )
-        self.tab.configure(yscrollcommand=self.scr.set)
+        self.scr.configure(command=self.tab.yview)
 
         # タイトル行設定
         self.tit.create_text(40, 13, text="No.", font=("", 10))
@@ -239,14 +240,48 @@ class Setting:
 
         print(g.row*4)
         for i in range(g.row*4):
-            self.tab.create_text(i%4*80+40, i//4*25+13, text=str(i), font=("", 10))
-            self.tab.create_rectangle(i%4*80+2, i//4*25+2, i%4*80+82, i//4*25+27)
+            self.tab.create_text(
+                i%4*80+40, i//4*25+13, text=self.txt[i], font=("", 10)
+            )  # 表に入る文字
+            rec = self.tab.create_rectangle(
+                i%4*80+2, i//4*25+2, i%4*80+82, i//4*25+27, tag=i
+            )  # 表の格子
+            self.tab.tag_bind(rec, "<Button-1>", self.ck_tb)  # 表クリックイベント
 
         # 配置
-        self.tab.place(x=40, y=55)
-        self.tit.place(x=40, y=20)
-        self.scr.place(x=350, y=55, height=200)
+        self.add.place(x=50, y=270)              # 行追加ボタン
+        self.dlt.place(x=150, y=270)             # 行削除ボタン
+        self.tab.place(x=40, y=55)               # 設定表キャンバス
+        self.tit.place(x=40, y=20)               # タイトル行キャンバス
+        self.scr.place(x=350, y=55, height=200)  # スクロールバー
         self.mw.frm.place(x=0, y=0)
+
+    # 表クリック
+    def ck_tb(self, e):
+        print(e)
+
+    # 設定変更
+    def chance(self, xy, txt):
+        self.txt[xy] = txt
+        self.tab.itemconfig(tag=xy, text=txt)
+    
+    # 行追加ボタン押下
+    def ps_ad(self):
+        self.row += 1  # 行を追加
+        for i in range(4):
+            self.txt.append("")
+            self.tab.create_text(
+                i*80+40, i//4*25+13, text=self.txt[i], font=("", 10)
+            )  # 表に入る文字
+            rec = self.tab.create_rectangle(
+                i*80+2, self.row*25+2, i*80+82, self.row*25+27, tag=self.row*4+i
+            )  # 表の格子
+            self.tab.tag_bind(rec, "<Button-1>", self.ck_tb)  # 表クリックイベント
+        
+
+    # 行削除ボタン押下
+    def ps_dl(self):
+        pass
 
 
 # 設定クラス
