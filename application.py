@@ -141,11 +141,6 @@ class Menu:
         # 定義
         self.mw = mw
         self.bar = tk.Menu(self.mw.master)  # メニューバー
-        # self.fil = tk.Menu(self.bar, tearoff=0)  # ファイルメニュー
-        # self.wtc = tk.Button(self.bar)  # タイマーメニュー
-        # self.set = tk.Menu(self.bar, tearoff=0)  # 設定メニュー
-        # self.rsv = tk.Menu(self.bar, tearoff=0)  # 予約メニュー
-        # self.hlp = tk.Menu(self.bar, tearoff=0)  # ヘルプメニュー
 
         # 設定
         self.mw.master.configure(menu=self.bar)  # メニューバー追加
@@ -169,17 +164,13 @@ class Watch:
         self.rst = None
         self.dsp = None
 
-    def tim_win(self, e):  # コード次第でなくせるかも？
-        self.mw.tim_win(e, "ccv", self.mw.tmr)
-
     def widgets(self):
         print("Watch")
         # 定義
         self.mw.frm.destroy()  # フレーム破壊
         self.mw.frm = tk.Frame(self.mw.master, width=400, height=280)  # 新たに生成
         self.wtc = tk.Label(self.mw.frm, text=self.mw.tmr.out_txt(), font=("", 60))
-        self.wtc.bind("<Button-1>", self.tim_win)
-        # self.wtc.bind("<Button-1>", partial(self.mw.tim_win, typ="ccv", tim=self.mw.tmr))
+        self.wtc.bind("<Button-1>", partial(self.mw.tim_win, typ="ccv", tim=self.mw.tmr))
         self.ssb = tk.Button(
             self.mw.frm, text=g.lg.stt, font=("", 15), width=15, height=3,
             command=partial(fc.command, e=None, mw=self.mw, cmd="ss")
@@ -214,6 +205,9 @@ class Setting:
         self.row = g.row + 2
         self.txt = [""] * self.row * 4
 
+        self.txt[0] = "1"
+        self.txt[1] = "00:00:00.00"
+
     def widgets(self):
         print("Setting")
         # 定義
@@ -231,15 +225,15 @@ class Setting:
             scrollregion=(0, 0, 321, 25)
         )  # タイトル行
         self.scr.configure(command=self.tab.yview)
+        self.tab.bind("<Button-1>", self.ck)
 
         for i in range(self.row*4):
-            self.tab.create_text(
-                i%4*80+40, i//4*25+13, text=self.txt[i], font=("", 10), tags=i
-            )  # 表に入る文字
             rec = self.tab.create_rectangle(
                 i%4*80, i//4*25, i%4*80+80, i//4*25+25, fill="SystemButtonFace"
             )  # 表の格子
-            self.tab.tag_bind(rec, "<Button-1>", partial(self.ck_tb, xy=i))  # 表クリックイベント
+            self.tab.create_text(
+                i%4*80+40, i//4*25+13, text=self.txt[i], font=("", 10), tags="s"+str(i)
+            )  # 表に入る文字
 
         # タイトル行設定
         self.tit.create_text(40, 13, text="No.", font=("", 10))
@@ -258,20 +252,21 @@ class Setting:
         self.tit.place(x=40, y=20)               # タイトル行キャンバス
         self.scr.place(x=365, y=55, height=200)  # スクロールバー
         self.mw.frm.place(x=0, y=0)
-        # self.ps_dl()
         self.scr.set(0, g.row/self.row)
         self.mw.master.update()
 
     # 表クリック
-    def ck_tb(self, e, xy):
-        print(e, xy)
-        self.change(xy, "hey")
+    def ck(self, e):
+        x = e.x // 80
+        y = e.y // 25
+        print(e, x, y)
+        self.change(4*y+x, "hey")
 
     # 設定変更
     def change(self, xy, txt):
         print(xy)
         self.txt[xy] = txt
-        self.tab.itemconfig(tagOrId=xy, text=txt)
+        self.tab.itemconfig(tagOrId="s"+str(xy), text=txt)
     
     # 行追加ボタン押下
     def ps_ad(self):
@@ -283,15 +278,15 @@ class Setting:
             self.tab.create_text(
                 i*80+40, i//4*25+13, text=self.txt[i], font=("", 10), tags=self.row*4+i
             )  # 表に入る文字
-            rec = self.tab.create_rectangle(
+            self.tab.create_rectangle(
                 i*80, self.row*25-25, i*80+80, self.row*25, fill="SystemButtonFace"
             )  # 表の格子
-            self.tab.tag_bind(rec, "<Button-1>", partial(self.ck_tb, xy=self.row*4+i))  # 表クリックイベント
 
     # 行削除ボタン押下
     def ps_dl(self):
-        y = self.scr.get()
-        print(y)
+        print(self.txt)
+        # y = self.scr.get()
+        # print(y)
 
 
 # 設定クラス

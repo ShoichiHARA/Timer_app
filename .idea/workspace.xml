@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="09/17&#10;設定クラス動作は問題ない&#10;位置の調整が必要&#10;関数のバインドが必要" />
+    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="09/18&#10;キャンバスの文字変更ができない" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -114,14 +114,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1723038717059</updated>
-    </task>
-    <task id="LOCAL-00025" summary="08/25&#10;表作成中">
-      <option name="closed" value="true" />
-      <created>1724603228402</created>
-      <option name="number" value="00025" />
-      <option name="presentableId" value="LOCAL-00025" />
-      <option name="project" value="LOCAL" />
-      <updated>1724603228402</updated>
     </task>
     <task id="LOCAL-00026" summary="08/25&#10;表のリストを一次化">
       <option name="closed" value="true" />
@@ -507,7 +499,15 @@
       <option name="project" value="LOCAL" />
       <updated>1726498827538</updated>
     </task>
-    <option name="localTasksCounter" value="74" />
+    <task id="LOCAL-00074" summary="09/18&#10;キャンバスの文字変更ができない">
+      <option name="closed" value="true" />
+      <created>1726610635978</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
+      <option name="project" value="LOCAL" />
+      <updated>1726610635978</updated>
+    </task>
+    <option name="localTasksCounter" value="75" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -522,7 +522,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="09/02&#10;exe化" />
     <MESSAGE value="09/02&#10;リリースv1.0" />
     <MESSAGE value="09/03&#10;停止予約のみを登録するとまっさらになるバグ修正&#10;予約時刻で開始させたときボタン文字を変更" />
     <MESSAGE value="09/03&#10;現在値変更を確定すると表示ウインドウが直接変わるバグ修正" />
@@ -547,6 +546,7 @@
     <MESSAGE value="09/16&#10;ストップウォッチクラスへほぼ完全に移行" />
     <MESSAGE value="09/17&#10;設定クラスを新たに作成したい&#10;cvsで描いてみる" />
     <MESSAGE value="09/17&#10;設定クラス動作は問題ない&#10;位置の調整が必要&#10;関数のバインドが必要" />
-    <option name="LAST_COMMIT_MESSAGE" value="09/17&#10;設定クラス動作は問題ない&#10;位置の調整が必要&#10;関数のバインドが必要" />
+    <MESSAGE value="09/18&#10;キャンバスの文字変更ができない" />
+    <option name="LAST_COMMIT_MESSAGE" value="09/18&#10;キャンバスの文字変更ができない" />
   </component>
 </project>
