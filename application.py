@@ -67,7 +67,7 @@ class MainWin(tk.Frame):
             self.viw_mas.focus_set()
 
     # 時間変更ウインドウ表示
-    def tim_win(self, typ, tim: fc.Time):
+    def tim_win(self, e, typ, tim: fc.Time):
         if self.chg_mas is None:
             self.chg_mas = tk.Toplevel(self.master)
             self.chg_app = ChanTimeWin(self.chg_mas, self, typ, tim)
@@ -141,11 +141,11 @@ class Menu:
         # 定義
         self.mw = mw
         self.bar = tk.Menu(self.mw.master)  # メニューバー
-        self.fil = tk.Menu(self.bar, tearoff=0)  # ファイルメニュー
-        self.wtc = tk.Button(self.bar)  # タイマーメニュー
-        self.set = tk.Menu(self.bar, tearoff=0)  # 設定メニュー
-        self.rsv = tk.Menu(self.bar, tearoff=0)  # 予約メニュー
-        self.hlp = tk.Menu(self.bar, tearoff=0)  # ヘルプメニュー
+        # self.fil = tk.Menu(self.bar, tearoff=0)  # ファイルメニュー
+        # self.wtc = tk.Button(self.bar)  # タイマーメニュー
+        # self.set = tk.Menu(self.bar, tearoff=0)  # 設定メニュー
+        # self.rsv = tk.Menu(self.bar, tearoff=0)  # 予約メニュー
+        # self.hlp = tk.Menu(self.bar, tearoff=0)  # ヘルプメニュー
 
         # 設定
         self.mw.master.configure(menu=self.bar)  # メニューバー追加
@@ -170,7 +170,7 @@ class Watch:
         self.dsp = None
 
     def tim_win(self, e):  # コード次第でなくせるかも？
-        self.mw.tim_win("ccv", self.mw.tmr)
+        self.mw.tim_win(e, "ccv", self.mw.tmr)
 
     def widgets(self):
         print("Watch")
@@ -179,6 +179,7 @@ class Watch:
         self.mw.frm = tk.Frame(self.mw.master, width=400, height=280)  # 新たに生成
         self.wtc = tk.Label(self.mw.frm, text=self.mw.tmr.out_txt(), font=("", 60))
         self.wtc.bind("<Button-1>", self.tim_win)
+        # self.wtc.bind("<Button-1>", partial(self.mw.tim_win, typ="ccv", tim=self.mw.tmr))
         self.ssb = tk.Button(
             self.mw.frm, text=g.lg.stt, font=("", 15), width=15, height=3,
             command=partial(fc.command, e=None, mw=self.mw, cmd="ss")
@@ -258,7 +259,8 @@ class Setting:
         self.scr.place(x=365, y=55, height=200)  # スクロールバー
         self.mw.frm.place(x=0, y=0)
         # self.ps_dl()
-        # self.scr.set(0, g.row/self.row)
+        self.scr.set(0, g.row/self.row)
+        self.mw.master.update()
 
     # 表クリック
     def ck_tb(self, e, xy):
@@ -267,6 +269,7 @@ class Setting:
 
     # 設定変更
     def change(self, xy, txt):
+        print(xy)
         self.txt[xy] = txt
         self.tab.itemconfig(tagOrId=xy, text=txt)
     
@@ -450,7 +453,7 @@ class SetTab:
                 if self.y > 1:  # 最初の時間は変更不可
                     if self.tab[xy]["text"] != "":  # 既に入力されていた場合
                         self.tmr.set_txt(self.tab[xy]["text"])  # クラス保存設定値を変更
-                    self.mw.tim_win("set", self.tmr)  # 時間設定ウインドウ表示
+                    self.mw.tim_win(None, "set", self.tmr)  # 時間設定ウインドウ表示
             elif self.x in [2, 3]:  # 文字色列、背景色列
                 if self.tab[xy]["text"] != "":  # 既に入力されている場合
                     self.clr = self.tab[xy]["text"]  # クラス保存設定値を変更
@@ -533,7 +536,7 @@ class RsvTab:
             if self.x != 0:  # 番号列でない場合
                 if self.tab[xy]["text"] != "":
                     self.tmr.set_txt(self.tab[xy]["text"])
-                self.mw.tim_win("rsv", self.tmr)  # 時間変更ウインドウ表示
+                self.mw.tim_win(None, "rsv", self.tmr)  # 時間変更ウインドウ表示
 
     # 表の更新
     def update(self, txt):
