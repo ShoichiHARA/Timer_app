@@ -205,8 +205,10 @@ class Setting:
         self.row = g.row + 2
         self.txt = [""] * self.row * 4
 
-        self.txt[0] = "1"
+        self.txt[0] = "0"
         self.txt[1] = "00:00:00.00"
+        self.txt[2] = g.clr0
+        self.txt[3] = g.bgc0
 
     def widgets(self):
         print("Setting")
@@ -225,15 +227,18 @@ class Setting:
             scrollregion=(0, 0, 321, 25)
         )  # タイトル行
         self.scr.configure(command=self.tab.yview)
-        self.tab.bind("<Button-1>", self.ck)
+        self.tab.bind("<Button-1>", self.ck_tb)
 
         for i in range(self.row*4):
-            rec = self.tab.create_rectangle(
-                i%4*80, i//4*25, i%4*80+80, i//4*25+25, fill="SystemButtonFace"
+            self.tab.create_rectangle(
+                i%4*80, i//4*25, i%4*80+80, i//4*25+25, fill="SystemButtonFace", tags="r"+str(i)
             )  # 表の格子
             self.tab.create_text(
-                i%4*80+40, i//4*25+13, text=self.txt[i], font=("", 10), tags="s"+str(i)
+                i%4*80+40, i//4*25+13, text=self.txt[i], font=("", 10), tags="t"+str(i)
             )  # 表に入る文字
+            if i % 4 in [2, 3]:  # 文字色列または背景色
+                if self.txt[i] != "":  # 空白でない場合
+                    self.tab.itemconfig("r"+str(i), fill=self.txt[i])  # 表の背景色変更
 
         # タイトル行設定
         self.tit.create_text(40, 13, text="No.", font=("", 10))
@@ -256,9 +261,11 @@ class Setting:
         self.mw.master.update()
 
     # 表クリック
-    def ck(self, e):
-        x = e.x // 80
-        y = e.y // 25
+    def ck_tb(self, e):
+        s = self.scr.get()              # スクロールバーの位置
+        d = s[0] * (self.row * 25 + 2)  # スクロール量（ピクセル）
+        x = e.x // 80                   # クリック列
+        y = (e.y + d) // 25             # クリック行
         print(e, x, y)
         self.change(4*y+x, "hey")
 
@@ -266,7 +273,18 @@ class Setting:
     def change(self, xy, txt):
         print(xy)
         self.txt[xy] = txt
-        self.tab.itemconfig(tagOrId="s"+str(xy), text=txt)
+        self.tab.itemconfig(tagOrId="t"+str(xy), text=txt)
+        if xy % 4 in [2, 3]:  # 文字色列または背景色
+            if self.txt[xy] != "":  # 空白の場合
+                self.tab.itemconfig(tagOrId="r"+str(xy), fill="SystemButtonFace")  # 表の背景色初期化
+            else:
+                self.tab.itemconfig(tagOrId"r"+str(xy), fill=self.txt[xy])  # 表の背景色変更
+
+        # 行が埋まっているか
+        y = xy // 4
+        if (self.txt[y+1] != "") and (self.txt[y+2] != "") and (self.txt[y+3] != ""):
+            self.txt[4*y] = str(y)
+            self.tab.itemconfig(tagOrId="t"+str(4*y), text=str(y))
     
     # 行追加ボタン押下
     def ps_ad(self):
