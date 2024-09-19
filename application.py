@@ -219,12 +219,12 @@ class Setting:
         self.dlt = tk.Button(self.mw.frm, text=g.lg.rdl, command=self.ps_dl)  # 行削除ボタン
         self.scr = tk.Scrollbar(self.mw.frm, orient=tk.VERTICAL)  # スクロールバー
         self.tab = tk.Canvas(
-            self.mw.frm, width=321, height=g.row*25+2,
+            self.mw.frm, width=321, height=g.row*25+1, highlightthickness=0,
             scrollregion=(0, 0, 321, self.row*25+2), yscrollcommand=self.scr.set
         )  # 設定表
         self.tit = tk.Canvas(
-            self.mw.frm, width=321, height=25, bg="silver",
-            scrollregion=(0, 0, 321, 25)
+            self.mw.frm, width=321, height=24, bg="silver", highlightthickness=0,
+            scrollregion=(0, 0, 321, 24)
         )  # タイトル行
         self.scr.configure(command=self.tab.yview)
         self.tab.bind("<Button-1>", self.ck_tb)
@@ -249,11 +249,12 @@ class Setting:
         self.tit.create_rectangle(80, 0, 160, 24)
         self.tit.create_rectangle(160, 0, 240, 24)
         self.tit.create_rectangle(240, 0, 320, 24)
+        self.tit.create_line(0, 23, 320, 23)
 
         # 配置
         self.add.place(x=50, y=250)              # 行追加ボタン
         self.dlt.place(x=150, y=250)             # 行削除ボタン
-        self.tab.place(x=40, y=45)               # 設定表キャンバス
+        self.tab.place(x=40, y=43)               # 設定表キャンバス
         self.tit.place(x=40, y=20)               # タイトル行キャンバス
         self.scr.place(x=365, y=55, height=200)  # スクロールバー
         self.mw.frm.place(x=0, y=0)
@@ -264,10 +265,11 @@ class Setting:
     def ck_tb(self, e):
         s = self.scr.get()              # スクロールバーの位置
         d = s[0] * (self.row * 25 + 2)  # スクロール量（ピクセル）
-        x = e.x // 80                   # クリック列
-        y = (e.y + d) // 25             # クリック行
+        x = (e.x - 2) // 80             # クリック列
+        y = (e.y + int(d)) // 25        # クリック行
+        print(e.y, d, y)
         print(e, x, y)
-        self.change(4*y+x, "hey")
+        self.change(4*y+x, "lime")
 
     # 設定変更
     def change(self, xy, txt):
@@ -275,16 +277,19 @@ class Setting:
         self.txt[xy] = txt
         self.tab.itemconfig(tagOrId="t"+str(xy), text=txt)
         if xy % 4 in [2, 3]:  # 文字色列または背景色
-            if self.txt[xy] != "":  # 空白の場合
+            print("clr")
+            if self.txt[xy] == "":  # 空白の場合
                 self.tab.itemconfig(tagOrId="r"+str(xy), fill="SystemButtonFace")  # 表の背景色初期化
             else:
-                self.tab.itemconfig(tagOrId"r"+str(xy), fill=self.txt[xy])  # 表の背景色変更
+                print("hey")
+                self.tab.itemconfig(tagOrId="r"+str(xy), fill=self.txt[xy])  # 表の背景色変更
 
         # 行が埋まっているか
         y = xy // 4
-        if (self.txt[y+1] != "") and (self.txt[y+2] != "") and (self.txt[y+3] != ""):
+        if (self.txt[4*y+1] != "") and (self.txt[4*y+2] != "") and (self.txt[4*y+3] != ""):
             self.txt[4*y] = str(y)
             self.tab.itemconfig(tagOrId="t"+str(4*y), text=str(y))
+            print("yes")
     
     # 行追加ボタン押下
     def ps_ad(self):
@@ -642,7 +647,7 @@ class ViewWin(tk.Frame):
         self.mw.tmr.out_seg(
             self.cvs, clr, bgc, self.wwd/2, self.whg/2, self.siz
         )  # 7セグ表示
-        self.mw.wt.wtc.configure(text=self.mw.tmr.out_txt())
+        # self.mw.wt.wtc.configure(text=self.mw.tmr.out_txt())
 
         self.master.after(2, self.re_frm)  # 0.002s後再描画
 

@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="09/18&#10;キャンバスの文字変更ができない" />
+    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="09/19&#10;表をスクロールすると座標がずれる" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -114,14 +114,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1723038717059</updated>
-    </task>
-    <task id="LOCAL-00026" summary="08/25&#10;表のリストを一次化">
-      <option name="closed" value="true" />
-      <created>1724708442380</created>
-      <option name="number" value="00026" />
-      <option name="presentableId" value="LOCAL-00026" />
-      <option name="project" value="LOCAL" />
-      <updated>1724708442380</updated>
     </task>
     <task id="LOCAL-00027" summary="08/27&#10;表の座標取得に成功">
       <option name="closed" value="true" />
@@ -507,7 +499,15 @@
       <option name="project" value="LOCAL" />
       <updated>1726610635978</updated>
     </task>
-    <option name="localTasksCounter" value="75" />
+    <task id="LOCAL-00075" summary="09/19&#10;表をスクロールすると座標がずれる">
+      <option name="closed" value="true" />
+      <created>1726697070073</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1726697070073</updated>
+    </task>
+    <option name="localTasksCounter" value="76" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -522,7 +522,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="09/02&#10;リリースv1.0" />
     <MESSAGE value="09/03&#10;停止予約のみを登録するとまっさらになるバグ修正&#10;予約時刻で開始させたときボタン文字を変更" />
     <MESSAGE value="09/03&#10;現在値変更を確定すると表示ウインドウが直接変わるバグ修正" />
     <MESSAGE value="09/03&#10;設定、予約表の現在行に色を設定" />
@@ -547,6 +546,7 @@
     <MESSAGE value="09/17&#10;設定クラスを新たに作成したい&#10;cvsで描いてみる" />
     <MESSAGE value="09/17&#10;設定クラス動作は問題ない&#10;位置の調整が必要&#10;関数のバインドが必要" />
     <MESSAGE value="09/18&#10;キャンバスの文字変更ができない" />
-    <option name="LAST_COMMIT_MESSAGE" value="09/18&#10;キャンバスの文字変更ができない" />
+    <MESSAGE value="09/19&#10;表をスクロールすると座標がずれる" />
+    <option name="LAST_COMMIT_MESSAGE" value="09/19&#10;表をスクロールすると座標がずれる" />
   </component>
 </project>
