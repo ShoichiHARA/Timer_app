@@ -134,6 +134,31 @@ class MainWin(tk.Frame):
         self.master.bind("<KeyPress>", k_press)
         self.master.bind("<KeyRelease>", k_release)
 
+    # 再描画
+    def update(self):
+        self.cvs.delete("all")    # 表示リセット
+
+        # 再描画の判断
+        prv = self.now.n  # 前回の時刻
+        self.now.get_now()  # 現在時刻取得
+        if self.cnt == False:  # カウントが無効の場合
+            self.master.after(2, self.update)  # 0.002秒後再描画
+        if prv == self.mw.now.n:  # 時刻が進んでいない場合
+            self.master.after(2, self.update)  # 0.002秒後再描画
+            print("この文字列表示される？")  # 確認したら削除
+        self.tmr.n += self.now.n - prv  # 前回と今回の差分だけ進ませる
+
+        # 時間表示
+        self.wt.wtc.configure(text=self.tmr.out_txt())
+        if self.viw_mas is not None:
+            # clr, bgc = self.mw.set_tab.crt_set(self.mw.tmr)
+            # self.cvs.configure(bg=bgc)  # 背景色
+            self.mw.tmr.out_seg(
+                self.cvs, g.clr0, g.bgc0, self.viw_mas.wwd/2, self.viw_mas.whg/2, self.viw_mas.siz
+            )  # 7セグ表示
+
+        self.master.after(2, self.update)  # 0.002s後再描画
+
 
 # メニューバークラス
 class Menu:
@@ -159,6 +184,7 @@ class Watch:
     def __init__(self, mw: MainWin):
         # 定義
         self.mw = mw
+        self.frm = None
         self.wtc = None
         self.ssb = None
         self.rst = None
@@ -169,6 +195,7 @@ class Watch:
         # 定義
         self.mw.frm.destroy()  # フレーム破壊
         self.mw.frm = tk.Frame(self.mw.master, width=400, height=280)  # 新たに生成
+        # self.frm = tk.Frame(self.mw.master, width=400, height=230)
         self.wtc = tk.Label(self.mw.frm, text=self.mw.tmr.out_txt(), font=("", 60))
         self.wtc.bind("<Button-1>", partial(self.mw.tim_win, typ="ccv", tim=self.mw.tmr))
         self.ssb = tk.Button(
@@ -190,6 +217,7 @@ class Watch:
         self.rst.place(x=210, y=120)  # 初期化ボタン
         self.dsp.place(x=22, y=210)   # 表示ボタン
         self.mw.frm.place(x=0, y=0)
+        # self.frm.place(x=0, y=0)
 
 
 # 設定クラス
@@ -197,6 +225,7 @@ class Setting:
     def __init__(self, mw: MainWin):
         # 定義
         self.mw = mw
+        self.frm = None
         self.add = None
         self.dlt = None
         self.tab = None
@@ -249,7 +278,7 @@ class Setting:
         self.tit.create_rectangle(80, 0, 160, 24)
         self.tit.create_rectangle(160, 0, 240, 24)
         self.tit.create_rectangle(240, 0, 320, 24)
-        self.tit.create_line(0, 23, 320, 23)
+        # self.tit.create_line(0, 23, 320, 23)
 
         # 配置
         self.add.place(x=50, y=250)              # 行追加ボタン
