@@ -196,7 +196,7 @@ def command(e, mw: MainWin, cmd: str):
         print(mw.clr)
 
     # アプリケーション終了
-    if cmd[0] == "exit":
+    elif cmd[0] == "exit":
         mw.master.destroy()
 
     # タイマー初期化
@@ -208,8 +208,28 @@ def command(e, mw: MainWin, cmd: str):
         mw.tmr.set_int(0)
 
     # 予約設定
-    if cmd[0] == "rsv":
+    elif cmd[0] == "rsv":
         pass
+
+    # 場面変更
+    elif cmd[0] == "scn":
+        mw.wt.frm.pack_forget()
+        mw.st.frm.pack_forget()
+        if cmd[1] == "file":
+            pass
+        elif cmd[1] == "tmr":
+            mw.scn = "TMR"
+            mw.wt.frm.pack(expand=True, fill="both")
+        elif cmd[1] == "set":
+            mw.scn = "SET"
+            mw.st.frm.pack(expand=True, fill="both")
+        elif cmd[1] == "rsv":
+            pass
+        elif cmd[1] == "help":
+            pass
+        else:
+            err = 3
+        mw.etr.lift()
 
     # 色設定
     elif cmd[0] == "set":
@@ -255,7 +275,7 @@ def command(e, mw: MainWin, cmd: str):
     if err != 0:
         print("err", err)
     else:
-        print("cmd OK")
+        print(cmd[0], "cmd OK")
         mw.etr.delete(0, "end")
         # mw.master.attributes("-topmost", True)
         # mw.master.attributes("-topmost", False)

@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import Button as Bt
-from functools import partial
+from functools import partial as pt
 import functions as fc
 import global_val as g
 
@@ -16,10 +16,8 @@ class MainWin(tk.Frame):
         self.now = fc.Time()                # 現在時刻
         self.clr = g.clr0            # 文字色
         self.bgc = g.bgc0            # 背景色
-        self.frm = tk.Frame(self.master, width=400, height=280)
         self.cnt = False                    # カウントアップ
-        self.lst = tk.Label(self.frm, text=g.lg.ccr)  # 設定表のラベル
-        self.lrv = tk.Label(self.frm, text=g.lg.rss)  # 予約表のラベル
+        self.scn = "Tmr"
         self.set_tab = SetTab(self)         # 設定表
         self.rsv_tab = RsvTab(self)         # 予約表
         self.tmr = fc.Time()                # 表示時間
@@ -46,9 +44,7 @@ class MainWin(tk.Frame):
 
     # ウィジェット
     def widgets(self: tk.Tk):
-        self.lst.place(x=10, y=150)   # 設定表タイトル
         self.set_tab.frm.place(x=10, y=170)  # 設定表
-        self.lrv.place(x=250, y=150)  # 予約表タイトル
         self.rsv_tab.frm.place(x=250, y=170)  # 予約表
 
     # 終了
@@ -90,7 +86,7 @@ class MainWin(tk.Frame):
 
     # コマンド入力(仮)
     def in_cd(self, e):
-        err = fc.command(None, self, self.etr.get())
+        err = fc.command(e, self, self.etr.get())
         if err != 0:  # エラー
             pass
 
@@ -137,16 +133,11 @@ class MainWin(tk.Frame):
     # 再描画
     def reload(self):
         # 再描画の判断
-        if not self.cnt:  # カウントが無効の場合
-            self.master.after(200, self.reload)  # 0.002秒後再描画
-            return
-        prv = self.now.n  # 前回の時刻
-        self.now.get_now()  # 現在時刻取得
-        if prv == self.now.n:  # 時刻が進んでいない場合
-            self.master.after(200, self.reload)  # 0.002秒後再描画
-            # print("この文字列表示される？")  # 実行された
-            return
-        self.tmr.set_int(self.tmr.n + self.now.n - prv)  # 前回と今回の差分だけ進ませる
+        if self.cnt:  # カウントが有効の場合
+            prv = self.now.n  # 前回の時刻
+            self.now.get_now()  # 現在時刻取得
+            if prv != self.now.n:  # 時刻が進んでいる場合
+                self.tmr.set_int(self.tmr.n + self.now.n - prv)  # 前回と今回の差分だけ進ませる
 
         # 時間表示
         try:
@@ -161,7 +152,7 @@ class MainWin(tk.Frame):
                 self.viw_mas.cvs, g.clr0, g.bgc0, self.viw_mas.wwd/2, self.viw_mas.whg/2, self.viw_mas.siz
             )  # 7セグ表示
 
-        self.master.after(200, self.reload)  # 0.002s後再描画
+        self.master.after(2, self.reload)  # 0.002s後再描画
         return
 
 
@@ -175,8 +166,12 @@ class Menu:
         # 設定
         self.mw.master.configure(menu=self.bar)  # メニューバー追加
         self.bar.add_command(label=g.lg.fil, command=self.hoge)       # ファイルコマンド追加
-        self.bar.add_command(label=g.lg.swc, command=self.mw.wt.widgets)  # タイマーコマンド追加
-        self.bar.add_command(label=g.lg.set, command=self.mw.st.widgets)  # 設定コマンド追加
+        self.bar.add_command(
+            label=g.lg.swc, command=pt(fc.command, e=None, mw=mw, cmd="scn tmr")
+        )  # タイマーコマンド追加
+        self.bar.add_command(
+            label=g.lg.set, command=pt(fc.command, e=None, mw=mw, cmd="scn set")
+        )  # 設定コマンド追加
         self.bar.add_command(label=g.lg.rsv, command=self.hoge)  # 予約コマンド追加
         self.bar.add_command(label=g.lg.hlp, command=self.hoge)  # ヘルプコマンド追加
 
@@ -195,25 +190,25 @@ class Watch:
         self.rst = None
         self.dsp = None
 
+        self.widgets()
+
     def widgets(self):
         print("Watch")
         # 定義
-        self.mw.frm.destroy()  # フレーム破壊
-        self.mw.frm = tk.Frame(self.mw.master, width=400, height=280)  # 新たに生成
-        # self.frm = tk.Frame(self.mw.master, width=400, height=230)
-        self.wtc = tk.Label(self.mw.frm, text=self.mw.tmr.out_txt(), font=("", 60))
-        self.wtc.bind("<Button-1>", partial(self.mw.tim_win, typ="ccv", tim=self.mw.tmr))
+        self.frm = tk.Frame(self.mw.master, width=400, height=300)  # 新たに生成
+        self.wtc = tk.Label(self.frm, text=self.mw.tmr.out_txt(), font=("", 60))
+        self.wtc.bind("<Button-1>", pt(self.mw.tim_win, typ="ccv", tim=self.mw.tmr))
         self.ssb = tk.Button(
-            self.mw.frm, text=g.lg.stt, font=("", 15), width=15, height=3,
-            command=partial(fc.command, e=None, mw=self.mw, cmd="ss")
+            self.frm, text=g.lg.stt, font=("", 15), width=15, height=3,
+            command=pt(fc.command, e=None, mw=self.mw, cmd="ss")
         )  # 開始/停止ボタン
         self.rst = tk.Button(
-            self.mw.frm, text=g.lg.rst, font=("", 15), width=15, height=3,
-            command=partial(fc.command, e=None, mw=self.mw, cmd="rst")
+            self.frm, text=g.lg.rst, font=("", 15), width=15, height=3,
+            command=pt(fc.command, e=None, mw=self.mw, cmd="rst")
         )  # 初期化ボタン
         self.dsp = tk.Button(
-            self.mw.frm, text=g.lg.viw, font=("", 15), width=32, height=1,
-            command=partial(fc.command, e=None, mw=self.mw, cmd="view")
+            self.frm, text=g.lg.viw, font=("", 15), width=32, height=1,
+            command=pt(fc.command, e=None, mw=self.mw, cmd="view")
         )
 
         # 配置
@@ -221,8 +216,6 @@ class Watch:
         self.ssb.place(x=20, y=120)   # 開始/停止ボタン
         self.rst.place(x=210, y=120)  # 初期化ボタン
         self.dsp.place(x=22, y=210)   # 表示ボタン
-        self.mw.frm.place(x=0, y=0)
-        # self.frm.place(x=0, y=0)
 
 
 # 設定クラス
@@ -244,21 +237,23 @@ class Setting:
         self.txt[2] = g.clr0
         self.txt[3] = g.bgc0
 
+        self.widgets()
+
     def widgets(self):
         print("Setting")
         # 定義
-        self.mw.frm.destroy()
-        self.mw.frm = tk.Frame(self.mw.master, width=400, height=280)
-        self.add = tk.Button(self.mw.frm, text=g.lg.rad, command=self.ps_ad)  # 行追加ボタン
-        self.dlt = tk.Button(self.mw.frm, text=g.lg.rdl, command=self.ps_dl)  # 行削除ボタン
-        self.scr = tk.Scrollbar(self.mw.frm, orient=tk.VERTICAL)  # スクロールバー
+        # self.mw.frm.destroy()
+        self.frm = tk.Frame(self.mw.master, width=400, height=280)
+        self.add = tk.Button(self.frm, text=g.lg.rad, command=self.ps_ad)  # 行追加ボタン
+        self.dlt = tk.Button(self.frm, text=g.lg.rdl, command=self.ps_dl)  # 行削除ボタン
+        self.scr = tk.Scrollbar(self.frm, orient=tk.VERTICAL)  # スクロールバー
         self.tab = tk.Canvas(
-            self.mw.frm, width=321, height=g.row*25+1, highlightthickness=0,
+            self.frm, width=321, height=g.row*25+1, highlightthickness=0,
             scrollregion=(0, 0, 321, self.row*25+2), yscrollcommand=self.scr.set
         )  # 設定表
         self.tit = tk.Canvas(
-            self.mw.frm, width=321, height=24, bg="silver", highlightthickness=0,
-            scrollregion=(0, 0, 321, 24)
+            self.frm, width=321, height=25, bg="silver", highlightthickness=0,
+            scrollregion=(0, 0, 321, 25)
         )  # タイトル行
         self.scr.configure(command=self.tab.yview)
         self.tab.bind("<Button-1>", self.ck_tb)
@@ -283,17 +278,13 @@ class Setting:
         self.tit.create_rectangle(80, 0, 160, 24)
         self.tit.create_rectangle(160, 0, 240, 24)
         self.tit.create_rectangle(240, 0, 320, 24)
-        # self.tit.create_line(0, 23, 320, 23)
 
         # 配置
         self.add.place(x=50, y=250)              # 行追加ボタン
         self.dlt.place(x=150, y=250)             # 行削除ボタン
-        self.tab.place(x=40, y=43)               # 設定表キャンバス
+        self.tab.place(x=40, y=44)               # 設定表キャンバス44
         self.tit.place(x=40, y=20)               # タイトル行キャンバス
-        self.scr.place(x=365, y=55, height=200)  # スクロールバー
-        self.mw.frm.place(x=0, y=0)
-        self.scr.set(0, g.row/self.row)
-        self.mw.master.update()
+        self.scr.place(x=360, y=44, height=g.row*25+1)  # スクロールバー
 
     # 表クリック
     def ck_tb(self, e):
@@ -330,136 +321,21 @@ class Setting:
         print("addition")
         self.row += 1  # 行を追加
         self.tab.configure(scrollregion=(0, 0, 321, self.row*25+2))
-        for i in range(4):
+        for i in range(self.row*4-4, self.row*4):
             self.txt.append("")
-            self.tab.create_text(
-                i*80+40, i//4*25+13, text=self.txt[i], font=("", 10), tags=self.row*4+i
-            )  # 表に入る文字
             self.tab.create_rectangle(
-                i*80, self.row*25-25, i*80+80, self.row*25, fill="SystemButtonFace"
+                i%4*80, i//4*25, i%4*80+80, i//4*25+25, fill="SystemButtonFace", tags="r"+str(i)
             )  # 表の格子
+            self.tab.create_text(
+                i%4*80+40, i//4*25+13, text=self.txt[i], font=("", 10), tags="t"+str(i)
+            )  # 表に入る文字
 
     # 行削除ボタン押下
     def ps_dl(self):
+        # self.frm.pack_forget()
         print(self.txt)
         # y = self.scr.get()
         # print(y)
-
-
-# 設定クラス
-class Setting1:
-    def __init__(self, mw: MainWin):
-        # 定義
-        self.mw = mw
-        self.add = None
-        self.dlt = None
-        self.frm = None
-        self.tab = []
-        self.cvs = None
-        self.scr = None
-        self.lbl = None
-        self.txt = [""] * g.row * 4
-        self.crt = 4  # 現在の設定行
-        self.rgy = 400  # スクロール範囲
-
-        # 列名設定
-        self.txt[0] = "No."
-        self.txt[1] = g.lg.tim
-        self.txt[2] = g.lg.clr
-        self.txt[3] = g.lg.bgc
-        self.txt[4] = "1"
-        self.txt[5] = "00:00:00.00"
-        self.txt[6] = g.clr0
-        self.txt[7] = g.bgc0
-
-        """
-        # 表状ラベルの生成
-        for i in range(g.row*4):
-            self.tab.append(
-                tk.Label(self.frm, bd=2, width=9, height=1, font=("", 10), text=str(i))
-            )  # ラベルの生成
-
-        # 列名ラベル設定
-        self.tab[0].configure(text="No.", bg="silver")
-        self.tab[1].configure(text=g.lg.tim, bg="silver")
-        self.tab[2].configure(text=g.lg.clr, bg="silver")
-        self.tab[3].configure(text=g.lg.bgc, bg="silver")
-        self.tab[4].configure(text="1", bg=g.rwc0)
-        self.tab[5].configure(text="00:00:00.00")
-        self.tab[6].configure(text=g.clr0, bg=g.clr0)
-        self.tab[7].configure(text=g.bgc0, bg=g.bgc0)
-        """
-
-        # print(self.tab)
-
-    def widgets(self):
-        print("Setting1")
-        # 定義
-        self.mw.frm.destroy()
-        self.mw.frm = tk.Frame(self.mw.master, width=400, height=280)
-        self.add = tk.Button(self.mw.frm, text=g.lg.rad, command=self.ps_ad)  # 行追加ボタン
-        self.dlt = tk.Button(self.mw.frm, text=g.lg.rdl)  # 行削除ボタン
-        self.frm = tk.Frame(self.mw.frm, bg="black")  # 表用のフレーム
-        # self.frm.propagate(False)
-        # self.cvs = tk.Canvas(self.mw.frm, width=200, height=200, bg="lime", scrollregion=(0, 0, 200, 400))
-        self.scr = tk.Scrollbar(
-            self.mw.frm, orient=tk.VERTICAL, command=self.scroll
-        )
-        # self.lbl = tk.Label(self.cvs, text="hoge")
-        # self.scr = tk.Scale(self.mw.frm)
-
-        """
-        # ラベルを表状に生成
-        print(self.tab)
-        for i in range(g.row*4):
-            # self.tab[i].pack()
-            self.tab[i].grid(row=i//4, column=i%4, padx=1, pady=1)  # ラベルを配置
-            # self.tab[i].bind("<Button-1>", partial(self.click, xy=i))  # 関数を設定
-        """
-        self.table()
-
-        # 設定
-        self.scr.set(0, 200/self.rgy)
-        # self.cvs.create_rectangle(50, 50, 100, 150, fill="red")
-        # self.cvs.configure(yscrollcommand=self.scr.set)
-
-        # 配置
-        self.add.place(x=300, y=200)
-        self.dlt.place(x=300, y=220)
-        # self.cvs.place(x=50, y=50)
-        self.frm.place(x=20, y=50)
-        # self.scr.pack(side=tk.LEFT)
-        self.scr.place(x=270, y=50, height=200)
-        # self.lbl.place(x=50, y=50)
-        self.mw.frm.place(x=0, y=0)
-
-    def table(self):
-        self.tab = []
-        for i in range(g.row*4):
-            self.tab.append(
-                tk.Label(self.frm, bd=2, width=9, height=1, font=("", 10), text=self.txt[i])
-            )  # ラベルの生成
-            self.tab[i].grid(row=i//4, column=i%4, padx=1, pady=1)  # ラベルを配置
-            # self.tab[i].bind("<Button-1>", partial(self.click, xy=i))  # 関数を設定
-            if i < 4:
-                self.tab[i].configure(bg="silver")
-
-        # 列名ラベル設定
-        self.tab[6].configure(bg=g.clr0)
-        self.tab[7].configure(bg=g.bgc0)
-
-    def ps_ad(self):
-        # y0 = self.scr.get()
-        # print(y0)
-        print(self.frm)
-        print(self.frm["width"], self.frm["height"])
-
-    def scroll(self, e, y0, y1=None):
-        # print(e, y0, y1)
-        # y = self.scr.get()
-        # print(y)
-        if e == "moveto":
-            self.scr.set(y0, 200/self.rgy+float(y0))
 
 
 # 設定表クラス
@@ -481,7 +357,7 @@ class SetTab:
                 tk.Label(self.frm, bd=2, width=7, height=1, font=("", 9))
             )  # ラベルの生成
             self.tab[i].grid(row=i//4, column=i%4, padx=1, pady=1)  # ラベルを配置
-            self.tab[i].bind("<Button-1>", partial(self.click, xy=i))  # 関数を設定
+            self.tab[i].bind("<Button-1>", pt(self.click, xy=i))  # 関数を設定
 
         # 列名ラベル設定
         self.tab[0].configure(text="No.", bg="silver")
@@ -570,7 +446,7 @@ class RsvTab:
                 tk.Label(self.frm, bd=2, width=7, height=1, font=("", 9))
             )  # ラベルの生成
             self.tab[i].grid(row=i//3, column=i%3, padx=1, pady=1)  # ラベルを配置
-            self.tab[i].bind("<Button-1>", partial(self.click, xy=i))  # 関数を設定
+            self.tab[i].bind("<Button-1>", pt(self.click, xy=i))  # 関数を設定
 
         # 列名ラベル設定
         self.tab[0].configure(text="No.", bg="silver")
@@ -725,13 +601,13 @@ class ChanTimeWin(tk.Frame):
                 self.bt_ch[i] = tk.Button(
                     self.master, text="↑", width=10,
                     repeatdelay=1000, repeatinterval=50,
-                    command=partial(self.ps_ch, n=lst[i])
+                    command=pt(self.ps_ch, n=lst[i])
                 )
             else:
                 self.bt_ch[i] = tk.Button(
                     self.master, text="↓", width=10,
                     repeatdelay=1000, repeatinterval=50,
-                    command=partial(self.ps_ch, n=lst[i])
+                    command=pt(self.ps_ch, n=lst[i])
                 )
 
         # ボタンの無効化
