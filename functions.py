@@ -227,6 +227,7 @@ def command(e, mw: MainWin, cmd: str):
         mw.cnt = not mw.cnt
         if mw.cnt:
             mw.wt.ssb.configure(text=g.lg.stp)
+            mw.now.get_now()
         else:
             mw.wt.ssb.configure(text=g.lg.stt)
 
@@ -234,6 +235,7 @@ def command(e, mw: MainWin, cmd: str):
     elif cmd[0] == "start":
         mw.cnt = True
         mw.wt.ssb.configure(text=g.lg.stp)
+        mw.now.get_now()
 
     # タイマー停止
     elif cmd[0] == "stop":

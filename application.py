@@ -42,7 +42,7 @@ class MainWin(tk.Frame):
         self.chg_app = None
 
         # 現在時刻取得
-        self.now.get_now()
+        self.reload()
 
     # ウィジェット
     def widgets(self: tk.Tk):
@@ -59,11 +59,11 @@ class MainWin(tk.Frame):
     def viw_win(self):
         if self.viw_mas is None:
             self.viw_mas = tk.Toplevel(self.master)
-            self.viw_app = ViewWin(self.viw_mas, self)
+            # self.viw_app = ViewWin(self.viw_mas, self)
             self.viw_mas.focus_set()
         elif not self.viw_mas.winfo_exists():
             self.viw_mas = tk.Toplevel(self.master)
-            self.viw_app = ViewWin(self.viw_mas, self)
+            # self.viw_app = ViewWin(self.viw_mas, self)
             self.viw_mas.focus_set()
 
     # 時間変更ウインドウ表示
@@ -135,29 +135,34 @@ class MainWin(tk.Frame):
         self.master.bind("<KeyRelease>", k_release)
 
     # 再描画
-    def update(self):
-        self.cvs.delete("all")    # 表示リセット
-
+    def reload(self):
         # 再描画の判断
+        if not self.cnt:  # カウントが無効の場合
+            self.master.after(200, self.reload)  # 0.002秒後再描画
+            return
         prv = self.now.n  # 前回の時刻
         self.now.get_now()  # 現在時刻取得
-        if self.cnt == False:  # カウントが無効の場合
-            self.master.after(2, self.update)  # 0.002秒後再描画
-        if prv == self.mw.now.n:  # 時刻が進んでいない場合
-            self.master.after(2, self.update)  # 0.002秒後再描画
-            print("この文字列表示される？")  # 確認したら削除
-        self.tmr.n += self.now.n - prv  # 前回と今回の差分だけ進ませる
+        if prv == self.now.n:  # 時刻が進んでいない場合
+            self.master.after(200, self.reload)  # 0.002秒後再描画
+            # print("この文字列表示される？")  # 実行された
+            return
+        self.tmr.set_int(self.tmr.n + self.now.n - prv)  # 前回と今回の差分だけ進ませる
 
         # 時間表示
-        self.wt.wtc.configure(text=self.tmr.out_txt())
+        try:
+            self.wt.wtc.configure(text=self.tmr.out_txt())
+        except:
+            pass
         if self.viw_mas is not None:
+            self.viw_mas.cvs.delete("all")    # 表示リセット
             # clr, bgc = self.mw.set_tab.crt_set(self.mw.tmr)
             # self.cvs.configure(bg=bgc)  # 背景色
-            self.mw.tmr.out_seg(
-                self.cvs, g.clr0, g.bgc0, self.viw_mas.wwd/2, self.viw_mas.whg/2, self.viw_mas.siz
+            self.tmr.out_seg(
+                self.viw_mas.cvs, g.clr0, g.bgc0, self.viw_mas.wwd/2, self.viw_mas.whg/2, self.viw_mas.siz
             )  # 7セグ表示
 
-        self.master.after(2, self.update)  # 0.002s後再描画
+        self.master.after(200, self.reload)  # 0.002s後再描画
+        return
 
 
 # メニューバークラス
@@ -628,6 +633,7 @@ class RsvTab:
         self.tab[self.crt].configure(bg=g.rwc0)  # 現在の行に色付け
 
 
+"""
 # 表示ウインドウ
 class ViewWin(tk.Frame):
     def __init__(self: tk.Tk, master, mw):
@@ -647,7 +653,7 @@ class ViewWin(tk.Frame):
         self.widgets()  # ウィジェット
         self.event()    # イベント
 
-        self.re_frm()
+        # self.re_frm()
 
     def widgets(self: tk.Tk):
         # キャンバスの設定
@@ -689,6 +695,7 @@ class ViewWin(tk.Frame):
 
         self.bind("<Configure>", win_size)
         self.master.bind("<KeyPress-space>", partial(fc.command, mw=self.mw, cmd="ss"))
+"""
 
 
 # 時間変更ウインドウ
