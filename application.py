@@ -55,11 +55,11 @@ class MainWin(tk.Frame):
     def viw_win(self):
         if self.viw_mas is None:
             self.viw_mas = tk.Toplevel(self.master)
-            # self.viw_app = ViewWin(self.viw_mas, self)
+            self.viw_app = ViewWin(self.viw_mas, self)
             self.viw_mas.focus_set()
         elif not self.viw_mas.winfo_exists():
             self.viw_mas = tk.Toplevel(self.master)
-            # self.viw_app = ViewWin(self.viw_mas, self)
+            self.viw_app = ViewWin(self.viw_mas, self)
             self.viw_mas.focus_set()
 
     # 時間変更ウインドウ表示
@@ -118,7 +118,7 @@ class MainWin(tk.Frame):
                         self.etr.focus_set()
                         self.etr.bind("<Key-Return>", self.in_cd)
             if e.keysym == "space":
-                pass
+                print("hey")
 
         def k_release(e):  # キーボード離した場合
             self.keys.remove(e.keysym)
@@ -140,17 +140,10 @@ class MainWin(tk.Frame):
                 self.tmr.set_int(self.tmr.n + self.now.n - prv)  # 前回と今回の差分だけ進ませる
 
         # 時間表示
-        try:
-            self.wt.wtc.configure(text=self.tmr.out_txt())
-        except:
-            pass
-        if self.viw_mas is not None:
-            self.viw_mas.cvs.delete("all")    # 表示リセット
+        self.wt.wtc.configure(text=self.tmr.out_txt())
+        if self.viw_mas is not None and self.viw_mas.winfo_exists():
             # clr, bgc = self.mw.set_tab.crt_set(self.mw.tmr)
-            # self.cvs.configure(bg=bgc)  # 背景色
-            self.tmr.out_seg(
-                self.viw_mas.cvs, g.clr0, g.bgc0, self.viw_mas.wwd/2, self.viw_mas.whg/2, self.viw_mas.siz
-            )  # 7セグ表示
+            self.viw_app.display(self.tmr, g.clr0, g.bgc0)
 
         self.master.after(2, self.reload)  # 0.002s後再描画
         return
@@ -509,7 +502,6 @@ class RsvTab:
         self.tab[self.crt].configure(bg=g.rwc0)  # 現在の行に色付け
 
 
-"""
 # 表示ウインドウ
 class ViewWin(tk.Frame):
     def __init__(self: tk.Tk, master, mw):
@@ -529,38 +521,9 @@ class ViewWin(tk.Frame):
         self.widgets()  # ウィジェット
         self.event()    # イベント
 
-        # self.re_frm()
-
     def widgets(self: tk.Tk):
         # キャンバスの設定
         self.cvs.pack(fill=tk.BOTH, expand=True)
-
-    # 画面更新
-    def re_frm(self):
-        self.cvs.delete("all")    # 表示リセット
-
-        # 現在時刻取得
-        pnm = self.mw.now.n  # 前回のミリ秒
-        self.mw.now.get_now()  # 現在時刻取得
-
-        # タイマーカウント
-        if self.mw.cnt:  # カウントが有効の場合
-            if pnm != self.mw.now.n:  # ミリ秒が進んでいる場合
-                c = self.mw.now.n - pnm  # 前回と今回の差分
-                self.mw.tmr.n += c  # 差分だけ進ませる
-
-        # 予約を確認
-        self.mw.rsv_tab.crt_rsv(self.mw.now)
-
-        # 7セグ表示
-        clr, bgc = self.mw.set_tab.crt_set(self.mw.tmr)
-        self.cvs.configure(bg=bgc)  # 背景色
-        self.mw.tmr.out_seg(
-            self.cvs, clr, bgc, self.wwd/2, self.whg/2, self.siz
-        )  # 7セグ表示
-        # self.mw.wt.wtc.configure(text=self.mw.tmr.out_txt())
-
-        self.master.after(2, self.re_frm)  # 0.002s後再描画
 
     # イベント
     def event(self):
@@ -570,8 +533,13 @@ class ViewWin(tk.Frame):
             self.siz = self.wwd // 85
 
         self.bind("<Configure>", win_size)
-        self.master.bind("<KeyPress-space>", partial(fc.command, mw=self.mw, cmd="ss"))
-"""
+        # self.master.bind("<KeyPress-space>", pt(fc.command, mw=self.mw, cmd="ss"))
+
+    # 時間表示
+    def display(self, tim: fc.Time, clr: str, bgc: str):
+        self.cvs.delete("all")  # 表示リセット
+        self.cvs.configure(bg=bgc)
+        tim.out_seg(self.cvs, clr, bgc, self.wwd/2, self.whg/2, self.siz)  # 7セグ表示
 
 
 # 時間変更ウインドウ
