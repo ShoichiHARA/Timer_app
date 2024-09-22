@@ -15,8 +15,6 @@ class MainWin(tk.Frame):
         # 定義
         self.keys = []                      # キーボードの状態
         self.now = fc.Time()                # 現在時刻
-        self.clr = g.clr0            # 文字色
-        self.bgc = g.bgc0            # 背景色
         self.cnt = False                    # カウントアップ
         self.scn = "Tmr"
         self.set_tab = SetTab(self)         # 設定表
@@ -232,7 +230,7 @@ class Setting:
             scrollregion=(0, 0, 321, 25)
         )  # タイトル行
         self.scr.configure(command=self.tab.yview)
-        self.tab.bind("<Button-1>", self.ck_tb)
+        self.tab.bind("<Button>", self.ck_tb)
 
         for i in range(self.row*4):
             self.tab.create_rectangle(
@@ -268,34 +266,38 @@ class Setting:
         d = s[0] * (self.row * 25 + 2)  # スクロール量（ピクセル）
         x = (e.x - 2) // 80             # クリック列
         y = (e.y + int(d)) // 25        # クリック行
-        # print(e.y, d, y)
         # print(e, x, y)
 
-        if x == 1:  # 時間変更
-            if self.txt[4*y+x] != "":              # 既に入力されている場合
-                self.tim.set_txt(self.txt[4*y+x])  # 入力値
-            elif g.in_zer:                         # 未記入で初期値を表示させたい場合
-                self.tim.set_int(0)                # 初期値
-            tim = asktime(self.tim)
-            if tim is not None:  # 時間が返された場合
-                self.tim.set_int(tim.n)
-                self.change(4*y+x, self.tim.out_txt())
-        elif x in [2, 3]:  # 文字色、背景色変更
-            clr = colorchooser.askcolor(self.clr, title=g.lg.ccr)
-            self.clr = clr[1]
-            self.change(4*y+x, self.clr)
+        if e.num == 1:  # 左クリック
+            if x == 1:  # 時間変更
+                if self.txt[4*y+x] != "":              # 既に入力されている場合
+                    self.tim.set_txt(self.txt[4*y+x])  # 入力値
+                elif g.in_zer:                         # 未記入で初期値を表示させたい場合
+                    self.tim.set_int(0)                # 初期値
+                tim = asktime(self.tim)                # 時間変更ウインドウで時間取得
+                if tim is not None:                         # 時間が返された場合
+                    self.tim.set_int(tim.n)                 # 時間を保存
+                    self.change(4*y+x, self.tim.out_txt())  # 表の表示を変更
+            elif x in [2, 3]:  # 文字色、背景色変更
+                if self.txt[4*y+x] != "":              # 既に入力されている場合
+                    self.clr = self.txt[4*y+x]         # 入力値
+                elif g.in_zer:                         # 未記入で初期値を表示させたい場合
+                    self.clr = "#000000"               # 初期値
+                clr = colorchooser.askcolor(self.clr, title=g.lg.ccr)
+                self.clr = clr[1]
+                self.change(4*y+x, self.clr)
+        elif e.num == 3:  # 右クリック
+            if y != 0:
+                self.change(4*y+x, "")
 
     # 設定変更
     def change(self, xy, txt):
-        # print(xy)
         self.txt[xy] = txt
         self.tab.itemconfig(tagOrId="t"+str(xy), text=txt)
         if xy % 4 in [2, 3]:  # 文字色列または背景色
-            # print("clr")
             if self.txt[xy] == "":  # 空白の場合
                 self.tab.itemconfig(tagOrId="r"+str(xy), fill="SystemButtonFace")  # 背景色初期化
             else:
-                # print("hey")
                 self.tab.itemconfig(tagOrId="r"+str(xy), fill=self.txt[xy])  # 表の背景色変更
 
         # 行が埋まっているか
@@ -303,11 +305,11 @@ class Setting:
         if (self.txt[4*y+1] != "") and (self.txt[4*y+2] != "") and (self.txt[4*y+3] != ""):
             self.txt[4*y] = str(y)
             self.tab.itemconfig(tagOrId="t"+str(4*y), text=str(y))
-            print("yes")
+        else:
+            self.tab.itemconfig(tagOrId="t"+str(4*y), text="")
     
     # 行追加ボタン押下
     def ps_ad(self):
-        print("addition")
         self.row += 1  # 行を追加
         self.tab.configure(scrollregion=(0, 0, 321, self.row*25+2))
         for i in range(self.row*4-4, self.row*4):
@@ -321,10 +323,13 @@ class Setting:
 
     # 行削除ボタン押下
     def ps_dl(self):
-        # self.frm.pack_forget()
-        print(self.txt)
-        # y = self.scr.get()
-        # print(y)
+        if self.row > g.row:
+            self.row -= 1  # 行を減少
+            del self.txt[-4: -1]
+            self.tab.configure(scrollregion=(0, 0, 321, self.row*25+2))
+            for i in range(self.row*4, self.row*4+4):
+                self.tab.delete("r"+str(i))
+                self.tab.delete("t"+str(i))
 
 
 # 設定表クラス
