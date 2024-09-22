@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import Button as Bt
+from tkinter import colorchooser
 from functools import partial as pt
 import functions as fc
 import global_val as g
@@ -36,8 +37,6 @@ class MainWin(tk.Frame):
         # サブウインドウの定義
         self.viw_mas = None  # 表示マスター
         self.viw_app = None
-        self.chg_mas = None  # 変更マスター
-        self.chg_app = None
 
         # 現在時刻取得
         self.reload()
@@ -61,28 +60,6 @@ class MainWin(tk.Frame):
             self.viw_mas = tk.Toplevel(self.master)
             self.viw_app = ViewWin(self.viw_mas, self)
             self.viw_mas.focus_set()
-
-    # 時間変更ウインドウ表示
-    def tim_win(self, e, typ, tim: fc.Time):
-        if self.chg_mas is None:
-            self.chg_mas = tk.Toplevel(self.master)
-            self.chg_app = ChanTimeWin(self.chg_mas, self, typ, tim)
-            self.chg_mas.focus_set()
-        elif not self.chg_mas.winfo_exists():
-            self.chg_mas = tk.Toplevel(self.master)
-            self.chg_app = ChanTimeWin(self.chg_mas, self, typ, tim)
-            self.chg_mas.focus_set()
-
-    # 色変更ウインドウ表示
-    def clr_win(self, typ, clr: str):
-        if self.chg_mas is None:
-            self.chg_mas = tk.Toplevel(self.master)
-            self.chg_app = ChanColorWin(self.chg_mas, self, typ, clr)
-            self.chg_mas.focus_set()
-        elif not self.chg_mas.winfo_exists():
-            self.chg_mas = tk.Toplevel(self.master)
-            self.chg_app = ChanColorWin(self.chg_mas, self, typ, clr)
-            self.chg_mas.focus_set()
 
     # コマンド入力(仮)
     def in_cd(self, e):
@@ -190,7 +167,7 @@ class Watch:
         # 定義
         self.frm = tk.Frame(self.mw.master, width=400, height=300)  # 新たに生成
         self.wtc = tk.Label(self.frm, text=self.mw.tmr.out_txt(), font=("", 60))
-        self.wtc.bind("<Button-1>", pt(self.mw.tim_win, typ="ccv", tim=self.mw.tmr))
+        self.wtc.bind("<Button-1>", self.chg_tim)
         self.ssb = tk.Button(
             self.frm, text=g.lg.stt, font=("", 15), width=15, height=3,
             command=pt(fc.command, e=None, mw=self.mw, cmd="ss")
@@ -210,6 +187,11 @@ class Watch:
         self.rst.place(x=210, y=120)  # 初期化ボタン
         self.dsp.place(x=22, y=210)   # 表示ボタン
 
+    def chg_tim(self, e):
+        tim = asktime(self.mw.tmr)
+        if tim is not None:
+            self.mw.tmr.set_int(tim.n)
+
 
 # 設定クラス
 class Setting:
@@ -222,6 +204,8 @@ class Setting:
         self.tab = None
         self.tit = None
         self.scr = None
+        self.tim = fc.Time()  # 場面保存用
+        self.clr = g.clr0     # 場面保存用
         self.row = g.row + 2
         self.txt = [""] * self.row * 4
 
@@ -235,7 +219,6 @@ class Setting:
     def widgets(self):
         print("Setting")
         # 定義
-        # self.mw.frm.destroy()
         self.frm = tk.Frame(self.mw.master, width=400, height=280)
         self.add = tk.Button(self.frm, text=g.lg.rad, command=self.ps_ad)  # 行追加ボタン
         self.dlt = tk.Button(self.frm, text=g.lg.rdl, command=self.ps_dl)  # 行削除ボタン
@@ -256,17 +239,17 @@ class Setting:
                 i%4*80, i//4*25, i%4*80+80, i//4*25+25, fill="SystemButtonFace", tags="r"+str(i)
             )  # 表の格子
             self.tab.create_text(
-                i%4*80+40, i//4*25+13, text=self.txt[i], font=("", 10), tags="t"+str(i)
+                i%4*80+40, i//4*25+13, text=self.txt[i], font=("", 11), tags="t"+str(i)
             )  # 表に入る文字
             if i % 4 in [2, 3]:  # 文字色列または背景色
                 if self.txt[i] != "":  # 空白でない場合
                     self.tab.itemconfig("r"+str(i), fill=self.txt[i])  # 表の背景色変更
 
         # タイトル行設定
-        self.tit.create_text(40, 13, text="No.", font=("", 10))
-        self.tit.create_text(120, 13, text=g.lg.tim, font=("", 10))
-        self.tit.create_text(200, 13, text=g.lg.clr, font=("", 10))
-        self.tit.create_text(280, 13, text=g.lg.bgc, font=("", 10))
+        self.tit.create_text(40, 13, text="No.", font=("", 11))
+        self.tit.create_text(120, 13, text=g.lg.tim, font=("", 11))
+        self.tit.create_text(200, 13, text=g.lg.clr, font=("", 11))
+        self.tit.create_text(280, 13, text=g.lg.bgc, font=("", 11))
         self.tit.create_rectangle(0, 0, 80, 24)
         self.tit.create_rectangle(80, 0, 160, 24)
         self.tit.create_rectangle(160, 0, 240, 24)
@@ -285,21 +268,34 @@ class Setting:
         d = s[0] * (self.row * 25 + 2)  # スクロール量（ピクセル）
         x = (e.x - 2) // 80             # クリック列
         y = (e.y + int(d)) // 25        # クリック行
-        print(e.y, d, y)
-        print(e, x, y)
-        self.change(4*y+x, "lime")
+        # print(e.y, d, y)
+        # print(e, x, y)
+
+        if x == 1:  # 時間変更
+            if self.txt[4*y+x] != "":              # 既に入力されている場合
+                self.tim.set_txt(self.txt[4*y+x])  # 入力値
+            elif g.in_zer:                         # 未記入で初期値を表示させたい場合
+                self.tim.set_int(0)                # 初期値
+            tim = asktime(self.tim)
+            if tim is not None:  # 時間が返された場合
+                self.tim.set_int(tim.n)
+                self.change(4*y+x, self.tim.out_txt())
+        elif x in [2, 3]:  # 文字色、背景色変更
+            clr = colorchooser.askcolor(self.clr, title=g.lg.ccr)
+            self.clr = clr[1]
+            self.change(4*y+x, self.clr)
 
     # 設定変更
     def change(self, xy, txt):
-        print(xy)
+        # print(xy)
         self.txt[xy] = txt
         self.tab.itemconfig(tagOrId="t"+str(xy), text=txt)
         if xy % 4 in [2, 3]:  # 文字色列または背景色
-            print("clr")
+            # print("clr")
             if self.txt[xy] == "":  # 空白の場合
-                self.tab.itemconfig(tagOrId="r"+str(xy), fill="SystemButtonFace")  # 表の背景色初期化
+                self.tab.itemconfig(tagOrId="r"+str(xy), fill="SystemButtonFace")  # 背景色初期化
             else:
-                print("hey")
+                # print("hey")
                 self.tab.itemconfig(tagOrId="r"+str(xy), fill=self.txt[xy])  # 表の背景色変更
 
         # 行が埋まっているか
@@ -320,7 +316,7 @@ class Setting:
                 i%4*80, i//4*25, i%4*80+80, i//4*25+25, fill="SystemButtonFace", tags="r"+str(i)
             )  # 表の格子
             self.tab.create_text(
-                i%4*80+40, i//4*25+13, text=self.txt[i], font=("", 10), tags="t"+str(i)
+                i%4*80+40, i//4*25+13, text=self.txt[i], font=("", 11), tags="t"+str(i)
             )  # 表に入る文字
 
     # 行削除ボタン押下
@@ -542,176 +538,93 @@ class ViewWin(tk.Frame):
         tim.out_seg(self.cvs, clr, bgc, self.wwd/2, self.whg/2, self.siz)  # 7セグ表示
 
 
-# 時間変更ウインドウ
+# 新時間変更ウインドウ
 class ChanTimeWin(tk.Frame):
-    def __init__(self: tk.Tk, master, mw, typ, tmr):
+    def __init__(self: tk.Tk, master, tim=None):
         super().__init__(master)
         self.pack()
 
         # 定義
-        self.mw = mw  # メインウインドウ
-        self.typ = typ  # 呼び出された種類
-        self.tmr = fc.Time(tmr.n)
-        self.dsp = tk.Label(master=master, text=self.tmr.out_txt(), font=("", 60, ))
-        self.bt_nw = Bt(self.master, width=10, text=g.lg.now, command=self.ps_nw)
-        self.bt_rs = Bt(self.master, width=10, text=g.lg.rst, command=self.ps_rs)
-        self.bt_ok = Bt(self.master, width=10, text=g.lg.ook, command=self.ps_ok)
-        self.bt_dl = Bt(self.master, width=10, text=g.lg.dlt, command=self.ps_dl)
-        self.bt_cn = Bt(
-            self.master, width=10, text=g.lg.ccl, command=self.master.destroy
-        )
+        if tim is None:
+            self.tim = fc.Time()
+        else:
+            self.tim = fc.Time(tim.n)
+        self.dsp = tk.Label(master=self.master, text=self.tim.out_txt(), font=("", 60, ))
+        self.now = tk.Button(self.master, width=10, text=g.lg.now, command=self.ps_nw)
+        self.rst = tk.Button(self.master, width=10, text=g.lg.rst, command=self.ps_rs)
+        self.ook = tk.Button(self.master, width=10, text=g.lg.ook, command=self.ps_ok)
+        self.ccl = tk.Button(self.master, width=10, text=g.lg.ccl, command=self.ps_cn)
 
         # 変更ボタン
         lst = [360000, -360000, 6000, -6000, 100, -100, 1, -1]
-        self.bt_ch = [None] * 8
+        self.chg = [None] * 8
         for i in range(8):
             if i % 2 == 0:
-                self.bt_ch[i] = tk.Button(
-                    self.master, text="↑", width=10,
-                    repeatdelay=1000, repeatinterval=50,
+                self.chg[i] = tk.Button(
+                    self.master, text="↑", width=10, repeatdelay=1000, repeatinterval=50,
                     command=pt(self.ps_ch, n=lst[i])
                 )
             else:
-                self.bt_ch[i] = tk.Button(
-                    self.master, text="↓", width=10,
-                    repeatdelay=1000, repeatinterval=50,
+                self.chg[i] = tk.Button(
+                    self.master, text="↓", width=10, repeatdelay=1000, repeatinterval=50,
                     command=pt(self.ps_ch, n=lst[i])
                 )
-
-        # ボタンの無効化
-        if self.typ == "ccv":
-            self.bt_dl.configure(state=tk.DISABLED)
 
         # ウインドウの定義
         self.master.title(g.lg.mwn)    # ウインドウタイトル
         self.master.geometry("400x300")      # ウインドウサイズ
         self.master.resizable(False, False)  # サイズ変更禁止
+        self.master.protocol("WM_DELETE_WINDOW", self.ps_cn)
         self.widgets()
 
     def widgets(self: tk.Tk):
-        self.dsp.place(x=15, y=80)      # 時間表示
-        self.bt_nw.place(x=120, y=210)  # 現在時刻ボタン
-        self.bt_rs.place(x=210, y=210)  # 初期化ボタン
-        self.bt_ok.place(x=120, y=250)  # 決定ボタン
-        self.bt_dl.place(x=210, y=250)  # 削除ボタン
-        self.bt_cn.place(x=300, y=250)  # 取消ボタン
+        self.dsp.place(x=15, y=80)    # 時間表示
+        self.now.place(x=120, y=210)  # 現在時刻ボタン
+        self.rst.place(x=210, y=210)  # 初期化ボタン
+        self.ook.place(x=210, y=250)  # 決定ボタン
+        self.ccl.place(x=300, y=250)  # 取消ボタン
 
         p = [
             [18, 60], [18, 165], [114, 60], [114, 165],
             [210, 60], [210, 165], [306, 60], [306, 165]
         ]
         for i in range(8):
-            self.bt_ch[i].place(x=p[i][0], y=p[i][1])
+            self.chg[i].place(x=p[i][0], y=p[i][1])
 
+    # 時間変更ボタン押下
     def ps_ch(self, n):
-        self.tmr.n += n
-        self.tmr.n = self.tmr.n % 36000000
-        self.dsp.configure(text=self.tmr.out_txt())
+        self.tim.n += n
+        self.tim.n = self.tim.n % 36000000
+        self.dsp.configure(text=self.tim.out_txt())
 
     # 現在時刻押下
     def ps_nw(self):
-        self.tmr.get_now()
-        self.dsp.configure(text=self.tmr.out_txt())
+        self.tim.get_now()
+        self.dsp.configure(text=self.tim.out_txt())
 
     # 初期化押下
     def ps_rs(self):
-        self.tmr.set_int(0)
-        self.dsp.configure(text=self.tmr.out_txt())
+        self.tim.set_int(0)
+        self.dsp.configure(text=self.tim.out_txt())
 
     # 決定押下
     def ps_ok(self):
-        if self.typ == "ccv":
-            self.mw.tmr.n = self.tmr.n
-        elif self.typ == "set":
-            self.mw.set_tab.tmr.n = self.tmr.n
-            self.mw.set_tab.update(self.tmr.out_txt())
-        elif self.typ == "rsv":
-            self.mw.rsv_tab.tmr.n = self.tmr.n
-            self.mw.rsv_tab.update(self.tmr.out_txt())
+        self.master.quit()
         self.master.destroy()
 
-    # 削除押下
-    def ps_dl(self):
-        if self.typ == "set":
-            self.mw.set_tab.update("")
-        elif self.typ == "rsv":
-            self.mw.rsv_tab.update("")
+    # 取消押下
+    def ps_cn(self):
+        self.tim = None
+        self.master.quit()
         self.master.destroy()
 
 
-# 色変更ウインドウ
-class ChanColorWin(tk.Frame):
-    def __init__(self: tk.Tk, master, mw, typ, ccd):
-        super().__init__(master)
-        self.pack()
-
-        # 定義
-        self.mw = mw
-        self.typ = typ  # 呼び出された種類
-        self.ccd = ccd
-        self.sc_r = tk.Scale(
-            self.master, from_=0, to=255, length=200,
-            orient="horizontal", command=self.ch_sc
-        )
-        self.sc_g = tk.Scale(
-            self.master, from_=0, to=255, length=200,
-            orient="horizontal", command=self.ch_sc
-        )
-        self.sc_b = tk.Scale(
-            self.master, from_=0, to=255, length=200,
-            orient="horizontal", command=self.ch_sc
-        )
-        self.dsp = tk.Label(self.master, width=10, height=6, bg=self.ccd)
-        self.bt_ok = Bt(self.master, width=10, text=g.lg.ook, command=self.ps_ok)
-        self.bt_dl = Bt(self.master, width=10, text=g.lg.dlt, command=self.ps_dl)
-        self.bt_cn = Bt(
-            self.master, width=10, text=g.lg.ccl, command=self.master.destroy
-        )
-
-        # スケール初期値
-        self.sc_r.set(int(ccd[1], 16) * 16 + int(ccd[2], 16))  # 16進数文字列から
-        self.sc_g.set(int(ccd[3], 16) * 16 + int(ccd[4], 16))  # 数値へ
-        self.sc_b.set(int(ccd[5], 16) * 16 + int(ccd[6], 16))  # 変換
-
-        # ボタンの無効化
-        if self.mw.set_tab.y*4+self.mw.set_tab.x in [6, 7]:
-            self.bt_dl.configure(state=tk.DISABLED)
-
-        # ウインドウの定義
-        self.master.title(g.lg.ccr)
-        self.master.geometry("400x300")
-        self.master.resizable(False, False)
-        self.widgets()
-
-    def widgets(self):
-        self.sc_r.place(x=50, y=50)
-        self.sc_g.place(x=50, y=100)
-        self.sc_b.place(x=50, y=150)
-        self.dsp.place(x=280, y=80)
-        self.bt_ok.place(x=120, y=250)
-        self.bt_dl.place(x=210, y=250)
-        self.bt_cn.place(x=300, y=250)
-
-    # スライドバー移動
-    def ch_sc(self, n):
-        r = self.sc_r.get()
-        g = self.sc_g.get()
-        b = self.sc_b.get()
-        self.ccd = f"#{r:02X}{g:02X}{b:02X}"  # 各色10進数からカラーコードへ
-        self.dsp.configure(bg=self.ccd)
-
-    # 決定押下
-    def ps_ok(self):
-        self.mw.set_tab.clr = self.ccd
-        if self.typ == "set":
-            self.mw.set_tab.update(self.ccd)
-        self.master.destroy()
-
-    # 削除押下
-    def ps_dl(self):
-        if self.typ == "set":
-            self.mw.set_tab.update("")
-        self.master.destroy()
+# 時間変更関数
+def asktime(tim=None):
+    root = tk.Tk()
+    app = ChanTimeWin(master=root, tim=tim)
+    app.mainloop()
+    return app.tim
 
 
 # アプリケーション
