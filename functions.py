@@ -270,15 +270,13 @@ def command(e, mw: MainWin, cmd: str):
     # 表示ウインドウ表示
     elif cmd[0] == "view":
         mw.viw_win()
+        mw.master.tkraise(mw.viw_mas)
 
     # エラー処理
     if err != 0:
         print("err", err)
     else:
         print(cmd[0], "cmd OK")
-        mw.etr.delete(0, "end")
-        # mw.master.attributes("-topmost", True)
-        # mw.master.attributes("-topmost", False)
-        # mw.master.focus_set()
-        # mw.etr.focus_set()  # 入力欄にフォーカスを設定したい
+        if cmd[0] != "exit":
+            mw.etr.delete(0, "end")
     return err

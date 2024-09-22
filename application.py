@@ -1,5 +1,4 @@
 import tkinter as tk
-from tkinter import Button as Bt
 from tkinter import colorchooser
 from functools import partial as pt
 import functions as fc
@@ -50,14 +49,17 @@ class MainWin(tk.Frame):
 
     # 表示ウインドウ表示
     def viw_win(self):
-        if self.viw_mas is None:
+        if (self.viw_mas is None) or (not self.viw_mas.winfo_exists()):
             self.viw_mas = tk.Toplevel(self.master)
             self.viw_app = ViewWin(self.viw_mas, self)
-            self.viw_mas.focus_set()
-        elif not self.viw_mas.winfo_exists():
-            self.viw_mas = tk.Toplevel(self.master)
-            self.viw_app = ViewWin(self.viw_mas, self)
-            self.viw_mas.focus_set()
+            if self.etr.place_info().get("in") is None:  # コマンド欄が無効の場合
+                self.viw_mas.focus_set()
+            # else:
+            #     print("hey")
+            #     self.master.lift(self.viw_mas)
+                # self.tkraise()
+            #     self.master.attributes("-topmost", True)
+            #     self.master.attributes("-topmost", False)
 
     # コマンド入力(仮)
     def in_cd(self, e):
@@ -88,10 +90,12 @@ class MainWin(tk.Frame):
             if "c" in self.keys:
                 if "m" in self.keys:
                     if "d" in self.keys:
+                        print(self.etr.place_info().get("in"))
                         print("entry")
                         self.etr.place(x=50, y=280)
                         self.etr.focus_set()
                         self.etr.bind("<Key-Return>", self.in_cd)
+                        print(self.etr.place_info().get("in"))
             if e.keysym == "space":
                 print("hey")
 
@@ -152,18 +156,19 @@ class Watch:
     def __init__(self, mw: MainWin):
         # 定義
         self.mw = mw
-        self.frm = None
-        self.wtc = None
-        self.ssb = None
-        self.rst = None
-        self.dsp = None
+        self.frm = tk.Frame(self.mw.master)
+        self.wtc = tk.Label(self.frm, text=self.mw.tmr.out_txt(), font=("", 60))
+        self.ssb = tk.Button(self.frm, text=g.lg.stt, font=("", 15), width=15, height=3)
+        self.rst = tk.Button(self.frm, text=g.lg.rst, font=("", 15), width=15, height=3)
+        self.dsp = tk.Button(self.frm, text=g.lg.viw, font=("", 15), width=32, height=1)
 
         self.widgets()
 
     def widgets(self):
         print("Watch")
+        """
         # 定義
-        self.frm = tk.Frame(self.mw.master, width=400, height=300)  # 新たに生成
+        self.frm = tk.Frame(self.mw.master)
         self.wtc = tk.Label(self.frm, text=self.mw.tmr.out_txt(), font=("", 60))
         self.wtc.bind("<Button-1>", self.chg_tim)
         self.ssb = tk.Button(
@@ -178,6 +183,12 @@ class Watch:
             self.frm, text=g.lg.viw, font=("", 15), width=32, height=1,
             command=pt(fc.command, e=None, mw=self.mw, cmd="view")
         )
+        """
+        # 設定
+        self.wtc.bind("<Button-1>", self.chg_tim)
+        self.ssb.configure(command=pt(fc.command, e=None, mw=self.mw, cmd="ss"))
+        self.rst.configure(command=pt(fc.command, e=None, mw=self.mw, cmd="rst"))
+        self.dsp.configure(command=pt(fc.command, e=None, mw=self.mw, cmd="view"))
 
         # 配置
         self.wtc.place(x=15, y=20)    # 現在値
@@ -196,12 +207,12 @@ class Setting:
     def __init__(self, mw: MainWin):
         # 定義
         self.mw = mw
-        self.frm = None
-        self.add = None
-        self.dlt = None
-        self.tab = None
-        self.tit = None
-        self.scr = None
+        self.frm = tk.Frame(self.mw.master)  # 設定場面
+        self.add = tk.Button(self.frm, text=g.lg.rad, command=self.ps_ad)  # 行追加ボタン
+        self.dlt = tk.Button(self.frm, text=g.lg.rdl, command=self.ps_dl)  # 行削除ボタン
+        self.scr = tk.Scrollbar(self.frm, orient=tk.VERTICAL)              # スクロールバー
+        self.tab = tk.Canvas(self.frm, width=321, height=g.row*25+1, highlightthickness=0)
+        self.tit = tk.Canvas(self.frm, width=321, height=25, bg="silver", highlightthickness=0)
         self.tim = fc.Time()  # 場面保存用
         self.clr = g.clr0     # 場面保存用
         self.row = g.row + 2
@@ -216,19 +227,8 @@ class Setting:
 
     def widgets(self):
         print("Setting")
-        # 定義
-        self.frm = tk.Frame(self.mw.master, width=400, height=280)
-        self.add = tk.Button(self.frm, text=g.lg.rad, command=self.ps_ad)  # 行追加ボタン
-        self.dlt = tk.Button(self.frm, text=g.lg.rdl, command=self.ps_dl)  # 行削除ボタン
-        self.scr = tk.Scrollbar(self.frm, orient=tk.VERTICAL)  # スクロールバー
-        self.tab = tk.Canvas(
-            self.frm, width=321, height=g.row*25+1, highlightthickness=0,
-            scrollregion=(0, 0, 321, self.row*25+2), yscrollcommand=self.scr.set
-        )  # 設定表
-        self.tit = tk.Canvas(
-            self.frm, width=321, height=25, bg="silver", highlightthickness=0,
-            scrollregion=(0, 0, 321, 25)
-        )  # タイトル行
+        # 設定
+        self.tab.configure(scrollregion=(0, 0, 321, self.row*25+1), yscrollcommand=self.scr.set)
         self.scr.configure(command=self.tab.yview)
         self.tab.bind("<Button>", self.ck_tb)
 
@@ -254,10 +254,10 @@ class Setting:
         self.tit.create_rectangle(240, 0, 320, 24)
 
         # 配置
-        self.add.place(x=50, y=250)              # 行追加ボタン
-        self.dlt.place(x=150, y=250)             # 行削除ボタン
-        self.tab.place(x=40, y=44)               # 設定表キャンバス44
-        self.tit.place(x=40, y=20)               # タイトル行キャンバス
+        self.add.place(x=50, y=250)                     # 行追加ボタン
+        self.dlt.place(x=150, y=250)                    # 行削除ボタン
+        self.tab.place(x=40, y=44)                      # 設定表キャンバス44
+        self.tit.place(x=40, y=20)                      # タイトル行キャンバス
         self.scr.place(x=360, y=44, height=g.row*25+1)  # スクロールバー
 
     # 表クリック
@@ -278,17 +278,17 @@ class Setting:
                 if tim is not None:                         # 時間が返された場合
                     self.tim.set_int(tim.n)                 # 時間を保存
                     self.change(4*y+x, self.tim.out_txt())  # 表の表示を変更
-            elif x in [2, 3]:  # 文字色、背景色変更
-                if self.txt[4*y+x] != "":              # 既に入力されている場合
-                    self.clr = self.txt[4*y+x]         # 入力値
-                elif g.in_zer:                         # 未記入で初期値を表示させたい場合
-                    self.clr = "#000000"               # 初期値
+            elif x in [2, 3]:                   # 文字色、背景色変更
+                if self.txt[4*y+x] != "":       # 既に入力されている場合
+                    self.clr = self.txt[4*y+x]  # 入力値
+                elif g.in_zer:                  # 未記入で初期値を表示させたい場合
+                    self.clr = "#000000"        # 初期値
                 clr = colorchooser.askcolor(self.clr, title=g.lg.ccr)
                 self.clr = clr[1]
                 self.change(4*y+x, self.clr)
         elif e.num == 3:  # 右クリック
             if y != 0:
-                self.change(4*y+x, "")
+                self.change(4*y+x, "")  # 空白を入力
 
     # 設定変更
     def change(self, xy, txt):
@@ -311,7 +311,7 @@ class Setting:
     # 行追加ボタン押下
     def ps_ad(self):
         self.row += 1  # 行を追加
-        self.tab.configure(scrollregion=(0, 0, 321, self.row*25+2))
+        self.tab.configure(scrollregion=(0, 0, 321, self.row*25+1))
         for i in range(self.row*4-4, self.row*4):
             self.txt.append("")
             self.tab.create_rectangle(
@@ -326,7 +326,7 @@ class Setting:
         if self.row > g.row:
             self.row -= 1  # 行を減少
             del self.txt[-4: -1]
-            self.tab.configure(scrollregion=(0, 0, 321, self.row*25+2))
+            self.tab.configure(scrollregion=(0, 0, 321, self.row*25+1))
             for i in range(self.row*4, self.row*4+4):
                 self.tab.delete("r"+str(i))
                 self.tab.delete("t"+str(i))
@@ -543,7 +543,7 @@ class ViewWin(tk.Frame):
         tim.out_seg(self.cvs, clr, bgc, self.wwd/2, self.whg/2, self.siz)  # 7セグ表示
 
 
-# 新時間変更ウインドウ
+# 時間変更ウインドウ
 class ChanTimeWin(tk.Frame):
     def __init__(self: tk.Tk, master, tim=None):
         super().__init__(master)
