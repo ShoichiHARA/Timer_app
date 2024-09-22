@@ -16,8 +16,6 @@ class MainWin(tk.Frame):
         self.now = fc.Time()                # 現在時刻
         self.cnt = False                    # カウントアップ
         self.scn = "Tmr"
-        self.set_tab = SetTab(self)         # 設定表
-        self.rsv_tab = RsvTab(self)         # 予約表
         self.tmr = fc.Time()                # 表示時間
         self.etr = tk.Entry(self.master, width=50)  # コマンド入力欄
         self.wt = Watch(self)
@@ -28,7 +26,7 @@ class MainWin(tk.Frame):
         self.master.title(g.lg.mwn)          # ウインドウタイトル
         self.master.geometry("400x300")      # ウインドウサイズ
         self.master.resizable(False, False)  # サイズ変更禁止
-        self.widgets()                       # ウィジェット
+        # self.widgets()                       # ウィジェット
         self.event()                         # イベント
 
         # サブウインドウの定義
@@ -40,12 +38,7 @@ class MainWin(tk.Frame):
 
     # ウィジェット
     def widgets(self: tk.Tk):
-        self.set_tab.frm.place(x=10, y=170)  # 設定表
-        self.rsv_tab.frm.place(x=250, y=170)  # 予約表
-
-    # 終了
-    def exit(self):
-        self.master.destroy()
+        pass
 
     # 表示ウインドウ表示
     def viw_win(self):
@@ -54,12 +47,6 @@ class MainWin(tk.Frame):
             self.viw_app = ViewWin(self.viw_mas, self)
             if self.etr.place_info().get("in") is None:  # コマンド欄が無効の場合
                 self.viw_mas.focus_set()
-            # else:
-            #     print("hey")
-            #     self.master.lift(self.viw_mas)
-                # self.tkraise()
-            #     self.master.attributes("-topmost", True)
-            #     self.master.attributes("-topmost", False)
 
     # コマンド入力(仮)
     def in_cd(self, e):
@@ -90,19 +77,16 @@ class MainWin(tk.Frame):
             if "c" in self.keys:
                 if "m" in self.keys:
                     if "d" in self.keys:
-                        print(self.etr.place_info().get("in"))
-                        print("entry")
                         self.etr.place(x=50, y=280)
                         self.etr.focus_set()
                         self.etr.bind("<Key-Return>", self.in_cd)
-                        print(self.etr.place_info().get("in"))
             if e.keysym == "space":
                 print("hey")
 
         def k_release(e):  # キーボード離した場合
             self.keys.remove(e.keysym)
             if e.keysym == "Escape":
-                self.exit()  # プログラム終了
+                self.master.destroy()  # プログラム終了
 
         self.master.bind("<ButtonPress>", m_press)
         self.master.bind("<ButtonRelease>", m_release)
@@ -166,24 +150,6 @@ class Watch:
 
     def widgets(self):
         print("Watch")
-        """
-        # 定義
-        self.frm = tk.Frame(self.mw.master)
-        self.wtc = tk.Label(self.frm, text=self.mw.tmr.out_txt(), font=("", 60))
-        self.wtc.bind("<Button-1>", self.chg_tim)
-        self.ssb = tk.Button(
-            self.frm, text=g.lg.stt, font=("", 15), width=15, height=3,
-            command=pt(fc.command, e=None, mw=self.mw, cmd="ss")
-        )  # 開始/停止ボタン
-        self.rst = tk.Button(
-            self.frm, text=g.lg.rst, font=("", 15), width=15, height=3,
-            command=pt(fc.command, e=None, mw=self.mw, cmd="rst")
-        )  # 初期化ボタン
-        self.dsp = tk.Button(
-            self.frm, text=g.lg.viw, font=("", 15), width=32, height=1,
-            command=pt(fc.command, e=None, mw=self.mw, cmd="view")
-        )
-        """
         # 設定
         self.wtc.bind("<Button-1>", self.chg_tim)
         self.ssb.configure(command=pt(fc.command, e=None, mw=self.mw, cmd="ss"))
@@ -315,7 +281,8 @@ class Setting:
         for i in range(self.row*4-4, self.row*4):
             self.txt.append("")
             self.tab.create_rectangle(
-                i%4*80, i//4*25, i%4*80+80, i//4*25+25, fill="SystemButtonFace", tags="r"+str(i)
+                i%4*80, i//4*25, i%4*80+80, i//4*25+25,
+                fill="SystemButtonFace", tags="r"+str(i)
             )  # 表の格子
             self.tab.create_text(
                 i%4*80+40, i//4*25+13, text=self.txt[i], font=("", 11), tags="t"+str(i)
@@ -559,27 +526,13 @@ class ChanTimeWin(tk.Frame):
         self.rst = tk.Button(self.master, width=10, text=g.lg.rst, command=self.ps_rs)
         self.ook = tk.Button(self.master, width=10, text=g.lg.ook, command=self.ps_ok)
         self.ccl = tk.Button(self.master, width=10, text=g.lg.ccl, command=self.ps_cn)
-
-        # 変更ボタン
-        lst = [360000, -360000, 6000, -6000, 100, -100, 1, -1]
-        self.chg = [None] * 8
-        for i in range(8):
-            if i % 2 == 0:
-                self.chg[i] = tk.Button(
-                    self.master, text="↑", width=10, repeatdelay=1000, repeatinterval=50,
-                    command=pt(self.ps_ch, n=lst[i])
-                )
-            else:
-                self.chg[i] = tk.Button(
-                    self.master, text="↓", width=10, repeatdelay=1000, repeatinterval=50,
-                    command=pt(self.ps_ch, n=lst[i])
-                )
+        self.chg = []  # 変更ボタン
 
         # ウインドウの定義
         self.master.title(g.lg.mwn)    # ウインドウタイトル
         self.master.geometry("400x300")      # ウインドウサイズ
         self.master.resizable(False, False)  # サイズ変更禁止
-        self.master.protocol("WM_DELETE_WINDOW", self.ps_cn)
+        self.master.protocol("WM_DELETE_WINDOW", self.ps_cn)  # ×ボタンクリック
         self.widgets()
 
     def widgets(self: tk.Tk):
@@ -589,11 +542,21 @@ class ChanTimeWin(tk.Frame):
         self.ook.place(x=210, y=250)  # 決定ボタン
         self.ccl.place(x=300, y=250)  # 取消ボタン
 
+        d = [360000, -360000, 6000, -6000, 100, -100, 1, -1]
         p = [
             [18, 60], [18, 165], [114, 60], [114, 165],
             [210, 60], [210, 165], [306, 60], [306, 165]
         ]
         for i in range(8):
+            self.chg.append(tk.Button(self.master))  # 変更ボタン追加
+            self.chg[i].configure(
+                width=10, repeatdelay=1000, repeatinterval=50,
+                command=pt(self.ps_ch, n=d[i])
+            )  # 変更ボタン共通設定
+            if i % 2 == 0:
+                self.chg[i].configure(text="↑")
+            else:
+                self.chg[i].configure(text="↓")
             self.chg[i].place(x=p[i][0], y=p[i][1])
 
     # 時間変更ボタン押下
