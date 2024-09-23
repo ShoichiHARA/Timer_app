@@ -85,7 +85,7 @@ class MainWin(tk.Frame):
                         self.etr.focus_set()
                         self.etr.bind("<Key-Return>", self.in_cd)
             if e.keysym == "space":
-                print("hey")
+                print("hey", self.st.crt)
 
         def k_release(e):  # キーボード離した場合
             self.keys.remove(e.keysym)
@@ -185,7 +185,7 @@ class Setting:
         self.tit = tk.Canvas(self.frm, width=321, height=25, bg="silver", highlightthickness=0)
         self.tim = fc.Time()  # 場面保存用
         self.clr = g.clr0     # 場面保存用
-        self.cnt = 0  # 現在の設定行
+        self.crt = 0  # 現在の設定行
         self.row = g.row + 2
         self.txt = [""] * self.row * 4
 
@@ -293,16 +293,13 @@ class Setting:
     # 現在の設定
     def current(self, tim: fc.Time):
         cmp = fc.Time()
-        for i in range(self.cnt, self.row):
-            if self.txt[4*i] == "":  # 設定行が無効の場合
-                break
-            cmp.set_txt(self.txt[4*i+1])
-            if tim.n < cmp.n:  # 現在時間の方が小さい場合
-                break
-            else:
-                self.cnt += 1
-        self.cnt -= 1
-        return self.txt[4*self.cnt+2], self.txt[4*self.cnt+3]
+        for i in range(self.crt, self.row):
+            if self.txt[4*i] != "":  # 設定行が有効の場合
+                cmp.set_txt(self.txt[4*i+1])
+                if tim.n >= cmp.n:  # 現在時間の方が大きい場合
+                    self.crt += 1
+        self.crt -= 1
+        return self.txt[4*self.crt+2], self.txt[4*self.crt+3]
     
     # 行追加ボタン押下
     def ps_ad(self):
@@ -327,96 +324,6 @@ class Setting:
             for i in range(self.row*4, self.row*4+4):
                 self.tab.delete("r"+str(i))
                 self.tab.delete("t"+str(i))
-
-
-# 設定表クラス
-class SetTab:
-    def __init__(self: tk.Tk, mw):
-        # 定義
-        self.mw = mw
-        self.x = None
-        self.y = None
-        self.crt = 4  # 現在の設定行
-        self.frm = tk.Frame(self.mw.master, bg="black")  # フレーム
-        self.tab = []
-        self.tmr = fc.Time()  # 控え用の時間
-        self.clr = g.clr0  # 控え用の色
-
-        # ラベルを表状に生成
-        for i in range(g.row*4):
-            self.tab.append(
-                tk.Label(self.frm, bd=2, width=7, height=1, font=("", 9))
-            )  # ラベルの生成
-            self.tab[i].grid(row=i//4, column=i%4, padx=1, pady=1)  # ラベルを配置
-            self.tab[i].bind("<Button-1>", pt(self.click, xy=i))  # 関数を設定
-
-        # 列名ラベル設定
-        self.tab[0].configure(text="No.", bg="silver")
-        self.tab[1].configure(text=g.lg.tim, bg="silver")
-        self.tab[2].configure(text=g.lg.clr, bg="silver")
-        self.tab[3].configure(text=g.lg.bgc, bg="silver")
-        self.tab[4].configure(text="1", bg=g.rwc0)
-        self.tab[5].configure(text="00:00:00.00")
-        self.tab[6].configure(text=g.clr0, bg=g.clr0)
-        self.tab[7].configure(text=g.bgc0, bg=g.bgc0)
-
-    # 表クリック時動作
-    def click(self, e, xy):
-        # 座標
-        self.x = xy % 4
-        self.y = xy // 4
-
-        # クリック有効範囲
-        if self.y != 0:  # タイトル行でない
-            if self.x == 1:  # 時間列
-                if self.y > 1:  # 最初の時間は変更不可
-                    if self.tab[xy]["text"] != "":  # 既に入力されていた場合
-                        self.tmr.set_txt(self.tab[xy]["text"])  # クラス保存設定値を変更
-                    self.mw.tim_win(None, "set", self.tmr)  # 時間設定ウインドウ表示
-            elif self.x in [2, 3]:  # 文字色列、背景色列
-                if self.tab[xy]["text"] != "":  # 既に入力されている場合
-                    self.clr = self.tab[xy]["text"]  # クラス保存設定値を変更
-                self.mw.clr_win("set", self.clr)  # 色変更ウインドウ表示
-
-    # 表の更新
-    def update(self, txt):
-        # 表の文字変更
-        self.tab[self.y*4+self.x].configure(text=txt)
-
-        # セルの色付け
-        if self.x in [2, 3]:
-            if txt == "":
-                self.tab[self.y*4+self.x].configure(bg="SystemButtonFace")
-            else:
-                self.tab[self.y*4+self.x].configure(bg=txt)
-
-        # 行の番号付け
-        if self.tab[self.y*4+1]["text"] == "":  # 時間列が空白の場合
-            self.tab[self.y*4].configure(text="")
-        elif self.tab[self.y*4+2]["text"] == "":  # 文字色列が空白の場合
-            self.tab[self.y*4].configure(text="")
-        elif self.tab[self.y*4+3]["text"] == "":  # 背景色が空白の場合
-            self.tab[self.y*4].configure(text="")
-        else:  # 行に空白がない場合
-            self.tab[self.y*4].configure(text=str(self.y))
-
-        # 座標リセット
-        self.x = None
-        self.y = None
-
-    # 現在の設定
-    def crt_set(self, tmr):
-        self.tab[self.crt].configure(bg="SystemButtonFace")  # 現在の行の色取消
-        row = self.crt + 4  # 現在の次の行
-        if row >= g.row*4:  # 最終行の場合
-            pass
-        elif self.tab[row]["text"] == "":  # 現在の次が空白の場合
-            pass
-        elif self.tab[row+1]["text"] == tmr.out_txt():  # 次の時間と同じ場合
-            self.crt += 4  # 現在行更新
-            self.crt_set(tmr)  # もう一度関数実行
-        self.tab[self.crt].configure(bg=g.rwc0)  # 現在の行に色付け
-        return self.tab[self.crt+2]["text"], self.tab[self.crt+3]["text"]
 
 
 # 予約表クラス
