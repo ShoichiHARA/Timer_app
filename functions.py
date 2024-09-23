@@ -203,7 +203,7 @@ def command(e, mw: MainWin, cmd: str):
     elif cmd[0] == "rst":
         # mw.set_tab.tab[mw.set_tab.crt].configure(bg="SystemButtonFace")
         # mw.rsv_tab.tab[mw.rsv_tab.crt].configure(bg="SystemButtonFace")
-        # mw.set_tab.crt = 4
+        mw.st.crt = 0
         # mw.rsv_tab.crt = 3
         mw.tmr.set_int(0)
 
@@ -215,6 +215,7 @@ def command(e, mw: MainWin, cmd: str):
     elif cmd[0] == "scn":
         mw.wt.frm.pack_forget()
         mw.st.frm.pack_forget()
+        mw.sc.frm.pack_forget()
         if cmd[1] == "file":
             pass
         elif cmd[1] in ["tmr", "TMR"]:
@@ -223,8 +224,9 @@ def command(e, mw: MainWin, cmd: str):
         elif cmd[1] in ["set", "SET"]:
             mw.scn = "SET"
             mw.st.frm.pack(expand=True, fill="both")
-        elif cmd[1] == "rsv":
-            pass
+        elif cmd[1] in ["scd", "SCD"]:
+            mw.scn = "SCD"
+            mw.sc.frm.pack(expand=True, fill="both")
         elif cmd[1] == "help":
             pass
         else:
@@ -247,7 +249,6 @@ def command(e, mw: MainWin, cmd: str):
         mw.cnt = not mw.cnt
         if mw.cnt:
             mw.wt.ssb.configure(text=g.lg.stp)
-            mw.now.get_now()
         else:
             mw.wt.ssb.configure(text=g.lg.stt)
 
@@ -255,7 +256,6 @@ def command(e, mw: MainWin, cmd: str):
     elif cmd[0] == "start":
         mw.cnt = True
         mw.wt.ssb.configure(text=g.lg.stp)
-        mw.now.get_now()
 
     # タイマー停止
     elif cmd[0] == "stop":

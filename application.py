@@ -20,6 +20,7 @@ class MainWin(tk.Frame):
         self.etr = tk.Entry(self.master, width=50)  # コマンド入力欄
         self.wt = Watch(self)
         self.st = Setting(self)
+        self.sc = Schedule(self)
         self.mn = Menu(self)
 
         # ウインドウの定義
@@ -35,9 +36,10 @@ class MainWin(tk.Frame):
 
         # 初期場面
         fc.command(None, self, "scn " + g.scn0)
-        fc.command(None, self, "view")  # テスト用
+        # fc.command(None, self, "view")  # テスト用
 
         # 現在時刻取得
+        self.now.get_now()
         self.reload()
 
     # ウィジェット
@@ -100,17 +102,20 @@ class MainWin(tk.Frame):
     # 再描画
     def reload(self):
         # 再描画の判断
+        prv = self.now.n  # 前回の時刻
+        self.now.get_now()  # 現在時刻取得
         if self.cnt:  # カウントが有効の場合
-            prv = self.now.n  # 前回の時刻
-            self.now.get_now()  # 現在時刻取得
             if prv != self.now.n:  # 時刻が進んでいる場合
                 self.tmr.set_int(self.tmr.n + self.now.n - prv)  # 前回と今回の差分だけ進ませる
 
         # 時間表示
         self.wt.wtc.configure(text=self.tmr.out_txt())
-        if self.viw_mas is not None and self.viw_mas.winfo_exists():
+        if (self.viw_mas is not None) and (self.viw_mas.winfo_exists()):
             clr, bgc = self.st.current(self.tmr)
             self.viw_app.display(self.tmr, clr, bgc)
+
+        # 予定の確認
+        self.sc.current(self.now)
 
         self.master.after(2, self.reload)  # 0.002s後再描画
         return
@@ -132,7 +137,9 @@ class Menu:
         self.bar.add_command(
             label=g.lg.set, command=pt(fc.command, e=None, mw=mw, cmd="scn set")
         )  # 設定コマンド追加
-        self.bar.add_command(label=g.lg.rsv, command=self.hoge)  # 予約コマンド追加
+        self.bar.add_command(
+            label=g.lg.rsv, command=pt(fc.command, e=None, mw=mw, cmd="scn scd")
+        )  # 予約コマンド追加
         self.bar.add_command(label=g.lg.hlp, command=self.hoge)  # ヘルプコマンド追加
 
     def hoge(self):
@@ -178,15 +185,15 @@ class Setting:
         # 定義
         self.mw = mw
         self.frm = tk.Frame(self.mw.master)  # 設定場面
-        self.add = tk.Button(self.frm, text=g.lg.rad, command=self.ps_ad)  # 行追加ボタン
-        self.dlt = tk.Button(self.frm, text=g.lg.rdl, command=self.ps_dl)  # 行削除ボタン
+        self.add = tk.Button(self.frm, width=10, text=g.lg.rad, command=self.ps_ad)  # 行追加ボタン
+        self.dlt = tk.Button(self.frm, width=10, text=g.lg.rdl, command=self.ps_dl)  # 行削除ボタン
         self.scr = tk.Scrollbar(self.frm, orient=tk.VERTICAL)              # スクロールバー
         self.tab = tk.Canvas(self.frm, width=321, height=g.row*25+1, highlightthickness=0)
         self.tit = tk.Canvas(self.frm, width=321, height=25, bg="silver", highlightthickness=0)
         self.tim = fc.Time()  # 場面保存用
         self.clr = g.clr0     # 場面保存用
         self.crt = 0  # 現在の設定行
-        self.row = g.row + 2
+        self.row = g.row
         self.txt = [""] * self.row * 4
 
         self.txt[0] = "0"
@@ -235,8 +242,8 @@ class Setting:
         self.tit.create_rectangle(240, 0, 320, 24)
 
         # 配置
-        self.add.place(x=50, y=250)                     # 行追加ボタン
-        self.dlt.place(x=150, y=250)                    # 行削除ボタン
+        self.add.place(x=190, y=g.row*25+55)                     # 行追加ボタン
+        self.dlt.place(x=280, y=g.row*25+55)                    # 行削除ボタン
         self.tab.place(x=40, y=44)                      # 設定表キャンバス44
         self.tit.place(x=40, y=20)                      # タイトル行キャンバス
         self.scr.place(x=360, y=44, height=g.row*25+1)  # スクロールバー
@@ -293,12 +300,11 @@ class Setting:
     # 現在の設定
     def current(self, tim: fc.Time):
         cmp = fc.Time()
-        for i in range(self.crt, self.row):
-            if self.txt[4*i] != "":  # 設定行が有効の場合
-                cmp.set_txt(self.txt[4*i+1])
+        if self.crt < self.row:  # 最終行でない場合
+            if self.txt[4*self.crt+4] != "":  # 設定行が有効の場合
+                cmp.set_txt(self.txt[4*self.crt+5])
                 if tim.n >= cmp.n:  # 現在時間の方が大きい場合
                     self.crt += 1
-        self.crt -= 1
         return self.txt[4*self.crt+2], self.txt[4*self.crt+3]
     
     # 行追加ボタン押下
@@ -326,85 +332,130 @@ class Setting:
                 self.tab.delete("t"+str(i))
 
 
-# 予約表クラス
-class RsvTab:
-    def __init__(self: tk.Tk, mw):
+# 予定クラス
+class Schedule:
+    def __init__(self, mw: MainWin):
         # 定義
         self.mw = mw
-        self.x = None
-        self.y = None
-        self.crt = 3  # 現在の予約行
-        self.frm = tk.Frame(self.mw.master, bg="black")  # フレーム
-        self.tab = []  # 予約表
-        self.tmr = fc.Time()  # 控え用の時間
+        self.frm = tk.Frame(self.mw.master)  # 設定場面
+        self.add = tk.Button(self.frm, width=10, text=g.lg.rad, command=self.ps_ad)  # 行追加ボタン
+        self.dlt = tk.Button(self.frm, width=10, text=g.lg.rdl, command=self.ps_dl)  # 行削除ボタン
+        self.scr = tk.Scrollbar(self.frm, orient=tk.VERTICAL)              # スクロールバー
+        self.tab = tk.Canvas(self.frm, width=241, height=g.row*25+1, highlightthickness=0)
+        self.tit = tk.Canvas(self.frm, width=241, height=25, bg="silver", highlightthickness=0)
+        self.tim = fc.Time()  # 場面保存用
+        self.crt = 0  # 現在の設定行
+        self.row = g.row
+        self.txt = [""] * self.row * 3
 
-        # ラベルを表状に生成
-        for i in range(g.row*3):
-            self.tab.append(
-                tk.Label(self.frm, bd=2, width=7, height=1, font=("", 9))
-            )  # ラベルの生成
-            self.tab[i].grid(row=i//3, column=i%3, padx=1, pady=1)  # ラベルを配置
-            self.tab[i].bind("<Button-1>", pt(self.click, xy=i))  # 関数を設定
+        self.widgets()
 
-        # 列名ラベル設定
-        self.tab[0].configure(text="No.", bg="silver")
-        self.tab[1].configure(text=g.lg.stt, bg="silver")
-        self.tab[2].configure(text=g.lg.stp, bg="silver")
+    def widgets(self):
+        print("Schedule")
+        # 設定
+        self.tab.configure(scrollregion=(0, 0, 241, self.row*25+1), yscrollcommand=self.scr.set)
+        self.scr.configure(command=self.tab.yview)
+        self.tab.bind("<Button>", self.ck_tb)
 
-    # 表クリック時動作
-    def click(self, e, xy):
-        # 座標
-        self.x = xy % 3
-        self.y = xy // 3
+        for i in range(self.row*3):
+            self.tab.create_rectangle(
+                i%3*80, i//3*25, i%3*80+80, i//3*25+25, fill="SystemButtonFace", tags="r"+str(i)
+            )  # 表の格子
+            self.tab.create_text(
+                i%3*80+40, i//3*25+13, text=self.txt[i], font=("", 11), tags="t"+str(i)
+            )  # 表に入る文字
 
-        # クリック有効範囲
-        if self.y != 0:  # タイトル行でない場合
-            if self.x != 0:  # 番号列でない場合
-                if self.tab[xy]["text"] != "":
-                    self.tmr.set_txt(self.tab[xy]["text"])
-                self.mw.tim_win(None, "rsv", self.tmr)  # 時間変更ウインドウ表示
+        # タイトル行設定
+        self.tit.create_text(40, 13, text="No.", font=("", 11))
+        self.tit.create_text(120, 13, text=g.lg.stt, font=("", 11))
+        self.tit.create_text(200, 13, text=g.lg.stp, font=("", 11))
+        self.tit.create_rectangle(0, 0, 80, 24)
+        self.tit.create_rectangle(80, 0, 160, 24)
+        self.tit.create_rectangle(160, 0, 240, 24)
 
-    # 表の更新
-    def update(self, txt):
-        # 表の文字変更
-        self.tab[self.y*3+self.x].configure(text=txt)
+        # 配置
+        self.add.place(x=150, y=g.row*25+55)                     # 行追加ボタン
+        self.dlt.place(x=240, y=g.row*25+55)                    # 行削除ボタン
+        self.tab.place(x=80, y=44)                      # 予定表キャンバス
+        self.tit.place(x=80, y=20)                      # タイトル行キャンバス
+        self.scr.place(x=320, y=44, height=g.row*25+1)  # スクロールバー
 
-        # 行の番号付け
-        if self.tab[self.y*3+1]["text"] != "":  # 開始列が空白でない場合
-            self.tab[self.y*3].configure(text=str(self.y))
-        elif self.tab[self.y*3+2]["text"] != "":  # 停止列が空白でない場合
-            self.tab[self.y*3].configure(text=str(self.y))
-        else:  # 行に時間がない場合
-            self.tab[self.y*3].configure(text="")
+    # 表クリック
+    def ck_tb(self, e):
+        s = self.scr.get()              # スクロールバーの位置
+        d = s[0] * (self.row * 25 + 2)  # スクロール量（ピクセル）
+        x = (e.x - 2) // 80             # クリック列
+        y = (e.y + int(d)) // 25        # クリック行
 
-        # 座標リセット
-        self.x = None
-        self.y = None
+        if e.num == 1:  # 左クリック
+            if x in [1, 2]:  # 時間変更
+                if self.txt[3*y+x] != "":              # 既に入力されている場合
+                    self.tim.set_txt(self.txt[3*y+x])  # 入力値
+                elif g.in_zer:                         # 未記入で初期値を表示させたい場合
+                    self.tim.set_int(0)                # 初期値
+                tim = asktime(self.tim)                # 時間変更ウインドウで時間取得
+                if tim is not None:                         # 時間が返された場合
+                    self.tim.set_int(tim.n)                 # 時間を保存
+                    self.change(3*y+x, self.tim.out_txt())  # 表の表示を変更
+        elif e.num == 3:  # 右クリック
+            if y != 0:
+                self.change(4*y+x, "")  # 空白を入力
 
-    # 現在の予約
-    def crt_rsv(self, tmr):
-        self.tab[self.crt].configure(bg="SystemButtonFace")  # 現在の行の色取消
-        if self.crt >= g.row*3:  # 最終行を超えた場合
-            pass
-        elif self.tab[self.crt]["text"] == "":  # 現在が空白の場合
-            pass
-        elif self.mw.cnt is False:  # タイマーが止まっている場合
-            if self.tab[self.crt+1]["text"] == "":  # 空欄の場合
-                pass
-            elif self.tab[self.crt+1]["text"] == tmr.out_txt():  # 現在の時間と同じ場合
-                # self.mw.ps_ss()    # カウント開始
-                fc.command(None, self.mw, "start")  # カウント開始
-                self.crt_rsv(tmr)  # もう一度関数実行
-        elif self.mw.cnt is True:  # タイマーが動いている場合
-            if self.tab[self.crt+2]["text"] == "":  # 空欄の場合
-                pass
-            elif self.tab[self.crt+2]["text"] == tmr.out_txt():  # 現在の時間と同じ場合
-                # self.mw.ps_ss()  # カウント停止
-                fc.command(None, self.mw, "stop")  # カウント停止
-                if self.tab[self.crt+3]["text"] != "":  # 現在の次が空白でない場合
-                    self.crt += 3  # 次の行へ
-                    self.crt_rsv(tmr)  # もう一度関数実行
-        self.tab[self.crt].configure(bg=g.rwc0)  # 現在の行に色付け
+    # 設定変更
+    def change(self, xy, txt):
+        self.txt[xy] = txt
+        self.tab.itemconfig(tagOrId="t" + str(xy), text=txt)
+
+        # 行が埋まっているか
+        y = xy // 3
+        if (self.txt[3*y+1] != "") or (self.txt[3*y+2] != ""):
+            self.txt[3*y] = str(y+1)
+            self.tab.itemconfig(tagOrId="t" + str(3*y), text=str(y+1))
+        else:
+            self.txt[3*y] = ""
+            self.tab.itemconfig(tagOrId="t" + str(3*y), text="")
+
+    # 現在の設定
+    def current(self, tim: fc.Time):
+        cmp = fc.Time()
+        if self.txt[3*self.crt] != "":  # 予定行が無効の場合
+            if not self.mw.cnt:  # カウントが無効の場合
+                if self.txt[3*self.crt+1] != "":  # 空欄でない場合
+                    cmp.set_txt(self.txt[3*self.crt+1])
+                    if tim.n >= cmp.n:  # 現在時刻の方が大きい場合
+                        fc.command(e=None, mw=self.mw, cmd="start")
+            else:
+                if self.txt[3*self.crt+1] != "":  # 空欄でない場合
+                    cmp.set_txt(self.txt[3*self.crt+2])
+                    if tim.n >= cmp.n:  # 現在時刻の方が大きい場合
+                        fc.command(e=None, mw=self.mw, cmd="stop")
+                        self.crt += 1
+        if self.crt > self.row:
+            self.crt = self.row
+
+    # 行追加ボタン押下
+    def ps_ad(self):
+        self.row += 1  # 行を追加
+        self.tab.configure(scrollregion=(0, 0, 241, self.row*25+1))
+        for i in range(self.row*3-3, self.row*3):
+            self.txt.append("")
+            self.tab.create_rectangle(
+                i%3*80, i//3*25, i%3*80+80, i//3*25+25,
+                fill="SystemButtonFace", tags="r"+str(i)
+            )  # 表の格子
+            self.tab.create_text(
+                i%3*80+40, i//3*25+13, text=self.txt[i], font=("", 11), tags="t"+str(i)
+            )  # 表に入る文字
+
+    # 行削除ボタン押下
+    def ps_dl(self):
+        if self.row > g.row:
+            self.row -= 1  # 行を減少
+            del self.txt[-3: -1]
+            self.tab.configure(scrollregion=(0, 0, 241, self.row*25+1))
+            for i in range(self.row*3, self.row*3+3):
+                self.tab.delete("r" + str(i))
+                self.tab.delete("t" + str(i))
 
 
 # 表示ウインドウ

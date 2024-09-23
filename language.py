@@ -12,6 +12,7 @@ class Language:
                 self.sva = output(i, ["Save as", "名前を付けて保存"])
                 self.swc = output(i, ["StopWatch", "ストップウォッチ"])
                 self.set = output(i, ["Setting", "設定"])
+                self.scd = output(i, ["schedule", "予定"])
                 self.rsv = output(i, ["Reserved", "予約"])
                 self.ext = output(i, ["Exit", "終了"])
                 self.viw = output(i, ["View", "表示"])
