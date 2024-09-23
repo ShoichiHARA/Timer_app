@@ -6,6 +6,7 @@ bgc0 = "#FFFFFF"
 rwc0 = "#00FF00"
 md_cmd = False
 in_zer = False  # 未記入の表を選択 True:0または黒, False:前回値
+scn0 = "TMR"
 row = 6
 ccd = {
     "white": "#FFFFFF", "black": "#000000",

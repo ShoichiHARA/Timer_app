@@ -33,6 +33,10 @@ class MainWin(tk.Frame):
         self.viw_mas = None  # 表示マスター
         self.viw_app = None
 
+        # 初期場面
+        fc.command(None, self, "scn " + g.scn0)
+        fc.command(None, self, "view")  # テスト用
+
         # 現在時刻取得
         self.reload()
 
@@ -105,8 +109,8 @@ class MainWin(tk.Frame):
         # 時間表示
         self.wt.wtc.configure(text=self.tmr.out_txt())
         if self.viw_mas is not None and self.viw_mas.winfo_exists():
-            # clr, bgc = self.mw.set_tab.crt_set(self.mw.tmr)
-            self.viw_app.display(self.tmr, g.clr0, g.bgc0)
+            clr, bgc = self.st.current(self.tmr)
+            self.viw_app.display(self.tmr, clr, bgc)
 
         self.master.after(2, self.reload)  # 0.002s後再描画
         return
@@ -181,6 +185,7 @@ class Setting:
         self.tit = tk.Canvas(self.frm, width=321, height=25, bg="silver", highlightthickness=0)
         self.tim = fc.Time()  # 場面保存用
         self.clr = g.clr0     # 場面保存用
+        self.cnt = 0  # 現在の設定行
         self.row = g.row + 2
         self.txt = [""] * self.row * 4
 
@@ -188,6 +193,16 @@ class Setting:
         self.txt[1] = "00:00:00.00"
         self.txt[2] = g.clr0
         self.txt[3] = g.bgc0
+
+        # テスト用
+        self.txt[4] = "1"
+        self.txt[5] = "00:00:00.01"
+        self.txt[6] = "#0000FF"
+        self.txt[7] = "#FFFFFF"
+        self.txt[8] = "2"
+        self.txt[9] = "00:00:10.00"
+        self.txt[10] = "#FF0000"
+        self.txt[11] = "#FFFFFF"
 
         self.widgets()
 
@@ -272,7 +287,22 @@ class Setting:
             self.txt[4*y] = str(y)
             self.tab.itemconfig(tagOrId="t"+str(4*y), text=str(y))
         else:
+            self.txt[4*y] = ""
             self.tab.itemconfig(tagOrId="t"+str(4*y), text="")
+
+    # 現在の設定
+    def current(self, tim: fc.Time):
+        cmp = fc.Time()
+        for i in range(self.cnt, self.row):
+            if self.txt[4*i] == "":  # 設定行が無効の場合
+                break
+            cmp.set_txt(self.txt[4*i+1])
+            if tim.n < cmp.n:  # 現在時間の方が小さい場合
+                break
+            else:
+                self.cnt += 1
+        self.cnt -= 1
+        return self.txt[4*self.cnt+2], self.txt[4*self.cnt+3]
     
     # 行追加ボタン押下
     def ps_ad(self):
@@ -501,7 +531,7 @@ class ViewWin(tk.Frame):
             self.siz = self.wwd // 85
 
         self.bind("<Configure>", win_size)
-        # self.master.bind("<KeyPress-space>", pt(fc.command, mw=self.mw, cmd="ss"))
+        self.master.bind("<KeyPress-space>", pt(fc.command, mw=self.mw, cmd="ss"))
 
     # 時間表示
     def display(self, tim: fc.Time, clr: str, bgc: str):

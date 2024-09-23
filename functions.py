@@ -201,10 +201,10 @@ def command(e, mw: MainWin, cmd: str):
 
     # タイマー初期化
     elif cmd[0] == "rst":
-        mw.set_tab.tab[mw.set_tab.crt].configure(bg="SystemButtonFace")
-        mw.rsv_tab.tab[mw.rsv_tab.crt].configure(bg="SystemButtonFace")
-        mw.set_tab.crt = 4
-        mw.rsv_tab.crt = 3
+        # mw.set_tab.tab[mw.set_tab.crt].configure(bg="SystemButtonFace")
+        # mw.rsv_tab.tab[mw.rsv_tab.crt].configure(bg="SystemButtonFace")
+        # mw.set_tab.crt = 4
+        # mw.rsv_tab.crt = 3
         mw.tmr.set_int(0)
 
     # 予約設定
@@ -217,10 +217,10 @@ def command(e, mw: MainWin, cmd: str):
         mw.st.frm.pack_forget()
         if cmd[1] == "file":
             pass
-        elif cmd[1] == "tmr":
+        elif cmd[1] in ["tmr", "TMR"]:
             mw.scn = "TMR"
             mw.wt.frm.pack(expand=True, fill="both")
-        elif cmd[1] == "set":
+        elif cmd[1] in ["set", "SET"]:
             mw.scn = "SET"
             mw.st.frm.pack(expand=True, fill="both")
         elif cmd[1] == "rsv":
@@ -232,15 +232,15 @@ def command(e, mw: MainWin, cmd: str):
         mw.etr.lift()
 
     # 色設定
-    elif cmd[0] == "set":
-        for i in range(len(mw.set_tab)/4):
-            if mw.set_tab.tab[i]["text"] == "":  # 行が未完成の場合
-                for j in range(1, 3):  # 時間、文字色、背景色の順に登録
-                    mw.set_tab.x = j
-                    mw.set_tab.y = i
-                    mw.set_tab.tab[4*i+j].update(cmd[j])  # 入力データが有効か判断する必要あり
-                break
-        mw.set_tab.update()
+    # elif cmd[0] == "set":
+        # for i in range(len(mw.set_tab)/4):
+        #     if mw.set_tab.tab[i]["text"] == "":  # 行が未完成の場合
+        #         for j in range(1, 3):  # 時間、文字色、背景色の順に登録
+        #             mw.set_tab.x = j
+        #             mw.set_tab.y = i
+        #             mw.set_tab.tab[4*i+j].update(cmd[j])  # 入力データが有効か判断する必要あり
+        #          break
+        # mw.set_tab.update()
 
     # タイマー開始/停止
     elif cmd[0] == "ss":
