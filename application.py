@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import colorchooser
 from functools import partial as pt
+import _tkinter
 import functions as fc
 import global_val as g
 
@@ -36,7 +37,6 @@ class MainWin(tk.Frame):
 
         # 初期場面
         fc.command(None, self, "scn " + g.scn0)
-        # fc.command(None, self, "view")  # テスト用
 
         # 現在時刻取得
         self.now.get_now()
@@ -83,11 +83,9 @@ class MainWin(tk.Frame):
             if "c" in self.keys:
                 if "m" in self.keys:
                     if "d" in self.keys:
-                        self.etr.place(x=50, y=280)
+                        self.etr.place(x=50, y=270)
                         self.etr.focus_set()
                         self.etr.bind("<Key-Return>", self.in_cd)
-            if e.keysym == "space":
-                print("hey", self.st.crt)
 
         def k_release(e):  # キーボード離した場合
             self.keys.remove(e.keysym)
@@ -160,7 +158,6 @@ class Watch:
         self.widgets()
 
     def widgets(self):
-        print("Watch")
         # 設定
         self.wtc.bind("<Button-1>", self.chg_tim)
         self.ssb.configure(command=pt(fc.command, e=None, mw=self.mw, cmd="ss"))
@@ -201,20 +198,9 @@ class Setting:
         self.txt[2] = g.clr0
         self.txt[3] = g.bgc0
 
-        # テスト用
-        self.txt[4] = "1"
-        self.txt[5] = "00:00:00.01"
-        self.txt[6] = "#0000FF"
-        self.txt[7] = "#FFFFFF"
-        self.txt[8] = "2"
-        self.txt[9] = "00:00:10.00"
-        self.txt[10] = "#FF0000"
-        self.txt[11] = "#FFFFFF"
-
         self.widgets()
 
     def widgets(self):
-        print("Setting")
         # 設定
         self.tab.configure(scrollregion=(0, 0, 321, self.row*25+1), yscrollcommand=self.scr.set)
         self.scr.configure(command=self.tab.yview)
@@ -280,13 +266,27 @@ class Setting:
 
     # 設定変更
     def change(self, xy, txt):
-        self.txt[xy] = txt
-        self.tab.itemconfig(tagOrId="t"+str(xy), text=txt)
-        if xy % 4 in [2, 3]:  # 文字色列または背景色
-            if self.txt[xy] == "":  # 空白の場合
+        # エラー判定
+        err = 0
+        if xy % 4 == 1:  # 時間列
+            if txt != "":
+                err = self.tim.set_txt(txt)
+                txt = self.tim.out_txt()
+        elif xy % 4 in [2, 3]:  # 文字色列または背景色列
+            if txt == "":  # 空白の場合
                 self.tab.itemconfig(tagOrId="r"+str(xy), fill="SystemButtonFace")  # 背景色初期化
             else:
-                self.tab.itemconfig(tagOrId="r"+str(xy), fill=self.txt[xy])  # 表の背景色変更
+                try:
+                    self.tab.itemconfig(tagOrId="r"+str(xy), fill=txt)  # 表の背景色変更
+                except _tkinter.TclError:
+                    print("application Line 282", _tkinter.TclError)
+                    err = 920
+        if err != 0:
+            return err
+
+        # 文字列変更
+        self.txt[xy] = txt
+        self.tab.itemconfig(tagOrId="t"+str(xy), text=txt)
 
         # 行が埋まっているか
         y = xy // 4
@@ -296,6 +296,7 @@ class Setting:
         else:
             self.txt[4*y] = ""
             self.tab.itemconfig(tagOrId="t"+str(4*y), text="")
+        return 0
 
     # 現在の設定
     def current(self, tim: fc.Time):
@@ -351,7 +352,6 @@ class Schedule:
         self.widgets()
 
     def widgets(self):
-        print("Schedule")
         # 設定
         self.tab.configure(scrollregion=(0, 0, 241, self.row*25+1), yscrollcommand=self.scr.set)
         self.scr.configure(command=self.tab.yview)
@@ -403,6 +403,15 @@ class Schedule:
 
     # 設定変更
     def change(self, xy, txt):
+        # エラー判定
+        err = 0
+        if txt != "":
+            err = self.tim.set_txt(txt)
+            txt = self.tim.out_txt()
+        if err != 0:
+            return err
+
+        # 文字列変更
         self.txt[xy] = txt
         self.tab.itemconfig(tagOrId="t" + str(xy), text=txt)
 
@@ -414,21 +423,22 @@ class Schedule:
         else:
             self.txt[3*y] = ""
             self.tab.itemconfig(tagOrId="t" + str(3*y), text="")
+        return 0
 
     # 現在の設定
     def current(self, tim: fc.Time):
         cmp = fc.Time()
-        if self.txt[3*self.crt] != "":  # 予定行が無効の場合
-            if not self.mw.cnt:  # カウントが無効の場合
-                if self.txt[3*self.crt+1] != "":  # 空欄でない場合
-                    cmp.set_txt(self.txt[3*self.crt+1])
-                    if tim.n >= cmp.n:  # 現在時刻の方が大きい場合
-                        fc.command(e=None, mw=self.mw, cmd="start")
+        if self.txt[3*self.crt] != "":                               # 予定行が無効の場合
+            if not self.mw.cnt:                                      # カウントが無効の場合
+                if self.txt[3*self.crt+1] != "":                     # 空欄でない場合
+                    cmp.set_txt(self.txt[3*self.crt+1])              # 比較用に時間を登録
+                    if tim.n >= cmp.n:                               # 現在時刻の方が大きい場合
+                        fc.command(e=None, mw=self.mw, cmd="start")  # カウント開始
             else:
-                if self.txt[3*self.crt+1] != "":  # 空欄でない場合
-                    cmp.set_txt(self.txt[3*self.crt+2])
-                    if tim.n >= cmp.n:  # 現在時刻の方が大きい場合
-                        fc.command(e=None, mw=self.mw, cmd="stop")
+                if self.txt[3*self.crt+1] != "":                     # 空欄でない場合
+                    cmp.set_txt(self.txt[3*self.crt+2])              # 比較用に時間を登録
+                    if tim.n >= cmp.n:                               # 現在時刻の方が大きい場合
+                        fc.command(e=None, mw=self.mw, cmd="stop")   # カウント停止
                         self.crt += 1
         if self.crt > self.row:
             self.crt = self.row
@@ -465,10 +475,10 @@ class ViewWin(tk.Frame):
         self.pack()
 
         # 定義
-        self.mw = mw                        # メインウインドウ
-        self.wwd = 400                      # ウインドウ幅
-        self.whg = 300                      # ウインドウ高
-        self.siz = self.wwd // 85           # 文字サイズ
+        self.mw = mw                                  # メインウインドウ
+        self.wwd = 400                                # ウインドウ幅
+        self.whg = 300                                # ウインドウ高
+        self.siz = self.wwd // 85                     # 文字サイズ
         self.cvs = tk.Canvas(self.master, bg=g.bgc0)  # キャンバス
 
         # ウインドウの定義

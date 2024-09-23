@@ -25,12 +25,12 @@ class Time:
             self.n += (int(t[3]) * 10 + int(t[4])) * 6000  # m
             self.n += (int(t[0]) * 10 + int(t[1])) * 360000  # h
             return 0
-        except IndexError as err:
-            print(err)
-            return 901
-        except ValueError as err:
-            print(err)
-            return 902
+        except IndexError:
+            print("function Line 29", IndexError)
+            return 910
+        except ValueError:
+            print("function Line 32", ValueError)
+            return 911
 
     # 現在時刻取得
     def get_now(self):
@@ -201,48 +201,67 @@ def command(e, mw: MainWin, cmd: str):
 
     # タイマー初期化
     elif cmd[0] == "rst":
-        # mw.set_tab.tab[mw.set_tab.crt].configure(bg="SystemButtonFace")
-        # mw.rsv_tab.tab[mw.rsv_tab.crt].configure(bg="SystemButtonFace")
         mw.st.crt = 0
-        # mw.rsv_tab.crt = 3
+        mw.sc.crt = 0
         mw.tmr.set_int(0)
 
-    # 予約設定
-    elif cmd[0] == "rsv":
-        pass
+    # 予定設定
+    elif cmd[0] == "scd":
+        for i in range(mw.sc.row):  # 入力行探し
+            if mw.sc.txt[3*i] == "":  # 設定行が未完成の場合
+                for j in range(1, 3):  # 1列ずつ設定
+                    try:
+                        if cmd[j] == "None":
+                            err = mw.sc.change(3*i+j, "")
+                        else:
+                            err = mw.sc.change(3*i+j, cmd[j])
+                    except IndexError:
+                        print("function Line 219", IndexError)
+                        err = 904
+                    if err != 0:
+                        break
+                break
 
     # 場面変更
     elif cmd[0] == "scn":
         mw.wt.frm.pack_forget()
         mw.st.frm.pack_forget()
         mw.sc.frm.pack_forget()
-        if cmd[1] == "file":
-            pass
-        elif cmd[1] in ["tmr", "TMR"]:
-            mw.scn = "TMR"
-            mw.wt.frm.pack(expand=True, fill="both")
-        elif cmd[1] in ["set", "SET"]:
-            mw.scn = "SET"
-            mw.st.frm.pack(expand=True, fill="both")
-        elif cmd[1] in ["scd", "SCD"]:
-            mw.scn = "SCD"
-            mw.sc.frm.pack(expand=True, fill="both")
-        elif cmd[1] == "help":
-            pass
-        else:
-            err = 3
-        mw.etr.lift()
+        try:
+            if cmd[1] == "file":
+                pass
+            elif cmd[1] in ["tmr", "TMR"]:
+                mw.scn = "TMR"
+                mw.wt.frm.pack(expand=True, fill="both")
+            elif cmd[1] in ["set", "SET"]:
+                mw.scn = "SET"
+                mw.st.frm.pack(expand=True, fill="both")
+            elif cmd[1] in ["scd", "SCD"]:
+                mw.scn = "SCD"
+                mw.sc.frm.pack(expand=True, fill="both")
+            elif cmd[1] == "help":
+                pass
+            else:
+                err = 902
+            mw.etr.lift()
+        except IndexError:
+            print("function Line 250", IndexError)
+            command(e=None, mw=mw, cmd="scn "+mw.scn)
+            err = 901
 
     # 色設定
-    # elif cmd[0] == "set":
-        # for i in range(len(mw.set_tab)/4):
-        #     if mw.set_tab.tab[i]["text"] == "":  # 行が未完成の場合
-        #         for j in range(1, 3):  # 時間、文字色、背景色の順に登録
-        #             mw.set_tab.x = j
-        #             mw.set_tab.y = i
-        #             mw.set_tab.tab[4*i+j].update(cmd[j])  # 入力データが有効か判断する必要あり
-        #          break
-        # mw.set_tab.update()
+    elif cmd[0] == "set":
+        for i in range(mw.st.row):  # 入力行探し
+            if mw.st.txt[4*i] == "":  # 設定行が未完成の場合
+                for j in range(1, 4):  # 1列ずつ設定
+                    try:
+                        err = mw.st.change(4*i+j, cmd[j])
+                    except IndexError:
+                        print("function Line 261", IndexError)
+                        err = 903
+                    if err != 0:
+                        break
+                break
 
     # タイマー開始/停止
     elif cmd[0] == "ss":
@@ -272,11 +291,31 @@ def command(e, mw: MainWin, cmd: str):
         mw.viw_win()
         mw.master.tkraise(mw.viw_mas)
 
+    # 該当コマンドなし
+    else:
+        err = 900
+
     # エラー処理
     if err != 0:
         print("err", err)
     else:
         print(cmd[0], "cmd OK")
-        if cmd[0] != "exit":
-            mw.etr.delete(0, "end")
+    if cmd[0] != "exit":
+        mw.etr.delete(0, "end")
     return err
+
+
+"""
+エラーコード集
+
+900:該当コマンドなし
+901:場面変更コマンドの引数が適切でない
+902:場面変更コマンドの引数が存在しない
+903:設定コマンドの引数が適切でない
+904:予約コマンドの引数が適切でない
+910:時間入力時、文字数が適切でない
+911:時間入力時、文字種が適切でない
+903:色入力時、カラーコードが適切でない
+
+
+"""
