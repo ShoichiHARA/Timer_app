@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import colorchooser
 from functools import partial as pt
 import _tkinter
+import os
 import functions as fc
 import global_val as g
 
@@ -22,6 +23,7 @@ class MainWin(tk.Frame):
         self.wt = Watch(self)
         self.st = Setting(self)
         self.sc = Schedule(self)
+        self.fl = File(self)
         self.mn = Menu(self)
 
         # ウインドウの定義
@@ -466,6 +468,39 @@ class Schedule:
             for i in range(self.row*3, self.row*3+3):
                 self.tab.delete("r" + str(i))
                 self.tab.delete("t" + str(i))
+
+
+# ファイルクラス
+class File:
+    def __init__(self, mw: MainWin):
+        # 定義
+        self.mw = mw
+        self.frm = tk.Frame(self.mw.master)
+        self.gvl = "global_val.cut"
+
+    # 開く
+    def open(self, n):
+        pass
+
+    # 現在の状態を保存
+    def save(self, n):
+        pass
+
+    # グローバル変数開く
+    def o_gval(self):
+        if os.path.exists(self.gvl):  # ファイルが存在するか
+            with open(self.gvl, "r") as f:
+                a = f.read()
+                print(a)
+            return 0
+        else:
+            return 940
+
+    # グローバル変数保存
+    def s_gval(self):
+        with open(self.gvl, "w") as f:
+            t = g.lg.lg + " "  # 言語
+
 
 
 # 表示ウインドウ

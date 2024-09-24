@@ -1,6 +1,7 @@
 # 言語クラス
 class Language:
     def __init__(self, lg="ENG"):
+        self.lg = lg
         lg_list = ["ENG", "JPN"]
         for i in range(len(lg_list)):
             if lg_list[i] == lg:

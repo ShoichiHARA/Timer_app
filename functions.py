@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from tkinter import colorchooser
 from datetime import datetime
+import os
 import global_val as g
 
 if TYPE_CHECKING:
@@ -184,6 +185,23 @@ class SevenSeg:
         )
 
 
+# グローバル変数開く
+def o_gval():
+    if os.path.exists(g.gpt):  # ファイルが存在するか
+        with open(g.gpt, "r") as f:
+            a = f.read()
+            print(a)
+        return 0
+    else:
+        return 940
+
+
+# グローバル変数保存
+def s_gval():
+    with open(g.gpt, "w") as f:
+        t = g.lg.lg + " "  # 言語
+
+
 # コマンド入力
 def command(e, mw: MainWin, cmd: str):
     cmd = cmd.split()
@@ -281,6 +299,13 @@ def command(e, mw: MainWin, cmd: str):
         mw.cnt = False
         mw.wt.ssb.configure(text=g.lg.stt)
 
+    # テスト
+    elif cmd[0] == "test":
+        if cmd[1] == "open":
+            err = mw.fl.o_gval()
+        elif cmd[1] == "save":
+            mw.fl.s_gval()
+
     # 現在値変更
     elif cmd[0] == "tmr":
         err = mw.tmr.set_txt(cmd[1])
@@ -315,7 +340,7 @@ def command(e, mw: MainWin, cmd: str):
 904:予約コマンドの引数が適切でない
 910:時間入力時、文字数が適切でない
 911:時間入力時、文字種が適切でない
-903:色入力時、カラーコードが適切でない
-
+920:色入力時、カラーコードが適切でない
+940:ファイルが存在しない
 
 """

@@ -8,6 +8,7 @@ md_cmd = False
 in_zer = False  # 未記入の表を選択 True:0または黒, False:前回値
 scn0 = "TMR"
 row = 7
+gpt = "global_val.cut"
 ccd = {
     "white": "#FFFFFF", "black": "#000000",
     "red": "#FF0000", "green": "#00FF00", "blue": "#0000FF"
