@@ -189,8 +189,14 @@ class SevenSeg:
 def o_gval():
     if os.path.exists(g.gpt):  # ファイルが存在するか
         with open(g.gpt, "r") as f:
-            a = f.read()
-            print(a)
+            t = f.read().split()
+            g.lg.__init__(t[0])
+            g.clr0 = t[1]
+            g.bgc0 = t[2]
+            g.in_zer = bool(t[3])
+            g.scn0 = t[4]
+            g.row = int(t[5])
+            print("open", t)
         return 0
     else:
         return 940
@@ -198,8 +204,16 @@ def o_gval():
 
 # グローバル変数保存
 def s_gval():
+    print("hello")
     with open(g.gpt, "w") as f:
         t = g.lg.lg + " "  # 言語
+        t += g.clr0 + " "  # 文字色初期値
+        t += g.bgc0 + " "  # 背景色初期値
+        t += str(g.in_zer) + " "  # 未記入セルの初期値
+        t += g.scn0 + " "  # 場面初期値
+        t += str(g.row) + " "  # 行数初期値
+        print("save", t)
+        f.write(t)
 
 
 # コマンド入力
@@ -302,9 +316,11 @@ def command(e, mw: MainWin, cmd: str):
     # テスト
     elif cmd[0] == "test":
         if cmd[1] == "open":
-            err = mw.fl.o_gval()
+            err = o_gval()
         elif cmd[1] == "save":
-            mw.fl.s_gval()
+            s_gval()
+        else:
+            err = 999
 
     # 現在値変更
     elif cmd[0] == "tmr":
