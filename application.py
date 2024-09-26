@@ -476,15 +476,49 @@ class File:
         # 定義
         self.mw = mw
         self.frm = tk.Frame(self.mw.master)
+        self.opn = None
+        self.sav = None
         self.gvl = "global_val.cut"
 
     # 開く
     def open(self, n):
-        pass
+        if os.path.exists(n):  # ファイルが存在するか
+            with open(n, "r") as f:
+                pass
+            return 0
+        else:
+            print("application Line 488", "No File")
+            return 940
 
     # 現在の状態を保存
     def save(self, n):
-        pass
+        with open(n, "w") as f:
+            f.write(self.mw.tmr.out_txt() + "\n")  # タイマー時間
+            t = ""
+            for i in range(self.mw.st.row*4):  # 色設定
+                if self.mw.st.txt[i] == "":    # 空欄の場合
+                    t += "None"                # 文字列生成
+                else:                          # 文字がある場合
+                    t += self.mw.st.txt[i]     # そのまま
+                if i % 4 == 3:                 # 最終列の場合
+                    t += "\n"                  # 改行
+                    f.write(t)                 # ファイル書き込み
+                    t = ""                     # 書き込み文字初期化
+                else:                          # 後ろに列がある場合
+                    t += " "                   # スペース
+            f.write("end\n")                   # 色設定終了
+            for i in range(self.mw.sc.row*3):  # 予定
+                if self.mw.sc.txt[i] == "":    # 空欄の場合
+                    t += "None"                # 文字列生成
+                else:                          # 文字がある場合
+                    t += self.mw.sc.txt[i]     # そのまま
+                if i % 3 == 2:                 # 最終列の場合
+                    t += "\n"                  # 改行
+                    f.write(t)                 # ファイル書き込み
+                    t = ""                     # 書き込み文字初期化
+                else:                          # 後ろに列がある場合
+                    t += " "                   # スペース
+            f.write("end\n")                   # 予定終了
 
     # グローバル変数開く
     def o_gval(self):
@@ -630,6 +664,8 @@ def asktime(tim=None):
 
 # アプリケーション
 def application():
+    fc.o_gval()                 # グローバル変数読み取り
     root = tk.Tk()              # Tkinterインスタンスの生成
     app = MainWin(master=root)  # アプリケーション実行
     app.mainloop()              # ウインドウの描画
+    fc.s_gval()                 # グローバル変数保存
