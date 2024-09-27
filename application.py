@@ -309,7 +309,7 @@ class Setting:
                 if tim.n >= cmp.n:  # 現在時間の方が大きい場合
                     self.crt += 1
         return self.txt[4*self.crt+2], self.txt[4*self.crt+3]
-    
+
     # 行追加ボタン押下
     def ps_ad(self):
         self.row += 1  # 行を追加
@@ -326,13 +326,13 @@ class Setting:
 
     # 行削除ボタン押下
     def ps_dl(self):
-        if self.row > g.row:
+        if self.row > g.row:  # 初期行数より多い場合
             self.row -= 1  # 行を減少
-            del self.txt[-4: -1]
-            self.tab.configure(scrollregion=(0, 0, 321, self.row*25+1))
+            del self.txt[-4: -1]  # 配列要素から削除
+            self.tab.configure(scrollregion=(0, 0, 321, self.row*25+1))  # 可動域縮小
             for i in range(self.row*4, self.row*4+4):
-                self.tab.delete("r"+str(i))
-                self.tab.delete("t"+str(i))
+                self.tab.delete("r"+str(i))  # 表の格子
+                self.tab.delete("t"+str(i))  # 表に入る文字
 
 
 # 予定クラス
@@ -434,12 +434,12 @@ class Schedule:
             if not self.mw.cnt:                                      # カウントが無効の場合
                 if self.txt[3*self.crt+1] != "":                     # 空欄でない場合
                     cmp.set_txt(self.txt[3*self.crt+1])              # 比較用に時間を登録
-                    if tim.n >= cmp.n:                               # 現在時刻の方が大きい場合
+                    if cmp.n <= tim.n < cmp.n+10:                    # 現在時刻の方が大きい場合
                         fc.command(e=None, mw=self.mw, cmd="start")  # カウント開始
             else:
                 if self.txt[3*self.crt+1] != "":                     # 空欄でない場合
                     cmp.set_txt(self.txt[3*self.crt+2])              # 比較用に時間を登録
-                    if tim.n >= cmp.n:                               # 現在時刻の方が大きい場合
+                    if cmp.n <= tim.n < cmp.n+10:                    # 現在時刻の方が大きい場合
                         fc.command(e=None, mw=self.mw, cmd="stop")   # カウント停止
                         self.crt += 1
         if self.crt > self.row:

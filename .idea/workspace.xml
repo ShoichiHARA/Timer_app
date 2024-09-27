@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="09/20&#10;表の位置問題解決" />
+    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="09/25&#10;グローバス変数のファイル読み書き関数完成" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -114,110 +114,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1723038717059</updated>
-    </task>
-    <task id="LOCAL-00028" summary="08/28&#10;別ウインドウから表の設定">
-      <option name="closed" value="true" />
-      <created>1724853082742</created>
-      <option name="number" value="00028" />
-      <option name="presentableId" value="LOCAL-00028" />
-      <option name="project" value="LOCAL" />
-      <updated>1724853082742</updated>
-    </task>
-    <task id="LOCAL-00029" summary="08/28&#10;表の行番号付け">
-      <option name="closed" value="true" />
-      <created>1724857177555</created>
-      <option name="number" value="00029" />
-      <option name="presentableId" value="LOCAL-00029" />
-      <option name="project" value="LOCAL" />
-      <updated>1724857177555</updated>
-    </task>
-    <task id="LOCAL-00030" summary="08/29&#10;言葉追加">
-      <option name="closed" value="true" />
-      <created>1724933660364</created>
-      <option name="number" value="00030" />
-      <option name="presentableId" value="LOCAL-00030" />
-      <option name="project" value="LOCAL" />
-      <updated>1724933660364</updated>
-    </task>
-    <task id="LOCAL-00031" summary="08/29&#10;表クリック関数を移動">
-      <option name="closed" value="true" />
-      <created>1724935110979</created>
-      <option name="number" value="00031" />
-      <option name="presentableId" value="LOCAL-00031" />
-      <option name="project" value="LOCAL" />
-      <updated>1724935110979</updated>
-    </task>
-    <task id="LOCAL-00032" summary="08/29&#10;変数名の変更">
-      <option name="closed" value="true" />
-      <created>1724937270197</created>
-      <option name="number" value="00032" />
-      <option name="presentableId" value="LOCAL-00032" />
-      <option name="project" value="LOCAL" />
-      <updated>1724937270197</updated>
-    </task>
-    <task id="LOCAL-00033" summary="08/29&#10;アプリケーションクラスの変数を減らしたい">
-      <option name="closed" value="true" />
-      <created>1725029694456</created>
-      <option name="number" value="00033" />
-      <option name="presentableId" value="LOCAL-00033" />
-      <option name="project" value="LOCAL" />
-      <updated>1725029694456</updated>
-    </task>
-    <task id="LOCAL-00034" summary="08/31&#10;設定表関数を改良&#10;変数減らした">
-      <option name="closed" value="true" />
-      <created>1725070316560</created>
-      <option name="number" value="00034" />
-      <option name="presentableId" value="LOCAL-00034" />
-      <option name="project" value="LOCAL" />
-      <updated>1725070316560</updated>
-    </task>
-    <task id="LOCAL-00035" summary="08/31&#10;不要なもの削除">
-      <option name="closed" value="true" />
-      <created>1725070976598</created>
-      <option name="number" value="00035" />
-      <option name="presentableId" value="LOCAL-00035" />
-      <option name="project" value="LOCAL" />
-      <updated>1725070976598</updated>
-    </task>
-    <task id="LOCAL-00036" summary="08/31&#10;予約表完成">
-      <option name="closed" value="true" />
-      <created>1725091129691</created>
-      <option name="number" value="00036" />
-      <option name="presentableId" value="LOCAL-00036" />
-      <option name="project" value="LOCAL" />
-      <updated>1725091129691</updated>
-    </task>
-    <task id="LOCAL-00037" summary="08/31&#10;時間変更ウインドウボタン追加">
-      <option name="closed" value="true" />
-      <created>1725095728821</created>
-      <option name="number" value="00037" />
-      <option name="presentableId" value="LOCAL-00037" />
-      <option name="project" value="LOCAL" />
-      <updated>1725095728821</updated>
-    </task>
-    <task id="LOCAL-00038" summary="08/31&#10;色変更ウインドウボタン追加">
-      <option name="closed" value="true" />
-      <created>1725096766292</created>
-      <option name="number" value="00038" />
-      <option name="presentableId" value="LOCAL-00038" />
-      <option name="project" value="LOCAL" />
-      <updated>1725096766292</updated>
-    </task>
-    <task id="LOCAL-00039" summary="08/31&#10;メインウインドウボタン配置">
-      <option name="closed" value="true" />
-      <created>1725102841163</created>
-      <option name="number" value="00039" />
-      <option name="presentableId" value="LOCAL-00039" />
-      <option name="project" value="LOCAL" />
-      <updated>1725102841163</updated>
-    </task>
-    <task id="LOCAL-00040" summary="08/31&#10;時間クラスの時間を文字列で登録">
-      <option name="closed" value="true" />
-      <created>1725103138967</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
-      <option name="project" value="LOCAL" />
-      <updated>1725103138967</updated>
     </task>
     <task id="LOCAL-00041" summary="09/01&#10;時間クラスの時間と文字列を比較">
       <option name="closed" value="true" />
@@ -507,7 +403,111 @@
       <option name="project" value="LOCAL" />
       <updated>1726783518075</updated>
     </task>
-    <option name="localTasksCounter" value="77" />
+    <task id="LOCAL-00077" summary="09/21&#10;メインウインドウクラスでタイマー動作">
+      <option name="closed" value="true" />
+      <created>1726899939970</created>
+      <option name="number" value="00077" />
+      <option name="presentableId" value="LOCAL-00077" />
+      <option name="project" value="LOCAL" />
+      <updated>1726899939970</updated>
+    </task>
+    <task id="LOCAL-00078" summary="09/21&#10;設定クラスにフレームを移動">
+      <option name="closed" value="true" />
+      <created>1726908859451</created>
+      <option name="number" value="00078" />
+      <option name="presentableId" value="LOCAL-00078" />
+      <option name="project" value="LOCAL" />
+      <updated>1726908859451</updated>
+    </task>
+    <task id="LOCAL-00079" summary="09/21&#10;表示ウインドウに時間を表示">
+      <option name="closed" value="true" />
+      <created>1726911582462</created>
+      <option name="number" value="00079" />
+      <option name="presentableId" value="LOCAL-00079" />
+      <option name="project" value="LOCAL" />
+      <updated>1726911582462</updated>
+    </task>
+    <task id="LOCAL-00080" summary="09/22&#10;時間変更ウインドウを関数化">
+      <option name="closed" value="true" />
+      <created>1727010625748</created>
+      <option name="number" value="00080" />
+      <option name="presentableId" value="LOCAL-00080" />
+      <option name="project" value="LOCAL" />
+      <updated>1727010625748</updated>
+    </task>
+    <task id="LOCAL-00081" summary="09/22&#10;設定クラス行削除、要素削除を追加">
+      <option name="closed" value="true" />
+      <created>1727012319582</created>
+      <option name="number" value="00081" />
+      <option name="presentableId" value="LOCAL-00081" />
+      <option name="project" value="LOCAL" />
+      <updated>1727012319582</updated>
+    </task>
+    <task id="LOCAL-00082" summary="09/23&#10;ウォッチクラス、設定クラスのウィジェット定義の最適化&#10;viewコマンド時は入力欄を最前面に">
+      <option name="closed" value="true" />
+      <created>1727018802973</created>
+      <option name="number" value="00082" />
+      <option name="presentableId" value="LOCAL-00082" />
+      <option name="project" value="LOCAL" />
+      <updated>1727018802973</updated>
+    </task>
+    <task id="LOCAL-00083" summary="09/23&#10;不要なもの削除">
+      <option name="closed" value="true" />
+      <created>1727020631656</created>
+      <option name="number" value="00083" />
+      <option name="presentableId" value="LOCAL-00083" />
+      <option name="project" value="LOCAL" />
+      <updated>1727020631656</updated>
+    </task>
+    <task id="LOCAL-00084" summary="09/23&#10;時間設定で色変更">
+      <option name="closed" value="true" />
+      <created>1727055183197</created>
+      <option name="number" value="00084" />
+      <option name="presentableId" value="LOCAL-00084" />
+      <option name="project" value="LOCAL" />
+      <updated>1727055183197</updated>
+    </task>
+    <task id="LOCAL-00085" summary="09/23&#10;設定クラスの移行完了">
+      <option name="closed" value="true" />
+      <created>1727059487615</created>
+      <option name="number" value="00085" />
+      <option name="presentableId" value="LOCAL-00085" />
+      <option name="project" value="LOCAL" />
+      <updated>1727059487615</updated>
+    </task>
+    <task id="LOCAL-00086" summary="09/23&#10;予定クラスの移行完了">
+      <option name="closed" value="true" />
+      <created>1727069688266</created>
+      <option name="number" value="00086" />
+      <option name="presentableId" value="LOCAL-00086" />
+      <option name="project" value="LOCAL" />
+      <updated>1727069688266</updated>
+    </task>
+    <task id="LOCAL-00087" summary="09/23&#10;不要なもの削除&#10;コマンドをある程度整理&#10;exe化">
+      <option name="closed" value="true" />
+      <created>1727096580744</created>
+      <option name="number" value="00087" />
+      <option name="presentableId" value="LOCAL-00087" />
+      <option name="project" value="LOCAL" />
+      <updated>1727096580744</updated>
+    </task>
+    <task id="LOCAL-00088" summary="09/24&#10;ファイルクラス作成中">
+      <option name="closed" value="true" />
+      <created>1727186937311</created>
+      <option name="number" value="00088" />
+      <option name="presentableId" value="LOCAL-00088" />
+      <option name="project" value="LOCAL" />
+      <updated>1727186937311</updated>
+    </task>
+    <task id="LOCAL-00089" summary="09/25&#10;グローバス変数のファイル読み書き関数完成">
+      <option name="closed" value="true" />
+      <created>1727276075778</created>
+      <option name="number" value="00089" />
+      <option name="presentableId" value="LOCAL-00089" />
+      <option name="project" value="LOCAL" />
+      <updated>1727276075778</updated>
+    </task>
+    <option name="localTasksCounter" value="90" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -522,19 +522,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="09/03&#10;現在値変更を確定すると表示ウインドウが直接変わるバグ修正" />
-    <MESSAGE value="09/03&#10;設定、予約表の現在行に色を設定" />
-    <MESSAGE value="09/03&#10;色が設定されている場合、スケールを移動&#10;pyinstallerでexe化&#10;リリースv2.0" />
-    <MESSAGE value="09/05&#10;動作確認終了&#10;異常なし" />
-    <MESSAGE value="09/05&#10;時間クラス改造中&#10;int型で取り扱い" />
-    <MESSAGE value="09/06&#10;時間クラス改造中&#10;int型で取り扱い" />
-    <MESSAGE value="09/06&#10;サイズ変更がわからない" />
-    <MESSAGE value="09/08&#10;サイズ変更成功" />
-    <MESSAGE value="09/08&#10;表示画面コロンコンマを設置" />
-    <MESSAGE value="09/08&#10;不要なもの削除&#10;spaceで開始停止" />
-    <MESSAGE value="09/08&#10;時間設定画面の調整" />
-    <MESSAGE value="09/09&#10;コマンド関数の作成開始&#10;入力欄を初期化したい&#10;入力欄にフォーカスを設定したい" />
-    <MESSAGE value="09/09&#10;コマンド作成予定&#10;exe化" />
     <MESSAGE value="09/10&#10;入力欄の初期化できた&#10;色変更ウインドウの変数と関数削除" />
     <MESSAGE value="09/12&#10;ファイル構成の変更&#10;設定クラスをグローバル変数化" />
     <MESSAGE value="09/13&#10;ファイル構成の変更&#10;設定クラスをグローバル変数化" />
@@ -547,6 +534,19 @@
     <MESSAGE value="09/18&#10;キャンバスの文字変更ができない" />
     <MESSAGE value="09/19&#10;表をスクロールすると座標がずれる" />
     <MESSAGE value="09/20&#10;表の位置問題解決" />
-    <option name="LAST_COMMIT_MESSAGE" value="09/20&#10;表の位置問題解決" />
+    <MESSAGE value="09/21&#10;メインウインドウクラスでタイマー動作" />
+    <MESSAGE value="09/21&#10;設定クラスにフレームを移動" />
+    <MESSAGE value="09/21&#10;表示ウインドウに時間を表示" />
+    <MESSAGE value="09/22&#10;時間変更ウインドウを関数化" />
+    <MESSAGE value="09/22&#10;設定クラス行削除、要素削除を追加" />
+    <MESSAGE value="09/23&#10;ウォッチクラス、設定クラスのウィジェット定義の最適化&#10;viewコマンド時は入力欄を最前面に" />
+    <MESSAGE value="09/23&#10;不要なもの削除" />
+    <MESSAGE value="09/23&#10;時間設定で色変更" />
+    <MESSAGE value="09/23&#10;設定クラスの移行完了" />
+    <MESSAGE value="09/23&#10;予定クラスの移行完了" />
+    <MESSAGE value="09/23&#10;不要なもの削除&#10;コマンドをある程度整理&#10;exe化" />
+    <MESSAGE value="09/24&#10;ファイルクラス作成中" />
+    <MESSAGE value="09/25&#10;グローバス変数のファイル読み書き関数完成" />
+    <option name="LAST_COMMIT_MESSAGE" value="09/25&#10;グローバス変数のファイル読み書き関数完成" />
   </component>
 </project>

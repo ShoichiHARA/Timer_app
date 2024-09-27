@@ -196,7 +196,6 @@ def o_gval():
             g.in_zer = bool(t[3])
             g.scn0 = t[4]
             g.row = int(t[5])
-            print("open", t)
         return 0
     else:
         return 940
@@ -204,7 +203,6 @@ def o_gval():
 
 # グローバル変数保存
 def s_gval():
-    print("hello")
     with open(g.gpt, "w") as f:
         t = g.lg.lg + " "  # 言語
         t += g.clr0 + " "  # 文字色初期値
@@ -212,7 +210,6 @@ def s_gval():
         t += str(g.in_zer) + " "  # 未記入セルの初期値
         t += g.scn0 + " "  # 場面初期値
         t += str(g.row) + " "  # 行数初期値
-        print("save", t)
         f.write(t)
 
 
@@ -237,22 +234,35 @@ def command(e, mw: MainWin, cmd: str):
         mw.sc.crt = 0
         mw.tmr.set_int(0)
 
+    # 保存
+    elif cmd[0] == "save":
+        try:
+            mw.fl.save(cmd[1])
+        except IndexError:
+            print("function Line 242", IndexError)
+            err = 941
+
     # 予定設定
     elif cmd[0] == "scd":
-        for i in range(mw.sc.row):  # 入力行探し
-            if mw.sc.txt[3*i] == "":  # 設定行が未完成の場合
-                for j in range(1, 3):  # 1列ずつ設定
-                    try:
-                        if cmd[j] == "None":
-                            err = mw.sc.change(3*i+j, "")
-                        else:
-                            err = mw.sc.change(3*i+j, cmd[j])
-                    except IndexError:
-                        print("function Line 219", IndexError)
-                        err = 904
-                    if err != 0:
-                        break
-                break
+        if cmd[1] == "add":
+            mw.sc.ps_ad()
+        elif cmd[1] == "del":
+            mw.sc.ps_dl()
+        else:
+            for i in range(mw.sc.row):  # 入力行探し
+                if mw.sc.txt[3*i] == "":  # 設定行が未完成の場合
+                    for j in range(1, 3):  # 1列ずつ設定
+                        try:
+                            if cmd[j] == "None":
+                                err = mw.sc.change(3*i+j, "")
+                            else:
+                                err = mw.sc.change(3*i+j, cmd[j])
+                        except IndexError:
+                            print("function Line 256", IndexError)
+                            err = 904
+                        if err != 0:
+                            break
+                    break
 
     # 場面変更
     elif cmd[0] == "scn":
@@ -283,17 +293,22 @@ def command(e, mw: MainWin, cmd: str):
 
     # 色設定
     elif cmd[0] == "set":
-        for i in range(mw.st.row):  # 入力行探し
-            if mw.st.txt[4*i] == "":  # 設定行が未完成の場合
-                for j in range(1, 4):  # 1列ずつ設定
-                    try:
-                        err = mw.st.change(4*i+j, cmd[j])
-                    except IndexError:
-                        print("function Line 261", IndexError)
-                        err = 903
-                    if err != 0:
-                        break
-                break
+        if cmd[1] == "add":  # 行追加
+            mw.st.ps_ad()
+        elif cmd[1] == "del":  # 行削除
+            mw.st.ps_dl()
+        else:
+            for i in range(mw.st.row):  # 入力行探し
+                if mw.st.txt[4*i] == "":  # 設定行が未完成の場合
+                    for j in range(1, 4):  # 1列ずつ設定
+                        try:
+                            err = mw.st.change(4*i+j, cmd[j])
+                        except IndexError:
+                            print("function Line 261", IndexError)
+                            err = 903
+                        if err != 0:
+                            break
+                    break
 
     # タイマー開始/停止
     elif cmd[0] == "ss":
@@ -358,5 +373,6 @@ def command(e, mw: MainWin, cmd: str):
 911:時間入力時、文字種が適切でない
 920:色入力時、カラーコードが適切でない
 940:ファイルが存在しない
+941:保存コマンドの引数が適切でない
 
 """
