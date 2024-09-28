@@ -228,6 +228,14 @@ def command(e, mw: MainWin, cmd: str):
     elif cmd[0] == "exit":
         mw.master.destroy()
 
+    # 開く
+    elif cmd[0] == "open":
+        try:
+            mw.fl.open(cmd[1])
+        except IndexError:
+            print("function Line 236", IndexError)
+            err = 941
+
     # タイマー初期化
     elif cmd[0] == "rst":
         mw.st.crt = 0
@@ -239,8 +247,8 @@ def command(e, mw: MainWin, cmd: str):
         try:
             mw.fl.save(cmd[1])
         except IndexError:
-            print("function Line 242", IndexError)
-            err = 941
+            print("function Line 250", IndexError)
+            err = 942
 
     # 予定設定
     elif cmd[0] == "scd":
@@ -373,6 +381,7 @@ def command(e, mw: MainWin, cmd: str):
 911:時間入力時、文字種が適切でない
 920:色入力時、カラーコードが適切でない
 940:ファイルが存在しない
-941:保存コマンドの引数が適切でない
+941:開くコマンドの引数が適切でない
+942:保存コマンドの引数が適切でない
 
 """

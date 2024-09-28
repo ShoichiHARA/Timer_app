@@ -484,14 +484,41 @@ class File:
     def open(self, n):
         if os.path.exists(n):  # ファイルが存在するか
             with open(n, "r") as f:
-                pass
+                self.mw.tmr.set_txt(f.readline())
+                set = f.readline().split()
+                for i in range(3):
+                    a = f.readline()
+                    print(a)
             return 0
         else:
             print("application Line 488", "No File")
             return 940
 
-    # 現在の状態を保存
+    # 保存
     def save(self, n):
+        with open(n, "w") as f:
+            f.write(self.mw.tmr.out_txt() + "\n")  # 現在時間書き込み
+            f.write(str(self.mw.st.row) + "\n")    # 設定行数書き込み
+            t = ""                                 # 書き込み変数
+            for i in range(self.mw.st.row*4):      # 行*列だけ繰り返し
+                if self.mw.st.txt[i] == "":        # 空欄の場合
+                    t += "None"                    # 何か文字列
+                else:                              # その他の場合
+                    t += self.mw.st.txt[i]         # 入力した文字列
+                t += " "                           # 空白挿入
+            f.write(t + "END\n")                   # 設定書き込み
+            f.write(str(self.mw.sc.row) + "\n")    # 予定行数書き込み
+            t = ""                                 # 書き込み変数
+            for i in range(self.mw.sc.row*3):      # 行*列だけ繰り返し
+                if self.mw.sc.txt[i] == "":        # 空欄の場合
+                    t += "None"                    # 何か文字列
+                else:                              # その他の場合
+                    t += self.mw.sc.txt[i]         # 入力した文字列
+                t += " "                           # 空白挿入
+            f.write(t + "END\n")                   # 設定書き込み
+
+    # 現在の状態を保存
+    def save1(self, n):
         with open(n, "w") as f:
             f.write(self.mw.tmr.out_txt() + "\n")  # タイマー時間
             t = ""
@@ -519,22 +546,6 @@ class File:
                 else:                          # 後ろに列がある場合
                     t += " "                   # スペース
             f.write("end\n")                   # 予定終了
-
-    # グローバル変数開く
-    def o_gval(self):
-        if os.path.exists(self.gvl):  # ファイルが存在するか
-            with open(self.gvl, "r") as f:
-                a = f.read()
-                print(a)
-            return 0
-        else:
-            return 940
-
-    # グローバル変数保存
-    def s_gval(self):
-        with open(self.gvl, "w") as f:
-            t = g.lg.lg + " "  # 言語
-
 
 
 # 表示ウインドウ
