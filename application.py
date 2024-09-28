@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import colorchooser
 from functools import partial as pt
 import _tkinter
+import copy
 import os
 import functions as fc
 import global_val as g
@@ -341,24 +342,32 @@ class Schedule:
         # 定義
         self.mw = mw
         self.frm = tk.Frame(self.mw.master)  # 設定場面
-        self.add = tk.Button(self.frm, width=10, text=g.lg.rad, command=self.ps_ad)  # 行追加ボタン
-        self.dlt = tk.Button(self.frm, width=10, text=g.lg.rdl, command=self.ps_dl)  # 行削除ボタン
+        self.add = tk.Button(self.frm, width=10, text=g.lg.rad)  # 行追加ボタン
+        self.dlt = tk.Button(self.frm, width=10, text=g.lg.rdl)  # 行削除ボタン
+        # self.add = tk.Button(self.frm, width=10, text=g.lg.rad, command=self.ps_ad)  # 行追加ボタン
+        # self.dlt = tk.Button(self.frm, width=10, text=g.lg.rdl, command=self.ps_dl)  # 行削除ボタン
         self.scr = tk.Scrollbar(self.frm, orient=tk.VERTICAL)              # スクロールバー
         self.tab = tk.Canvas(self.frm, width=241, height=g.row*25+1, highlightthickness=0)
         self.tit = tk.Canvas(self.frm, width=241, height=25, bg="silver", highlightthickness=0)
         self.tim = fc.Time()  # 場面保存用
         self.crt = 0  # 現在の設定行
         self.row = g.row
-        self.txt = [""] * self.row * 3
+        self.txt = []
+        # self.txt = [""] * self.row * 3
 
         self.widgets()
+        self.table(self.row)
 
     def widgets(self):
         # 設定
-        self.tab.configure(scrollregion=(0, 0, 241, self.row*25+1), yscrollcommand=self.scr.set)
+        self.tab.configure(yscrollcommand=self.scr.set)
+        # self.tab.configure(scrollregion=(0, 0, 241, self.row*25+1), yscrollcommand=self.scr.set)
         self.scr.configure(command=self.tab.yview)
         self.tab.bind("<Button>", self.ck_tb)
+        self.add.configure(command=pt(self.table, row=self.row+1))
+        self.dlt.configure(command=pt(self.table, row=self.row-1))
 
+        """
         for i in range(self.row*3):
             self.tab.create_rectangle(
                 i%3*80, i//3*25, i%3*80+80, i//3*25+25, fill="SystemButtonFace", tags="r"+str(i)
@@ -366,6 +375,7 @@ class Schedule:
             self.tab.create_text(
                 i%3*80+40, i//3*25+13, text=self.txt[i], font=("", 11), tags="t"+str(i)
             )  # 表に入る文字
+        """
 
         # タイトル行設定
         self.tit.create_text(40, 13, text="No.", font=("", 11))
@@ -381,6 +391,26 @@ class Schedule:
         self.tab.place(x=80, y=44)                      # 予定表キャンバス
         self.tit.place(x=80, y=20)                      # タイトル行キャンバス
         self.scr.place(x=320, y=44, height=g.row*25+1)  # スクロールバー
+
+    # 表生成
+    def table(self, row):
+        print(self.row, row)
+        self.row = row  # 行数決定
+        txt = copy.deepcopy(self.txt)  # 現在の予約保存
+        self.txt = [""] * self.row * 3
+        self.tab.configure(scrollregion=(0, 0, 241, self.row*25+1))  # 可動域変更
+        for i in range(self.row*3):
+            if i < len(txt):
+                self.txt[i] = txt[i]
+            else:
+                self.txt[i] = ""
+            self.tab.create_rectangle(
+                i%3*80, i//3*25, i%3*80+80, i//3*25+25, fill="SystemButtonFace",
+                tags="r"+str(i)
+            )  # 表の格子
+            self.tab.create_text(
+                i%3*80+40, i//3*25+13, text=self.txt[i], font=("", 11), tags="t"+str(i)
+            )  # 表に入る文字
 
     # 表クリック
     def ck_tb(self, e):
@@ -445,6 +475,7 @@ class Schedule:
         if self.crt > self.row:
             self.crt = self.row
 
+    """
     # 行追加ボタン押下
     def ps_ad(self):
         self.row += 1  # 行を追加
@@ -468,6 +499,7 @@ class Schedule:
             for i in range(self.row*3, self.row*3+3):
                 self.tab.delete("r" + str(i))
                 self.tab.delete("t" + str(i))
+    """
 
 
 # ファイルクラス
