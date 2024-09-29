@@ -218,17 +218,17 @@ def command(e, mw: MainWin, cmd: str):
     cmd = cmd.split()
     err = 0
 
-    # 色変更ウインドウ
-    if cmd[0] == "clr":
-        clr = colorchooser.askcolor(mw.clr, title=g.lg.ccr)
-        mw.clr = clr[1]
-        print(mw.clr)
-
     # コマンド欄非表示
     if cmd[0] == "cmd":
         if cmd[1] == "off":
             g.md_cmd = False
             mw.dsp_cmd()
+
+    # 起動変数（グローバル変数）変更
+    elif cmd[0] == "configure":
+        if cmd[1] == "lg":
+            if cmd[2] in g.lg.lg_list:
+                g.lg.lg = cmd[2]
 
     # アプリケーション終了
     elif cmd[0] == "exit":
@@ -243,7 +243,7 @@ def command(e, mw: MainWin, cmd: str):
             err = 941
 
     # タイマー初期化
-    elif cmd[0] == "rst":
+    elif cmd[0] in ["rst", "reset"]:
         mw.st.crt = 0
         mw.sc.crt = 0
         mw.tmr.set_int(0)
@@ -278,24 +278,12 @@ def command(e, mw: MainWin, cmd: str):
 
     # 場面変更
     elif cmd[0] == "scn":
-        mw.wt.frm.pack_forget()
-        mw.st.frm.pack_forget()
-        mw.sc.frm.pack_forget()
+        lst = ["file", "FIL", "tmr", "TMR", "set", "SET", "scd", "SCD", "help", "HLP"]
         try:
-            if cmd[1] == "file":
-                pass
-            elif cmd[1] in ["tmr", "TMR"]:
-                mw.scn = "TMR"
-                mw.wt.frm.pack(expand=True, fill="both")
-            elif cmd[1] in ["set", "SET"]:
-                mw.scn = "SET"
-                mw.st.frm.pack(expand=True, fill="both")
-            elif cmd[1] in ["scd", "SCD"]:
-                mw.scn = "SCD"
-                mw.sc.frm.pack(expand=True, fill="both")
-            elif cmd[1] == "help":
-                pass
+            if cmd[1] in lst:
+                mw.mn.change(cmd[1])
             else:
+                print("function Line 250")
                 err = 902
             mw.etr.lift()
         except IndexError:

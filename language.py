@@ -1,10 +1,10 @@
 # 言語クラス
 class Language:
-    def __init__(self, lg="ENG"):
+    def __init__(self, lg="JPN"):
         self.lg = lg
-        lg_list = ["ENG", "JPN"]
-        for i in range(len(lg_list)):
-            if lg_list[i] == lg:
+        self.lg_list = ["ENG", "JPN"]
+        for i in range(len(self.lg_list)):
+            if self.lg_list[i] == lg:
                 self.mwn = output(i, ["Count Up Timer", "カウントアップタイマー"])
                 self.twn = output(i, ["Timer", "表示ウインドウ"])
                 self.fil = output(i, ["File", "ファイル"])

@@ -20,11 +20,12 @@ class MainWin(tk.Frame):
         self.scn = g.scn0
         self.tmr = fc.Time()                # 表示時間
         self.etr = tk.Entry(self.master, width=50)  # コマンド入力欄
-        self.wt = Watch(self)
-        self.st = Setting(self)
-        self.sc = Schedule(self)
-        self.fl = File(self)
-        self.mn = Menu(self)
+        self.wt = Watch(self)     # ストップウォッチタブ
+        self.st = Setting(self)   # 設定タブ
+        self.sc = Schedule(self)  # 予定タブ
+        self.fl = File(self)      # ファイルタブ
+        self.mn = Menu(self)      # メニューバー
+        self.mn.change(self.scn)  # 初期タブ
 
         # ウインドウの定義
         self.master.title(g.lg.mwn)          # ウインドウタイトル
@@ -36,9 +37,6 @@ class MainWin(tk.Frame):
         # サブウインドウの定義
         self.viw_mas = None  # 表示マスター
         self.viw_app = None
-
-        # 初期場面
-        fc.command(None, self, "scn " + self.scn)
 
         # 現在時刻取得
         self.now.get_now()
@@ -140,16 +138,30 @@ class Menu:
         # 設定
         self.mw.master.configure(menu=self.bar)  # メニューバー追加
         self.bar.add_command(label=g.lg.fil, command=self.hoge)       # ファイルコマンド追加
-        self.bar.add_command(
-            label=g.lg.swc, command=pt(fc.command, e=None, mw=mw, cmd="scn tmr")
-        )  # タイマーコマンド追加
-        self.bar.add_command(
-            label=g.lg.set, command=pt(fc.command, e=None, mw=mw, cmd="scn set")
-        )  # 設定コマンド追加
-        self.bar.add_command(
-            label=g.lg.rsv, command=pt(fc.command, e=None, mw=mw, cmd="scn scd")
-        )  # 予約コマンド追加
+        self.bar.add_command(label=g.lg.swc, command=pt(self.change, scn="TMR"))  # タイマー
+        self.bar.add_command(label=g.lg.set, command=pt(self.change, scn="SET"))  # 設定
+        self.bar.add_command(label=g.lg.rsv, command=pt(self.change, scn="SCD"))  # 予定
         self.bar.add_command(label=g.lg.hlp, command=self.hoge)  # ヘルプコマンド追加
+
+    # タブ変更
+    def change(self, scn):
+        self.mw.wt.frm.pack_forget()
+        self.mw.st.frm.pack_forget()
+        self.mw.sc.frm.pack_forget()
+        if scn in ["file", "FIL"]:
+            pass
+        elif scn in ["tmr", "TMR"]:
+            self.mw.scn = "TMR"
+            self.mw.wt.frm.pack(expand=True, fill="both")
+        elif scn in ["set", "SET"]:
+            self.mw.scn = "SET"
+            self.mw.st.frm.pack(expand=True, fill="both")
+        elif scn in ["scd", "SCD"]:
+            self.mw.scn = "SCD"
+            self.mw.sc.frm.pack(expand=True, fill="both")
+        elif scn in ["help", "HLP"]:
+            pass
+        self.mw.etr.lift()
 
     def hoge(self):
         pass
@@ -695,7 +707,7 @@ def asktime(tim=None):
 
 # アプリケーション
 def application():
-    # fc.o_gval()                 # グローバル変数読み取り
+    fc.o_gval()                 # グローバル変数読み取り
     root = tk.Tk()              # Tkinterインスタンスの生成
     app = MainWin(master=root)  # アプリケーション実行
     app.mainloop()              # ウインドウの描画

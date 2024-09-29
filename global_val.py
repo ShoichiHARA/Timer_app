@@ -1,6 +1,6 @@
 import language
 
-lg = language.Language("JPN")
+lg = language.Language()
 clr0 = "#000000"
 bgc0 = "#FFFFFF"
 rwc0 = "#00FF00"
