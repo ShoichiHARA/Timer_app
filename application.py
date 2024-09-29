@@ -184,8 +184,9 @@ class Setting:
         # 定義
         self.mw = mw
         self.frm = tk.Frame(self.mw.master)  # 設定場面
-        self.add = tk.Button(self.frm, width=10, text=g.lg.rad, command=self.ps_ad)  # 行追加ボタン
-        self.dlt = tk.Button(self.frm, width=10, text=g.lg.rdl, command=self.ps_dl)  # 行削除ボタン
+        self.add = tk.Button(self.frm, width=10, text=g.lg.rad)  # 行追加ボタン
+        self.dlt = tk.Button(self.frm, width=10, text=g.lg.rdl)  # 行削除ボタン
+
         self.scr = tk.Scrollbar(self.frm, orient=tk.VERTICAL)              # スクロールバー
         self.tab = tk.Canvas(self.frm, width=321, height=g.row*25+1, highlightthickness=0)
         self.tit = tk.Canvas(self.frm, width=321, height=25, bg="silver", highlightthickness=0)
@@ -201,23 +202,15 @@ class Setting:
         self.txt[3] = g.bgc0
 
         self.widgets()
+        self.table(self.row)
 
     def widgets(self):
         # 設定
         self.tab.configure(scrollregion=(0, 0, 321, self.row*25+1), yscrollcommand=self.scr.set)
         self.scr.configure(command=self.tab.yview)
-        self.tab.bind("<Button>", self.ck_tb)
-
-        for i in range(self.row*4):
-            self.tab.create_rectangle(
-                i%4*80, i//4*25, i%4*80+80, i//4*25+25, fill="SystemButtonFace", tags="r"+str(i)
-            )  # 表の格子
-            self.tab.create_text(
-                i%4*80+40, i//4*25+13, text=self.txt[i], font=("", 11), tags="t"+str(i)
-            )  # 表に入る文字
-            if i % 4 in [2, 3]:  # 文字色列または背景色
-                if self.txt[i] != "":  # 空白でない場合
-                    self.tab.itemconfig("r"+str(i), fill=self.txt[i])  # 表の背景色変更
+        self.tab.bind("<Button>", self.click)
+        self.add.configure(command=pt(self.table, cmd="+"))
+        self.dlt.configure(command=pt(self.table, cmd="-"))
 
         # タイトル行設定
         self.tit.create_text(40, 13, text="No.", font=("", 11))
@@ -236,8 +229,38 @@ class Setting:
         self.tit.place(x=40, y=20)                      # タイトル行キャンバス
         self.scr.place(x=360, y=44, height=g.row*25+1)  # スクロールバー
 
+    # 表生成
+    def table(self, cmd, txt=None):
+        if cmd == "+":           # 行追加コマンド
+            self.row += 1        # 1行追加
+        elif cmd == "-":         # 行削除コマンド
+            self.row -= 1        # 1行削除
+        else:                    # 行数入力
+            self.row = int(cmd)  # 行数設定
+        if txt is None:                 # 引数が指定されていない場合
+            txt = self.txt              # 自身を保存
+        self.txt = [""] * self.row * 4  # 配列初期化
+        self.tab.configure(scrollregion=(0, 0, 241, self.row*25+1))  # 可動域変更
+        for i in range(self.row*4):      # 引数行*列だけ繰り返し
+            if i < len(txt):          # 文字配列がある場合
+                self.txt[i] = txt[i]  # 文字入力
+            self.tab.create_rectangle(
+                i%4*80, i//4*25, i%4*80+80, i//4*25+25, fill="SystemButtonFace",
+                tags="r"+str(i)
+            )  # 表の格子
+            self.tab.create_text(
+                i%4*80+40, i//4*25+13, text=self.txt[i], font=("", 11), tags="t"+str(i)
+            )  # 表に入る文字
+            if i%4 in [2, 3]:  # 文字色列または背景色
+                if self.txt[i] != "":  # 空白でない場合
+                    self.tab.itemconfig("r"+str(i), fill=self.txt[i])  # 表の背景色変更
+        if self.row == g.row:                     # 行数最小の場合
+            self.dlt.configure(state="disabled")  # 削除ボタン無効
+        else:                                     # その他
+            self.dlt.configure(state="normal")    # 削除ボタン有効
+
     # 表クリック
-    def ck_tb(self, e):
+    def click(self, e):
         s = self.scr.get()              # スクロールバーの位置
         d = s[0] * (self.row * 25 + 2)  # スクロール量（ピクセル）
         x = (e.x - 2) // 80             # クリック列
@@ -310,30 +333,6 @@ class Setting:
                     self.crt += 1
         return self.txt[4*self.crt+2], self.txt[4*self.crt+3]
 
-    # 行追加ボタン押下
-    def ps_ad(self):
-        self.row += 1  # 行を追加
-        self.tab.configure(scrollregion=(0, 0, 321, self.row*25+1))
-        for i in range(self.row*4-4, self.row*4):
-            self.txt.append("")
-            self.tab.create_rectangle(
-                i%4*80, i//4*25, i%4*80+80, i//4*25+25,
-                fill="SystemButtonFace", tags="r"+str(i)
-            )  # 表の格子
-            self.tab.create_text(
-                i%4*80+40, i//4*25+13, text=self.txt[i], font=("", 11), tags="t"+str(i)
-            )  # 表に入る文字
-
-    # 行削除ボタン押下
-    def ps_dl(self):
-        if self.row > g.row:  # 初期行数より多い場合
-            self.row -= 1  # 行を減少
-            del self.txt[-4: -1]  # 配列要素から削除
-            self.tab.configure(scrollregion=(0, 0, 321, self.row*25+1))  # 可動域縮小
-            for i in range(self.row*4, self.row*4+4):
-                self.tab.delete("r"+str(i))  # 表の格子
-                self.tab.delete("t"+str(i))  # 表に入る文字
-
 
 # 予定クラス
 class Schedule:
@@ -358,7 +357,7 @@ class Schedule:
         # 設定
         self.tab.configure(yscrollcommand=self.scr.set)
         self.scr.configure(command=self.tab.yview)
-        self.tab.bind("<Button>", self.crick)
+        self.tab.bind("<Button>", self.click)
         self.add.configure(command=pt(self.table, cmd="+"))
         self.dlt.configure(command=pt(self.table, cmd="-"))
 
@@ -405,7 +404,7 @@ class Schedule:
             self.dlt.configure(state="normal")    # 削除ボタン有効
 
     # 表クリック
-    def crick(self, e):
+    def click(self, e):
         s = self.scr.get()              # スクロールバーの位置
         d = s[0] * (self.row * 25 + 2)  # スクロール量（ピクセル）
         x = (e.x - 2) // 80             # クリック列

@@ -252,10 +252,8 @@ def command(e, mw: MainWin, cmd: str):
 
     # 予定設定
     elif cmd[0] == "scd":
-        if cmd[1] == "add":
-            mw.sc.table("+")
-        elif cmd[1] == "del":
-            mw.sc.table("-")
+        if cmd[1] in ["+", "-"]:  # 行追加または行削除
+            mw.sc.table(cmd[1])
         else:
             for i in range(mw.sc.row):  # 入力行探し
                 if mw.sc.txt[3*i] == "":  # 設定行が未完成の場合
@@ -301,10 +299,8 @@ def command(e, mw: MainWin, cmd: str):
 
     # 色設定
     elif cmd[0] == "set":
-        if cmd[1] == "add":  # 行追加
-            mw.st.ps_ad()
-        elif cmd[1] == "del":  # 行削除
-            mw.st.ps_dl()
+        if cmd[1] in ["+", "-"]:  # 行追加または行削除
+            mw.st.table(cmd[1])
         else:
             for i in range(mw.st.row):  # 入力行探し
                 if mw.st.txt[4*i] == "":  # 設定行が未完成の場合
