@@ -1,6 +1,5 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from tkinter import colorchooser
 from datetime import datetime
 import os
 import global_val as g
@@ -185,6 +184,20 @@ class SevenSeg:
         )
 
 
+# カラーコード判定
+def color(clr):
+    lst = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"]
+    if clr in g.ccd:
+        return True
+    elif clr[0] == "#":
+        for i in range(6):
+            if clr[i] not in lst:
+                return False
+        return True
+    else:
+        return False
+
+
 # グローバル変数開く
 def o_gval():
     if os.path.exists(g.gpt):  # ファイルが存在するか
@@ -226,9 +239,47 @@ def command(e, mw: MainWin, cmd: str):
 
     # 起動変数（グローバル変数）変更
     elif cmd[0] == "configure":
-        if cmd[1] == "lg":
-            if cmd[2] in g.lg.lg_list:
-                g.lg.lg = cmd[2]
+        try:
+            if cmd[1] == "lg":  # 言語変更（再起動が必要）
+                if cmd[2] in g.lg.lg_list:
+                    g.lg.lg = cmd[2]
+                else:
+                    err = 962
+            elif cmd[1] == "clr0":  # 初期文字色
+                if color(cmd[2]):
+                    g.clr0 = cmd[2]
+                else:
+                    err = 920
+            elif cmd[1] == "bgc0":  # 初期背景色
+                if color(cmd[2]):
+                    g.bgc0 = cmd[2]
+                else:
+                    err = 920
+            elif cmd[1] == "cmd":  # 初期コマンドモード
+                if cmd[2] in ["True", "False"]:
+                    g.md_cmd = bool(cmd[2])
+                else:
+                    err = 963
+            elif cmd[1] == "zero":  # 未記入の表を選択
+                if cmd[2] in ["True", "False"]:
+                    g.in_zer = bool(cmd[2])
+                else:
+                    err = 963
+            elif cmd[1] == "scn0":
+                if cmd[2] in mw.mn.lst:
+                    g.scn0 = cmd[2]
+                else:
+                    err = 964
+            elif cmd[1] == "row0":
+                if 0 < int(cmd[2]) < 21:
+                    g.row = int(cmd[2])
+                else:
+                    err = 965
+            else:
+                err = 961
+        except IndexError:
+            print("function Line 242", IndexError)
+            err = 960
 
     # アプリケーション終了
     elif cmd[0] == "exit":
@@ -278,9 +329,8 @@ def command(e, mw: MainWin, cmd: str):
 
     # 場面変更
     elif cmd[0] == "scn":
-        lst = ["file", "FIL", "tmr", "TMR", "set", "SET", "scd", "SCD", "help", "HLP"]
         try:
-            if cmd[1] in lst:
+            if cmd[1] in mw.mn.lst:
                 mw.mn.change(cmd[1])
             else:
                 print("function Line 250")
@@ -373,5 +423,12 @@ def command(e, mw: MainWin, cmd: str):
 940:ファイルが存在しない
 941:開くコマンドの引数が適切でない
 942:保存コマンドの引数が適切でない
+960:構成変更コマンドの引数が適切でない
+961:構成変更コマンドの項目が存在しない
+962:構成変更コマンドの設定値が適切でない(ENG, JPN)
+963:構成変更コマンドの設定値が適切でない(True, False)
+964:構成変更コマンドの設定値が適切でない(タブ名)
+965:構成変更コマンドの設定値が適切でない(1 ~ 20)
+
 
 """

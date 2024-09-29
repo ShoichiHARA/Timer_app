@@ -134,6 +134,7 @@ class Menu:
         # 定義
         self.mw = mw
         self.bar = tk.Menu(self.mw.master)  # メニューバー
+        self.lst = ["file", "FIL", "tmr", "TMR", "set", "SET", "scd", "SCD", "help", "HLP"]
 
         # 設定
         self.mw.master.configure(menu=self.bar)  # メニューバー追加
