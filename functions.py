@@ -253,11 +253,9 @@ def command(e, mw: MainWin, cmd: str):
     # 予定設定
     elif cmd[0] == "scd":
         if cmd[1] == "add":
-            # mw.sc.ps_ad()
-            mw.sc.table(mw.sc.row+1)
+            mw.sc.table("+")
         elif cmd[1] == "del":
-            # mw.sc.ps_dl()
-            mw.sc.table(mw.sc.row-1)
+            mw.sc.table("-")
         else:
             for i in range(mw.sc.row):  # 入力行探し
                 if mw.sc.txt[3*i] == "":  # 設定行が未完成の場合
