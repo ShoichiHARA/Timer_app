@@ -224,6 +224,12 @@ def command(e, mw: MainWin, cmd: str):
         mw.clr = clr[1]
         print(mw.clr)
 
+    # コマンド欄非表示
+    if cmd[0] == "cmd":
+        if cmd[1] == "off":
+            g.md_cmd = False
+            mw.dsp_cmd()
+
     # アプリケーション終了
     elif cmd[0] == "exit":
         mw.master.destroy()
@@ -233,7 +239,7 @@ def command(e, mw: MainWin, cmd: str):
         try:
             mw.fl.open(cmd[1])
         except IndexError:
-            print("function Line 236", IndexError)
+            print("function Line 242", IndexError)
             err = 941
 
     # タイマー初期化

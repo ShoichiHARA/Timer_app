@@ -17,7 +17,7 @@ class MainWin(tk.Frame):
         self.keys = []                      # キーボードの状態
         self.now = fc.Time()                # 現在時刻
         self.cnt = False                    # カウントアップ
-        self.scn = "Tmr"
+        self.scn = g.scn0
         self.tmr = fc.Time()                # 表示時間
         self.etr = tk.Entry(self.master, width=50)  # コマンド入力欄
         self.wt = Watch(self)
@@ -30,7 +30,7 @@ class MainWin(tk.Frame):
         self.master.title(g.lg.mwn)          # ウインドウタイトル
         self.master.geometry("400x300")      # ウインドウサイズ
         self.master.resizable(False, False)  # サイズ変更禁止
-        # self.widgets()                       # ウィジェット
+        self.widgets()                       # ウィジェット
         self.event()                         # イベント
 
         # サブウインドウの定義
@@ -38,7 +38,7 @@ class MainWin(tk.Frame):
         self.viw_app = None
 
         # 初期場面
-        fc.command(None, self, "scn " + g.scn0)
+        fc.command(None, self, "scn " + self.scn)
 
         # 現在時刻取得
         self.now.get_now()
@@ -46,15 +46,25 @@ class MainWin(tk.Frame):
 
     # ウィジェット
     def widgets(self: tk.Tk):
-        pass
+        if g.md_cmd:
+            self.dsp_cmd()
 
     # 表示ウインドウ表示
     def viw_win(self):
         if (self.viw_mas is None) or (not self.viw_mas.winfo_exists()):
             self.viw_mas = tk.Toplevel(self.master)
             self.viw_app = ViewWin(self.viw_mas, self)
-            if self.etr.place_info().get("in") is None:  # コマンド欄が無効の場合
+            if not g.md_cmd:  # コマンド欄が無効の場合
                 self.viw_mas.focus_set()
+
+    # コマンド欄表示
+    def dsp_cmd(self):
+        if g.md_cmd:
+            self.etr.place(x=50, y=270)
+            self.etr.focus_set()
+            self.etr.bind("<Key-Return>", self.in_cd)
+        else:
+            self.etr.place_forget()
 
     # コマンド入力(仮)
     def in_cd(self, e):
@@ -85,9 +95,8 @@ class MainWin(tk.Frame):
             if "c" in self.keys:
                 if "m" in self.keys:
                     if "d" in self.keys:
-                        self.etr.place(x=50, y=270)
-                        self.etr.focus_set()
-                        self.etr.bind("<Key-Return>", self.in_cd)
+                        g.md_cmd = True
+                        self.dsp_cmd()
 
         def k_release(e):  # キーボード離した場合
             self.keys.remove(e.keysym)
@@ -481,11 +490,25 @@ class File:
     def open(self, n):
         if os.path.exists(n):  # ファイルが存在するか
             with open(n, "r") as f:
-                self.mw.tmr.set_txt(f.readline())
-                set = f.readline().split()
-                for i in range(3):
-                    a = f.readline()
-                    print(a)
+                st_t = []                          # 設定表格納配列
+                sc_t = []                          # 予定表格納配列
+                self.mw.tmr.set_txt(f.readline())  # 現在時間
+                st_r = int(f.readline())           # 設定行数
+                st_l = f.readline().split()        # 設定表
+                sc_r = int(f.readline())           # 予定行数
+                sc_l = f.readline().split()        # 予定表
+                for i in range(st_r*4):            # 列*行だけ繰り返し
+                    if st_l[i] == "None":          # Noneの場合
+                        st_t.append("")            # 空白
+                    else:                          # その他
+                        st_t.append(st_l[i])       # 設定
+                for i in range(sc_r*3):            # 列*行だけ繰り返し
+                    if sc_l[i] == "None":          # Noneの場合
+                        sc_t.append("")            # 空白
+                    else:                          # その他
+                        sc_t.append(sc_l[i])       # 予定
+                self.mw.st.table(st_r, st_t)       # 設定表表示
+                self.mw.sc.table(sc_r, sc_t)       # 予定表表示
             return 0
         else:
             print("application Line 488", "No File")
@@ -503,7 +526,7 @@ class File:
                 else:                              # その他の場合
                     t += self.mw.st.txt[i]         # 入力した文字列
                 t += " "                           # 空白挿入
-            f.write(t + "END\n")                   # 設定書き込み
+            f.write(t + "\n")                   # 設定書き込み
             f.write(str(self.mw.sc.row) + "\n")    # 予定行数書き込み
             t = ""                                 # 書き込み変数
             for i in range(self.mw.sc.row*3):      # 行*列だけ繰り返し
@@ -512,7 +535,7 @@ class File:
                 else:                              # その他の場合
                     t += self.mw.sc.txt[i]         # 入力した文字列
                 t += " "                           # 空白挿入
-            f.write(t + "END\n")                   # 設定書き込み
+            f.write(t + "\n")                   # 設定書き込み
 
     # 現在の状態を保存
     def save1(self, n):
@@ -672,7 +695,7 @@ def asktime(tim=None):
 
 # アプリケーション
 def application():
-    fc.o_gval()                 # グローバル変数読み取り
+    # fc.o_gval()                 # グローバル変数読み取り
     root = tk.Tk()              # Tkinterインスタンスの生成
     app = MainWin(master=root)  # アプリケーション実行
     app.mainloop()              # ウインドウの描画
