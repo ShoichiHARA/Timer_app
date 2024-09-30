@@ -17,7 +17,6 @@ class MainWin(tk.Frame):
         self.keys = []                      # キーボードの状態
         self.now = fc.Time()                # 現在時刻
         self.cnt = False                    # カウントアップ
-        self.scn = g.scn0
         self.tmr = fc.Time()                # 表示時間
         self.etr = tk.Entry(self.master, width=50)  # コマンド入力欄
         self.wt = Watch(self)     # ストップウォッチタブ
@@ -25,7 +24,7 @@ class MainWin(tk.Frame):
         self.sc = Schedule(self)  # 予定タブ
         self.fl = File(self)      # ファイルタブ
         self.mn = Menu(self)      # メニューバー
-        self.mn.change(self.scn)  # 初期タブ
+        self.mn.change(g.scn0)  # 初期タブ
 
         # ウインドウの定義
         self.master.title(g.lg.mwn)          # ウインドウタイトル
@@ -138,34 +137,29 @@ class Menu:
 
         # 設定
         self.mw.master.configure(menu=self.bar)  # メニューバー追加
-        self.bar.add_command(label=g.lg.fil, command=self.hoge)       # ファイルコマンド追加
+        self.bar.add_command(label=g.lg.fil, command=pt(self.change, scn="FIL"))  # ファイル
         self.bar.add_command(label=g.lg.swc, command=pt(self.change, scn="TMR"))  # タイマー
         self.bar.add_command(label=g.lg.set, command=pt(self.change, scn="SET"))  # 設定
         self.bar.add_command(label=g.lg.rsv, command=pt(self.change, scn="SCD"))  # 予定
-        self.bar.add_command(label=g.lg.hlp, command=self.hoge)  # ヘルプコマンド追加
+        self.bar.add_command(label=g.lg.hlp, command=pt(self.change, scn="HLP"))  # ヘルプ
 
     # タブ変更
     def change(self, scn):
+        self.mw.fl.frm.pack_forget()
         self.mw.wt.frm.pack_forget()
         self.mw.st.frm.pack_forget()
         self.mw.sc.frm.pack_forget()
         if scn in ["file", "FIL"]:
-            pass
+            self.mw.fl.frm.pack(expand=True, fill="both")
         elif scn in ["tmr", "TMR"]:
-            self.mw.scn = "TMR"
             self.mw.wt.frm.pack(expand=True, fill="both")
         elif scn in ["set", "SET"]:
-            self.mw.scn = "SET"
             self.mw.st.frm.pack(expand=True, fill="both")
         elif scn in ["scd", "SCD"]:
-            self.mw.scn = "SCD"
             self.mw.sc.frm.pack(expand=True, fill="both")
         elif scn in ["help", "HLP"]:
             pass
         self.mw.etr.lift()
-
-    def hoge(self):
-        pass
 
 
 # ストップウォッチクラス
@@ -495,9 +489,19 @@ class File:
         # 定義
         self.mw = mw
         self.frm = tk.Frame(self.mw.master)
-        self.opn = None
-        self.sav = None
-        self.gvl = "global_val.cut"
+        self.opn = tk.Button(self.frm, text=g.lg.opn)
+        self.sav = tk.Button(self.frm, text=g.lg.sav)
+        self.sva = tk.Button(self.frm, text=g.lg.sva)
+
+        self.widgets()
+
+    def widgets(self):
+        # 設定
+
+        # 配置
+        self.opn.place(x=10, y=50)
+        self.sav.place(x=10, y=70)
+        self.sva.place(x=10, y=90)
 
     # 開く
     def open(self, n):
@@ -549,36 +553,6 @@ class File:
                     t += self.mw.sc.txt[i]         # 入力した文字列
                 t += " "                           # 空白挿入
             f.write(t + "\n")                   # 設定書き込み
-
-    # 現在の状態を保存
-    def save1(self, n):
-        with open(n, "w") as f:
-            f.write(self.mw.tmr.out_txt() + "\n")  # タイマー時間
-            t = ""
-            for i in range(self.mw.st.row*4):  # 色設定
-                if self.mw.st.txt[i] == "":    # 空欄の場合
-                    t += "None"                # 文字列生成
-                else:                          # 文字がある場合
-                    t += self.mw.st.txt[i]     # そのまま
-                if i % 4 == 3:                 # 最終列の場合
-                    t += "\n"                  # 改行
-                    f.write(t)                 # ファイル書き込み
-                    t = ""                     # 書き込み文字初期化
-                else:                          # 後ろに列がある場合
-                    t += " "                   # スペース
-            f.write("end\n")                   # 色設定終了
-            for i in range(self.mw.sc.row*3):  # 予定
-                if self.mw.sc.txt[i] == "":    # 空欄の場合
-                    t += "None"                # 文字列生成
-                else:                          # 文字がある場合
-                    t += self.mw.sc.txt[i]     # そのまま
-                if i % 3 == 2:                 # 最終列の場合
-                    t += "\n"                  # 改行
-                    f.write(t)                 # ファイル書き込み
-                    t = ""                     # 書き込み文字初期化
-                else:                          # 後ろに列がある場合
-                    t += " "                   # スペース
-            f.write("end\n")                   # 予定終了
 
 
 # 表示ウインドウ
