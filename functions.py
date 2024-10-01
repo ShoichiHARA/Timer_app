@@ -204,7 +204,6 @@ def o_gval():
         with open(g.gpt, "r") as f:
             while True:
                 t = f.readline().split()
-                print(t)
                 if t[0] == "END":
                     break
                 elif t[0] == "lg":

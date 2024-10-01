@@ -28,11 +28,12 @@ class MainWin(tk.Frame):
         self.mn.change(g.scn0)  # 初期タブ
 
         # ウインドウの定義
-        self.master.title(g.lg.mwn)          # ウインドウタイトル
-        self.master.geometry("400x300")      # ウインドウサイズ
-        self.master.resizable(False, False)  # サイズ変更禁止
-        self.widgets()                       # ウィジェット
-        self.event()                         # イベント
+        self.master.title(g.lg.mwn)                          # ウインドウタイトル
+        self.master.geometry("400x300")                      # ウインドウサイズ
+        self.master.resizable(False, False)                  # サイズ変更禁止
+        self.master.protocol("WM_DELETE_WINDOW", self.exit)  # ×ボタンクリック
+        self.widgets()                                       # ウィジェット
+        self.event()                                         # イベント
 
         # サブウインドウの定義
         self.viw_mas = None  # 表示マスター
@@ -44,8 +45,10 @@ class MainWin(tk.Frame):
 
     # ウィジェット
     def widgets(self: tk.Tk):
-        if g.md_cmd:
+        if g.md_cmd:  # コマンドモード有効
             self.dsp_cmd()
+        if g.ctn:  # 前回の続き有効
+            self.fl.open("backup.cut")
 
     # 表示ウインドウ表示
     def viw_win(self):
@@ -54,6 +57,12 @@ class MainWin(tk.Frame):
             self.viw_app = ViewWin(self.viw_mas, self)
             if not g.md_cmd:  # コマンド欄が無効の場合
                 self.viw_mas.focus_set()
+
+    # アプリケーション終了
+    def exit(self, e=None):
+        if g.ctn:
+            self.fl.save("backup.cut")
+        self.master.destroy()
 
     # コマンド欄表示
     def dsp_cmd(self):
@@ -85,6 +94,7 @@ class MainWin(tk.Frame):
                 pass
 
         def k_press(e):  # キーボード押した場合
+            print(e.keysym)
             if e.keysym in self.keys:
                 return
             self.keys.append(e.keysym)
@@ -98,13 +108,12 @@ class MainWin(tk.Frame):
 
         def k_release(e):  # キーボード離した場合
             self.keys.remove(e.keysym)
-            if e.keysym == "Escape":
-                self.master.destroy()  # プログラム終了
 
         self.master.bind("<ButtonPress>", m_press)
         self.master.bind("<ButtonRelease>", m_release)
         self.master.bind("<KeyPress>", k_press)
         self.master.bind("<KeyRelease>", k_release)
+        self.master.bind("<KeyRelease-Escape>", self.exit)
 
     # 再描画
     def reload(self):
@@ -282,7 +291,6 @@ class Setting:
         d = s[0] * (self.row * 25 + 2)  # スクロール量（ピクセル）
         x = (e.x - 2) // 80             # クリック列
         y = (e.y + int(d)) // 25        # クリック行
-        # print(e, x, y)
 
         if e.num == 1:  # 左クリック
             if x == 1:  # 時間変更
@@ -491,22 +499,25 @@ class File:
         self.mw = mw
         self.nam = ""
         self.frm = tk.Frame(self.mw.master)
-        self.opn = tk.Button(self.frm, text=g.lg.opn)
-        self.sav = tk.Button(self.frm, text=g.lg.sav)
-        self.sva = tk.Button(self.frm, text=g.lg.sva)
+        self.nwb = tk.Button(self.frm, text=g.lg.new, font=("", 15), width=15, height=3)
+        self.opn = tk.Button(self.frm, text=g.lg.opn, font=("", 15), width=15, height=3)
+        self.sav = tk.Button(self.frm, text=g.lg.sav, font=("", 15), width=15, height=3)
+        self.sva = tk.Button(self.frm, text=g.lg.sva, font=("", 15), width=15, height=3)
 
         self.widgets()
 
     def widgets(self):
         # 設定
+        self.nwb.configure(command=self.new)
         self.opn.configure(command=pt(self.open, n="", d=True))
         self.sav.configure(command=pt(self.save, n="", d=False))
         self.sva.configure(command=pt(self.save, n="", d=True))
 
         # 配置
-        self.opn.place(x=10, y=50)
-        self.sav.place(x=10, y=70)
-        self.sva.place(x=10, y=90)
+        self.nwb.place(x=20, y=50)
+        self.opn.place(x=210, y=50)
+        self.sav.place(x=20, y=150)
+        self.sva.place(x=210, y=150)
 
     # 開く
     def open(self, n="", d=False):
@@ -569,6 +580,12 @@ class File:
                 t += " "                           # 空白挿入
             f.write(t + "\n")                      # 設定書き込み
 
+    # 新規
+    def new(self):
+        self.mw.tmr.set_int(0)
+        self.mw.st.__init__(self.mw)
+        self.mw.sc.__init__(self.mw)
+
 
 # 表示ウインドウ
 class ViewWin(tk.Frame):
@@ -600,8 +617,13 @@ class ViewWin(tk.Frame):
             self.whg = self.master.winfo_height()
             self.siz = self.wwd // 85
 
+        def exit(e):
+            self.master.destroy()
+
         self.bind("<Configure>", win_size)
         self.master.bind("<KeyPress-space>", pt(fc.command, mw=self.mw, cmd="ss"))
+        self.master.bind("<KeyPress-BackSpace>", pt(fc.command, mw=self.mw, cmd="rst"))
+        self.master.bind("<KeyRelease-Escape>", exit)
 
     # 時間表示
     def display(self, tim: fc.Time, clr: str, bgc: str):

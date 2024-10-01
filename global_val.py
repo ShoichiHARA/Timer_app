@@ -4,11 +4,11 @@ lg = language.Language()
 clr0 = "#000000"
 bgc0 = "#FFFFFF"
 rwc0 = "#00FF00"
-md_cmd = True
-in_zer = False  # 未記入の表を選択 True:0または黒, False:前回値
-scn0 = "TMR"
+md_cmd = False
+in_zer = True  # 未記入の表を選択 True:0または黒, False:前回値
+scn0 = "FIL"
 row = 7
-ctn = False  # 前回の続き
+ctn = True  # 前回の続き
 gpt = "global_val.gvl"
 ccd = [
     "AliceBlue",

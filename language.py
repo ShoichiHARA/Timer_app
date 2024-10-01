@@ -8,6 +8,7 @@ class Language:
                 self.mwn = output(i, ["Count Up Timer", "カウントアップタイマー"])
                 self.twn = output(i, ["Timer", "表示ウインドウ"])
                 self.fil = output(i, ["File", "ファイル"])
+                self.new = output(i, ["New", "新規作成"])
                 self.opn = output(i, ["Open", "開く"])
                 self.sav = output(i, ["Save", "上書き保存"])
                 self.sva = output(i, ["Save as", "名前を付けて保存"])
