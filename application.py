@@ -65,10 +65,13 @@ class MainWin(tk.Frame):
     # コマンド欄表示
     def dsp_cmd(self):
         if g.md_cmd:
+            self.etr.configure(state="normal")
             self.etr.place(x=50, y=270)
             self.etr.focus_set()
             self.etr.bind("<Key-Return>", self.in_cd)
         else:
+            self.etr.delete(0, "end")
+            self.etr.configure(state="disabled")
             self.etr.place_forget()
 
     # コマンド入力(仮)

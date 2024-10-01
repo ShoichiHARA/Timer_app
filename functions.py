@@ -407,7 +407,7 @@ def command(e, mw: MainWin, cmd: str):
 
     # タイマー開始/停止
     elif cmd[0] in ["ss", "start", "stop"]:
-        mw.wt.stt_stp(cmd[1])
+        mw.wt.stt_stp(cmd[0])
 
     # テスト
     elif cmd[0] == "test":
@@ -437,8 +437,8 @@ def command(e, mw: MainWin, cmd: str):
         print("err", err)
     else:
         print(cmd[0], "cmd OK")
-    if cmd[0] != "exit":
-        mw.etr.delete(0, "end")
+        if cmd[0] != "exit":
+            mw.etr.delete(0, "end")
     return err
 
 
