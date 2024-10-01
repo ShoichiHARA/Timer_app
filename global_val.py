@@ -8,7 +8,8 @@ md_cmd = True
 in_zer = False  # 未記入の表を選択 True:0または黒, False:前回値
 scn0 = "TMR"
 row = 7
-gpt = "global_val.cut"
+ctn = False  # 前回の続き
+gpt = "global_val.gvl"
 ccd = [
     "AliceBlue",
     "AntiqueWhite", "AntiqueWhite1", "AntiqueWhite2", "AntiqueWhite3", "AntiqueWhite4",

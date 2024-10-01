@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import colorchooser
+from tkinter import filedialog as fd
 from functools import partial as pt
 import _tkinter
 import os
@@ -488,6 +489,7 @@ class File:
     def __init__(self, mw: MainWin):
         # 定義
         self.mw = mw
+        self.nam = ""
         self.frm = tk.Frame(self.mw.master)
         self.opn = tk.Button(self.frm, text=g.lg.opn)
         self.sav = tk.Button(self.frm, text=g.lg.sav)
@@ -497,6 +499,9 @@ class File:
 
     def widgets(self):
         # 設定
+        self.opn.configure(command=pt(self.open, n="", d=True))
+        self.sav.configure(command=pt(self.save, n="", d=False))
+        self.sva.configure(command=pt(self.save, n="", d=True))
 
         # 配置
         self.opn.place(x=10, y=50)
@@ -504,9 +509,12 @@ class File:
         self.sva.place(x=10, y=90)
 
     # 開く
-    def open(self, n):
+    def open(self, n="", d=False):
+        if d:  # ダイアログ開く
+            n = fd.askopenfilename(title=g.lg.opn, filetypes=[("CUTファイル", "*.cut")])
         if os.path.exists(n):  # ファイルが存在するか
             with open(n, "r") as f:
+                self.nam = n                       # 名前を記録
                 st_t = []                          # 設定表格納配列
                 sc_t = []                          # 予定表格納配列
                 self.mw.tmr.set_txt(f.readline())  # 現在時間
@@ -532,7 +540,14 @@ class File:
             return 940
 
     # 保存
-    def save(self, n):
+    def save(self, n="", d=False):
+        if d:
+            n = fd.asksaveasfilename(title=g.lg.sva, filetypes=[("CUTファイル", "*.cut")])
+        if n == "":
+            if self.nam == "":
+                n = fd.asksaveasfilename(title=g.lg.opn, filetypes=[("CUTファイル", "*.cut")])
+            else:
+                n = self.nam
         with open(n, "w") as f:
             f.write(self.mw.tmr.out_txt() + "\n")  # 現在時間書き込み
             f.write(str(self.mw.st.row) + "\n")    # 設定行数書き込み
@@ -543,7 +558,7 @@ class File:
                 else:                              # その他の場合
                     t += self.mw.st.txt[i]         # 入力した文字列
                 t += " "                           # 空白挿入
-            f.write(t + "\n")                   # 設定書き込み
+            f.write(t + "\n")                      # 設定書き込み
             f.write(str(self.mw.sc.row) + "\n")    # 予定行数書き込み
             t = ""                                 # 書き込み変数
             for i in range(self.mw.sc.row*3):      # 行*列だけ繰り返し
@@ -552,7 +567,7 @@ class File:
                 else:                              # その他の場合
                     t += self.mw.sc.txt[i]         # 入力した文字列
                 t += " "                           # 空白挿入
-            f.write(t + "\n")                   # 設定書き込み
+            f.write(t + "\n")                      # 設定書き込み
 
 
 # 表示ウインドウ

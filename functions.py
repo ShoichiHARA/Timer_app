@@ -202,13 +202,25 @@ def color(clr):
 def o_gval():
     if os.path.exists(g.gpt):  # ファイルが存在するか
         with open(g.gpt, "r") as f:
-            t = f.read().split()
-            g.lg.__init__(t[0])
-            g.clr0 = t[1]
-            g.bgc0 = t[2]
-            g.in_zer = bool(t[3])
-            g.scn0 = t[4]
-            g.row = int(t[5])
+            while True:
+                t = f.readline().split()
+                print(t)
+                if t[0] == "END":
+                    break
+                elif t[0] == "lg":
+                    g.lg.__init__(t[1])
+                elif t[0] == "clr0":
+                    g.clr0 = t[1]
+                elif t[0] == "bgc0":
+                    g.bgc0 = t[1]
+                elif t[0] == "in_zer":
+                    g.in_zer = bool(t[1])
+                elif t[0] == "scn0":
+                    g.scn0 = t[1]
+                elif t[0] == "row":
+                    g.row = int(t[1])
+                elif t[0] == "ctn":
+                    g.ctn = bool(t[1])
         return 0
     else:
         return 940
@@ -217,12 +229,14 @@ def o_gval():
 # グローバル変数保存
 def s_gval():
     with open(g.gpt, "w") as f:
-        t = g.lg.lg + " "  # 言語
-        t += g.clr0 + " "  # 文字色初期値
-        t += g.bgc0 + " "  # 背景色初期値
-        t += str(g.in_zer) + " "  # 未記入セルの初期値
-        t += g.scn0 + " "  # 場面初期値
-        t += str(g.row) + " "  # 行数初期値
+        t = "lg " + g.lg.lg + "\n"             # 言語
+        t += "clr0 " + g.clr0 + "\n"           # 文字色初期値
+        t += "bgc0 " + g.bgc0 + "\n"           # 背景色初期値
+        t += "in_zer " + str(g.in_zer) + "\n"  # 未記入セルの初期値
+        t += "scn0 " + g.scn0 + "\n"           # 場面初期値
+        t += "row " + str(g.row) + "\n"        # 行数初期値
+        t += "ctn " + str(g.ctn) + "\n"        # 前回の続き
+        t += "END"
         f.write(t)
 
 
@@ -288,6 +302,8 @@ def command(e, mw: MainWin, cmd: str):
     # 開く
     elif cmd[0] == "open":
         try:
+            if cmd[1].rfind(".cut") != len(cmd[1])-4:  # 拡張子を入力していない
+                cmd[1] += ".cut"                       # 拡張子追加
             mw.fl.open(cmd[1])
         except IndexError:
             print("function Line 242", IndexError)
@@ -302,6 +318,8 @@ def command(e, mw: MainWin, cmd: str):
     # 保存
     elif cmd[0] == "save":
         try:
+            if cmd[1].rfind(".cut") != len(cmd[1])-4:  # 拡張子を入力していない
+                cmd[1] += ".cut"                       # 拡張子追加
             mw.fl.save(cmd[1])
         except IndexError:
             print("function Line 250", IndexError)
@@ -338,7 +356,6 @@ def command(e, mw: MainWin, cmd: str):
             mw.etr.lift()
         except IndexError:
             print("function Line 250", IndexError)
-            command(e=None, mw=mw, cmd="scn "+mw.scn)
             err = 901
 
     # 色設定
