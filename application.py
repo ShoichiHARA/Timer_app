@@ -466,8 +466,7 @@ class Schedule:
                     self.tim.set_int(tim.n)                 # 時間を保存
                     self.change(3*y+x, self.tim.out_txt())  # 表の表示を変更
         elif e.num == 3:  # 右クリック
-            if y != 0:
-                self.change(4*y+x, "")  # 空白を入力
+            self.change(3*y+x, "")  # 空白を入力
 
     # 設定変更
     def change(self, xy, txt):
