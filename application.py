@@ -17,7 +17,6 @@ class MainWin(tk.Frame):
         # 定義
         self.keys = []                      # キーボードの状態
         self.now = fc.Time()                # 現在時刻
-        self.cnt = False                    # カウントアップ
         self.tmr = fc.Time()                # 表示時間
         self.etr = tk.Entry(self.master, width=50)  # コマンド入力欄
         self.wt = Watch(self)     # ストップウォッチタブ
@@ -25,7 +24,7 @@ class MainWin(tk.Frame):
         self.sc = Schedule(self)  # 予定タブ
         self.fl = File(self)      # ファイルタブ
         self.mn = Menu(self)      # メニューバー
-        self.mn.change(g.scn0)  # 初期タブ
+        self.mn.change(g.scn0)    # 初期タブ
 
         # ウインドウの定義
         self.master.title(g.lg.mwn)                          # ウインドウタイトル
@@ -45,8 +44,7 @@ class MainWin(tk.Frame):
 
     # ウィジェット
     def widgets(self: tk.Tk):
-        if g.md_cmd:  # コマンドモード有効
-            self.dsp_cmd()
+        self.dsp_cmd()  # コマンド欄
         if g.ctn:  # 前回の続き有効
             self.fl.open("backup.cut")
 
@@ -94,7 +92,7 @@ class MainWin(tk.Frame):
                 pass
 
         def k_press(e):  # キーボード押した場合
-            print(e.keysym)
+            # print(e.keysym)
             if e.keysym in self.keys:
                 return
             self.keys.append(e.keysym)
@@ -120,7 +118,7 @@ class MainWin(tk.Frame):
         # 再描画の判断
         prv = self.now.n  # 前回の時刻
         self.now.get_now()  # 現在時刻取得
-        if self.cnt:  # カウントが有効の場合
+        if self.wt.cnt:  # カウントが有効の場合
             if prv != self.now.n:  # 時刻が進んでいる場合
                 self.tmr.set_int(self.tmr.n + self.now.n - prv)  # 前回と今回の差分だけ進ませる
 
@@ -177,6 +175,7 @@ class Watch:
     def __init__(self, mw: MainWin):
         # 定義
         self.mw = mw
+        self.cnt = False
         self.frm = tk.Frame(self.mw.master)
         self.wtc = tk.Label(self.frm, text=self.mw.tmr.out_txt(), font=("", 60))
         self.ssb = tk.Button(self.frm, text=g.lg.stt, font=("", 15), width=15, height=3)
@@ -187,9 +186,9 @@ class Watch:
 
     def widgets(self):
         # 設定
-        self.wtc.bind("<Button-1>", self.chg_tim)
-        self.ssb.configure(command=pt(fc.command, e=None, mw=self.mw, cmd="ss"))
-        self.rst.configure(command=pt(fc.command, e=None, mw=self.mw, cmd="rst"))
+        self.wtc.bind("<Button-1>", self.change)
+        self.ssb.configure(command=pt(self.stt_stp, e=None, ss="ss"))
+        self.rst.configure(command=pt(self.reset, e=None))
         self.dsp.configure(command=pt(fc.command, e=None, mw=self.mw, cmd="view"))
 
         # 配置
@@ -198,10 +197,31 @@ class Watch:
         self.rst.place(x=210, y=120)  # 初期化ボタン
         self.dsp.place(x=22, y=210)   # 表示ボタン
 
-    def chg_tim(self, e):
-        tim = asktime(self.mw.tmr)
+    # 現在値変更
+    def change(self, e, tim=None):
+        if tim is None:
+            tim = asktime(self.mw.tmr)
         if tim is not None:
             self.mw.tmr.set_int(tim.n)
+
+    # 初期化
+    def reset(self, e):
+        self.mw.st.crt = 0
+        self.mw.sc.crt = 0
+        self.mw.tmr.set_int(0)
+
+    # 開始/停止
+    def stt_stp(self, e, ss="ss"):
+        if ss == "start":  # 開始
+            self.cnt = True
+        elif ss == "stop":  # 停止
+            self.cnt = False
+        else:  # 開始停止を切替
+            self.cnt = not self.cnt
+        if self.cnt:
+            self.ssb.configure(text=g.lg.stp)  # 停止を表示
+        else:
+            self.ssb.configure(text=g.lg.stt)  # 開始を表示
 
 
 # 設定クラス
@@ -249,8 +269,8 @@ class Setting:
         self.tit.create_rectangle(240, 0, 320, 24)
 
         # 配置
-        self.add.place(x=190, y=g.row*25+55)                     # 行追加ボタン
-        self.dlt.place(x=280, y=g.row*25+55)                    # 行削除ボタン
+        self.add.place(x=190, y=g.row*25+55)            # 行追加ボタン
+        self.dlt.place(x=280, y=g.row*25+55)            # 行削除ボタン
         self.tab.place(x=40, y=44)                      # 設定表キャンバス44
         self.tit.place(x=40, y=20)                      # タイトル行キャンバス
         self.scr.place(x=360, y=44, height=g.row*25+1)  # スクロールバー
@@ -267,7 +287,7 @@ class Setting:
             txt = self.txt              # 自身を保存
         self.txt = [""] * self.row * 4  # 配列初期化
         self.tab.configure(scrollregion=(0, 0, 241, self.row*25+1))  # 可動域変更
-        for i in range(self.row*4):      # 引数行*列だけ繰り返し
+        for i in range(self.row*4):   # 引数行*列だけ繰り返し
             if i < len(txt):          # 文字配列がある場合
                 self.txt[i] = txt[i]  # 文字入力
             self.tab.create_rectangle(
@@ -477,7 +497,7 @@ class Schedule:
     def current(self, tim: fc.Time):
         cmp = fc.Time()
         if self.txt[3*self.crt] != "":                               # 予定行が無効の場合
-            if not self.mw.cnt:                                      # カウントが無効の場合
+            if not self.mw.wt.cnt:                                   # カウントが無効の場合
                 if self.txt[3*self.crt+1] != "":                     # 空欄でない場合
                     cmp.set_txt(self.txt[3*self.crt+1])              # 比較用に時間を登録
                     if cmp.n <= tim.n < cmp.n+10:                    # 現在時刻の方が大きい場合
@@ -497,7 +517,7 @@ class File:
     def __init__(self, mw: MainWin):
         # 定義
         self.mw = mw
-        self.nam = ""
+        self.nam = "None"
         self.frm = tk.Frame(self.mw.master)
         self.nwb = tk.Button(self.frm, text=g.lg.new, font=("", 15), width=15, height=3)
         self.opn = tk.Button(self.frm, text=g.lg.opn, font=("", 15), width=15, height=3)
@@ -547,7 +567,7 @@ class File:
                 self.mw.sc.table(sc_r, sc_t)       # 予定表表示
             return 0
         else:
-            print("application Line 488", "No File")
+            print("application Line 571", "No File")
             return 940
 
     # 保存
@@ -555,33 +575,35 @@ class File:
         if d:
             n = fd.asksaveasfilename(title=g.lg.sva, filetypes=[("CUTファイル", "*.cut")])
         if n == "":
-            if self.nam == "":
-                n = fd.asksaveasfilename(title=g.lg.opn, filetypes=[("CUTファイル", "*.cut")])
+            if self.nam == "None":
+                n = fd.asksaveasfilename(title=g.lg.sva, filetypes=[("CUTファイル", "*.cut")])
             else:
                 n = self.nam
-        with open(n, "w") as f:
-            f.write(self.mw.tmr.out_txt() + "\n")  # 現在時間書き込み
-            f.write(str(self.mw.st.row) + "\n")    # 設定行数書き込み
-            t = ""                                 # 書き込み変数
-            for i in range(self.mw.st.row*4):      # 行*列だけ繰り返し
-                if self.mw.st.txt[i] == "":        # 空欄の場合
-                    t += "None"                    # 何か文字列
-                else:                              # その他の場合
-                    t += self.mw.st.txt[i]         # 入力した文字列
-                t += " "                           # 空白挿入
-            f.write(t + "\n")                      # 設定書き込み
-            f.write(str(self.mw.sc.row) + "\n")    # 予定行数書き込み
-            t = ""                                 # 書き込み変数
-            for i in range(self.mw.sc.row*3):      # 行*列だけ繰り返し
-                if self.mw.sc.txt[i] == "":        # 空欄の場合
-                    t += "None"                    # 何か文字列
-                else:                              # その他の場合
-                    t += self.mw.sc.txt[i]         # 入力した文字列
-                t += " "                           # 空白挿入
-            f.write(t + "\n")                      # 設定書き込み
+        if n != "":
+            with open(n, "w") as f:
+                f.write(self.mw.tmr.out_txt() + "\n")  # 現在時間書き込み
+                f.write(str(self.mw.st.row) + "\n")    # 設定行数書き込み
+                t = ""                                 # 書き込み変数
+                for i in range(self.mw.st.row*4):      # 行*列だけ繰り返し
+                    if self.mw.st.txt[i] == "":        # 空欄の場合
+                        t += "None"                    # 何か文字列
+                    else:                              # その他の場合
+                        t += self.mw.st.txt[i]         # 入力した文字列
+                    t += " "                           # 空白挿入
+                f.write(t + "\n")                      # 設定書き込み
+                f.write(str(self.mw.sc.row) + "\n")    # 予定行数書き込み
+                t = ""                                 # 書き込み変数
+                for i in range(self.mw.sc.row*3):      # 行*列だけ繰り返し
+                    if self.mw.sc.txt[i] == "":        # 空欄の場合
+                        t += "None"                    # 何か文字列
+                    else:                              # その他の場合
+                        t += self.mw.sc.txt[i]         # 入力した文字列
+                    t += " "                           # 空白挿入
+                f.write(t + "\n")                      # 設定書き込み
 
     # 新規
     def new(self):
+        self.nam = "None"
         self.mw.tmr.set_int(0)
         self.mw.st.__init__(self.mw)
         self.mw.sc.__init__(self.mw)

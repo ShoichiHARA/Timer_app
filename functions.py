@@ -184,6 +184,16 @@ class SevenSeg:
         )
 
 
+# 文字型ブールをブール型へ
+def tobool(txt):
+    if txt == "True":
+        return True
+    elif txt == "False":
+        return False
+    else:
+        return
+
+
 # カラーコード判定
 def color(clr):
     lst = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"]
@@ -212,14 +222,16 @@ def o_gval():
                     g.clr0 = t[1]
                 elif t[0] == "bgc0":
                     g.bgc0 = t[1]
+                elif t[0] == "md_cmd":
+                    g.md_cmd = tobool(t[1])
                 elif t[0] == "in_zer":
-                    g.in_zer = bool(t[1])
+                    g.in_zer = tobool(t[1])
                 elif t[0] == "scn0":
                     g.scn0 = t[1]
                 elif t[0] == "row":
                     g.row = int(t[1])
                 elif t[0] == "ctn":
-                    g.ctn = bool(t[1])
+                    g.ctn = tobool(t[1])
         return 0
     else:
         return 940
@@ -231,6 +243,7 @@ def s_gval():
         t = "lg " + g.lg.lg + "\n"             # 言語
         t += "clr0 " + g.clr0 + "\n"           # 文字色初期値
         t += "bgc0 " + g.bgc0 + "\n"           # 背景色初期値
+        t += "md_cmd " + str(g.md_cmd) + "\n"  # コマンドモード
         t += "in_zer " + str(g.in_zer) + "\n"  # 未記入セルの初期値
         t += "scn0 " + g.scn0 + "\n"           # 場面初期値
         t += "row " + str(g.row) + "\n"        # 行数初期値
@@ -268,11 +281,11 @@ def command(e, mw: MainWin, cmd: str):
                     g.bgc0 = cmd[2]
                 else:
                     err = 920
-            elif cmd[1] == "cmd":  # 初期コマンドモード
-                if cmd[2] in ["True", "False"]:
-                    g.md_cmd = bool(cmd[2])
-                else:
-                    err = 963
+            # elif cmd[1] == "cmd":  # 初期コマンドモード
+            #     if cmd[2] in ["True", "False"]:
+            #         g.md_cmd = bool(cmd[2])
+            #     else:
+            #         err = 963
             elif cmd[1] == "zero":  # 未記入の表を選択
                 if cmd[2] in ["True", "False"]:
                     g.in_zer = bool(cmd[2])
@@ -283,20 +296,40 @@ def command(e, mw: MainWin, cmd: str):
                     g.scn0 = cmd[2]
                 else:
                     err = 964
-            elif cmd[1] == "row0":
+            elif cmd[1] == "row0":  # 表に表示する行の数
                 if 0 < int(cmd[2]) < 21:
                     g.row = int(cmd[2])
                 else:
                     err = 965
+            elif cmd[1] == "ctn":  # 続きから始めるか
+                if cmd[2] in ["True", "False"]:
+                    g.ctn = bool(cmd[2])
+                else:
+                    err = 963
             else:
                 err = 961
         except IndexError:
             print("function Line 242", IndexError)
             err = 960
 
+    # 現在値変更
+    elif cmd[0] == "cur":
+        try:
+            tim = Time()
+            err = tim.set_txt(cmd[1])
+            if err == 0:
+                mw.wt.change(None, tim)
+        except IndexError:
+            print("function Line 242", IndexError)
+            err = 905
+
     # アプリケーション終了
     elif cmd[0] == "exit":
-        mw.master.destroy()
+        mw.exit(e)
+
+    # 新規作成
+    elif cmd[0] == "new":
+        mw.fl.new()
 
     # 開く
     elif cmd[0] == "open":
@@ -310,9 +343,7 @@ def command(e, mw: MainWin, cmd: str):
 
     # タイマー初期化
     elif cmd[0] in ["rst", "reset"]:
-        mw.st.crt = 0
-        mw.sc.crt = 0
-        mw.tmr.set_int(0)
+        mw.wt.reset(e)
 
     # 保存
     elif cmd[0] == "save":
@@ -375,22 +406,8 @@ def command(e, mw: MainWin, cmd: str):
                     break
 
     # タイマー開始/停止
-    elif cmd[0] == "ss":
-        mw.cnt = not mw.cnt
-        if mw.cnt:
-            mw.wt.ssb.configure(text=g.lg.stp)
-        else:
-            mw.wt.ssb.configure(text=g.lg.stt)
-
-    # タイマー開始
-    elif cmd[0] == "start":
-        mw.cnt = True
-        mw.wt.ssb.configure(text=g.lg.stp)
-
-    # タイマー停止
-    elif cmd[0] == "stop":
-        mw.cnt = False
-        mw.wt.ssb.configure(text=g.lg.stt)
+    elif cmd[0] in ["ss", "start", "stop"]:
+        mw.wt.stt_stp(cmd[1])
 
     # テスト
     elif cmd[0] == "test":
@@ -433,6 +450,7 @@ def command(e, mw: MainWin, cmd: str):
 902:場面変更コマンドの引数が存在しない
 903:設定コマンドの引数が適切でない
 904:予約コマンドの引数が適切でない
+905:現在値変更コマンドの引数が適切でない
 910:時間入力時、文字数が適切でない
 911:時間入力時、文字種が適切でない
 920:色入力時、カラーコードが適切でない
