@@ -541,7 +541,7 @@ class File:
         self.sav.place(x=20, y=150)
         self.sva.place(x=210, y=150)
 
-    # 開く
+    # 開く(ファイル名, ダイアログ開くか)
     def open(self, n="", d=False):
         if d:  # ダイアログ開く
             n = fd.askopenfilename(title=g.lg.opn, filetypes=[("CUTファイル", "*.cut")])
@@ -572,15 +572,20 @@ class File:
             print("application Line 571", "No File")
             return 940
 
-    # 保存
+    # 保存(ファイル名, ダイアログ開くか)
     def save(self, n="", d=False):
-        if d:
+        # ファイル取得
+        if d:  # ダイアログ開く
             n = fd.asksaveasfilename(title=g.lg.sva, filetypes=[("CUTファイル", "*.cut")])
-        if n == "":
+        elif n == "":
             if self.nam == "None":
                 n = fd.asksaveasfilename(title=g.lg.sva, filetypes=[("CUTファイル", "*.cut")])
             else:
                 n = self.nam
+        if n[-4:] != ".cut":
+            n += ".cut"
+
+        # ファイル書き込み
         if n != "":
             with open(n, "w") as f:
                 f.write(self.mw.tmr.out_txt() + "\n")  # 現在時間書き込み
