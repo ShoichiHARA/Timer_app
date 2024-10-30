@@ -4,9 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="09/25&#10;グローバス変数のファイル読み書き関数完成">
+    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="10/27&#10;ファイル保存で拡張子がつかない問題解決&#10;eze化">
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application.py" beforeDir="false" afterPath="$PROJECT_DIR$/application.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/functions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/language.py" beforeDir="false" afterPath="$PROJECT_DIR$/language.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,17 +39,17 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.setup.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/shoic/PycharmProjects/Sequential_Control&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PythonContentEntriesConfigurable&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.main.executor": "Run",
+    "Python.setup.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "C:/Users/shoic/PycharmProjects/Sequential_Control",
+    "settings.editor.selected.configurable": "configurable.group.build"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\shoic\PycharmProjects\Timer_app" />
@@ -117,14 +121,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1723038717059</updated>
-    </task>
-    <task id="LOCAL-00041" summary="09/01&#10;時間クラスの時間と文字列を比較">
-      <option name="closed" value="true" />
-      <created>1725179211317</created>
-      <option name="number" value="00041" />
-      <option name="presentableId" value="LOCAL-00041" />
-      <option name="project" value="LOCAL" />
-      <updated>1725179211317</updated>
     </task>
     <task id="LOCAL-00042" summary="09/01&#10;設定表をクラス化">
       <option name="closed" value="true" />
@@ -510,7 +506,15 @@
       <option name="project" value="LOCAL" />
       <updated>1727276075778</updated>
     </task>
-    <option name="localTasksCounter" value="90" />
+    <task id="LOCAL-00090" summary="10/27&#10;ファイル保存で拡張子がつかない問題解決&#10;eze化">
+      <option name="closed" value="true" />
+      <created>1730037893821</created>
+      <option name="number" value="00090" />
+      <option name="presentableId" value="LOCAL-00090" />
+      <option name="project" value="LOCAL" />
+      <updated>1730037893821</updated>
+    </task>
+    <option name="localTasksCounter" value="91" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -525,7 +529,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="09/10&#10;入力欄の初期化できた&#10;色変更ウインドウの変数と関数削除" />
     <MESSAGE value="09/12&#10;ファイル構成の変更&#10;設定クラスをグローバル変数化" />
     <MESSAGE value="09/13&#10;ファイル構成の変更&#10;設定クラスをグローバル変数化" />
     <MESSAGE value="09/14&#10;設定クラスをグローバル変数へ移行&#10;設定クラスを削除" />
@@ -550,6 +553,7 @@
     <MESSAGE value="09/23&#10;不要なもの削除&#10;コマンドをある程度整理&#10;exe化" />
     <MESSAGE value="09/24&#10;ファイルクラス作成中" />
     <MESSAGE value="09/25&#10;グローバス変数のファイル読み書き関数完成" />
-    <option name="LAST_COMMIT_MESSAGE" value="09/25&#10;グローバス変数のファイル読み書き関数完成" />
+    <MESSAGE value="10/27&#10;ファイル保存で拡張子がつかない問題解決&#10;eze化" />
+    <option name="LAST_COMMIT_MESSAGE" value="10/27&#10;ファイル保存で拡張子がつかない問題解決&#10;eze化" />
   </component>
 </project>

@@ -18,6 +18,7 @@ class Language:
                 self.rsv = output(i, ["Reserved", "予約"])
                 self.ext = output(i, ["Exit", "終了"])
                 self.viw = output(i, ["View", "表示"])
+                self.hid = output(i, ["Hide", "非表示"])
                 self.sim = output(i, ["Simulation", "シミュレーション"])
                 self.stt = output(i, ["Start", "開始"])
                 self.stp = output(i, ["Stop", "停止"])

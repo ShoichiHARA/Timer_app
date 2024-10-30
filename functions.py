@@ -425,8 +425,9 @@ def command(e, mw: MainWin, cmd: str):
 
     # 表示ウインドウ表示
     elif cmd[0] == "view":
-        mw.viw_win()
-        mw.master.tkraise(mw.viw_mas)
+        mw.wt.display()
+        # mw.viw_win()
+        # mw.master.tkraise(mw.viw_mas)
 
     # 該当コマンドなし
     else:

@@ -178,7 +178,8 @@ class Watch:
     def __init__(self, mw: MainWin):
         # 定義
         self.mw = mw
-        self.cnt = False
+        self.cnt = False  # カウントしているか
+        self.wnd = False  # 別ウインドウ表示しているか
         self.frm = tk.Frame(self.mw.master)
         self.wtc = tk.Label(self.frm, text=self.mw.tmr.out_txt(), font=("", 60))
         self.ssb = tk.Button(self.frm, text=g.lg.stt, font=("", 15), width=15, height=3)
@@ -192,7 +193,8 @@ class Watch:
         self.wtc.bind("<Button-1>", self.change)
         self.ssb.configure(command=pt(self.stt_stp, e=None, ss="ss"))
         self.rst.configure(command=pt(self.reset, e=None))
-        self.dsp.configure(command=pt(fc.command, e=None, mw=self.mw, cmd="view"))
+        self.dsp.configure(command=pt(self.display))
+        # self.dsp.configure(command=pt(fc.command, e=None, mw=self.mw, cmd="view"))
 
         # 配置
         self.wtc.place(x=15, y=20)    # 現在値
@@ -225,6 +227,17 @@ class Watch:
             self.ssb.configure(text=g.lg.stp)  # 停止を表示
         else:
             self.ssb.configure(text=g.lg.stt)  # 開始を表示
+
+    # 別ウインドウ表示/非表示
+    def display(self):
+        self.wnd = not self.wnd
+        if self.wnd:
+            self.mw.viw_win()  # 表示ウインドウ表示
+            self.mw.master.tkraise(self.mw.viw_mas)  # 表示ウインドウを前面へ
+            self.dsp.configure(text=g.lg.hid)  # 非表示を表示
+        else:
+            self.mw.viw_mas.destroy()  # 表示ウインドウ非表示
+            self.dsp.configure(text=g.lg.viw)  # 表示を表示
 
 
 # 設定クラス
@@ -374,7 +387,7 @@ class Setting:
     # 現在の設定
     def current(self, tim: fc.Time):
         cmp = fc.Time()
-        if self.crt < self.row:  # 最終行でない場合
+        if self.crt < self.row-1:  # 最終行でない場合
             if self.txt[4*self.crt+4] != "":  # 設定行が有効の場合
                 cmp.set_txt(self.txt[4*self.crt+5])
                 if tim.n >= cmp.n:  # 現在時間の方が大きい場合
@@ -632,12 +645,18 @@ class ViewWin(tk.Frame):
         # ウインドウの定義
         self.master.title(g.lg.twn)
         self.master.geometry("400x300")
+        self.master.protocol("WM_DELETE_WINDOW", self.exit)  # ×ボタンクリック
         self.widgets()  # ウィジェット
         self.event()    # イベント
 
     def widgets(self: tk.Tk):
         # キャンバスの設定
         self.cvs.pack(fill=tk.BOTH, expand=True)
+
+    # ウインドウ非表示
+    def exit(self):
+        self.mw.wt.display()
+        self.master.destroy()
 
     # イベント
     def event(self):
@@ -646,13 +665,10 @@ class ViewWin(tk.Frame):
             self.whg = self.master.winfo_height()
             self.siz = self.wwd // 85
 
-        def exit(e):
-            self.master.destroy()
-
-        self.bind("<Configure>", win_size)
+        self.master.bind("<Configure>", win_size)
         self.master.bind("<KeyPress-space>", pt(fc.command, mw=self.mw, cmd="ss"))
         self.master.bind("<KeyPress-BackSpace>", pt(fc.command, mw=self.mw, cmd="rst"))
-        self.master.bind("<KeyRelease-Escape>", exit)
+        self.master.bind("<KeyRelease-Escape>", self.exit)
 
     # 時間表示
     def display(self, tim: fc.Time, clr: str, bgc: str):
