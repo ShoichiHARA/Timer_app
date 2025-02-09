@@ -404,19 +404,19 @@ class Schedule:
         self.add = tk.Button(self.frm, width=10, text=g.lg.rad)  # 行追加ボタン
         self.dlt = tk.Button(self.frm, width=10, text=g.lg.rdl)  # 行削除ボタン
         self.scr = tk.Scrollbar(self.frm, orient=tk.VERTICAL)              # スクロールバー
-        self.tab = tk.Canvas(self.frm, width=241, height=g.row*25+1, highlightthickness=0)
-        self.tit = tk.Canvas(self.frm, width=241, height=25, bg="silver", highlightthickness=0)
+        self.tab = tk.Canvas(self.frm, width=321, height=g.row*25+1, highlightthickness=0)
+        self.tit = tk.Canvas(self.frm, width=321, height=25, bg="silver", highlightthickness=0)
         self.tim = fc.Time()  # 場面保存用
         self.crt = 0  # 現在の設定行
         self.row = g.row
-        self.txt = [""] * self.row * 3
+        self.txt = [""] * self.row * 4
 
         self.widgets()
         self.table(self.row)
 
     def widgets(self):
         # 設定
-        self.tab.configure(yscrollcommand=self.scr.set)
+        self.tab.configure(scrollregion=(0, 0, 321, self.row+25+1), yscrollcommand=self.scr.set)
         self.scr.configure(command=self.tab.yview)
         self.tab.bind("<Button>", self.click)
         self.add.configure(command=pt(self.table, cmd="+"))
@@ -424,18 +424,20 @@ class Schedule:
 
         # タイトル行設定
         self.tit.create_text(40, 13, text="No.", font=("", 11))
-        self.tit.create_text(120, 13, text=g.lg.stt, font=("", 11))
-        self.tit.create_text(200, 13, text=g.lg.stp, font=("", 11))
+        self.tit.create_text(120, 13, text=g.lg.tim, font=("", 11))
+        self.tit.create_text(200, 13, text=g.lg.scd, font=("", 11))
+        self.tit.create_text(280, 13, text=g.lg.val, font=("", 11))
         self.tit.create_rectangle(0, 0, 80, 24)
         self.tit.create_rectangle(80, 0, 160, 24)
         self.tit.create_rectangle(160, 0, 240, 24)
+        self.tit.create_rectangle(240, 0, 320, 24)
 
         # 配置
-        self.add.place(x=150, y=g.row*25+55)                     # 行追加ボタン
-        self.dlt.place(x=240, y=g.row*25+55)                    # 行削除ボタン
-        self.tab.place(x=80, y=44)                      # 予定表キャンバス
-        self.tit.place(x=80, y=20)                      # タイトル行キャンバス
-        self.scr.place(x=320, y=44, height=g.row*25+1)  # スクロールバー
+        self.add.place(x=190, y=g.row*25+55)                    # 行追加ボタン
+        self.dlt.place(x=280, y=g.row*25+55)                    # 行削除ボタン
+        self.tab.place(x=40, y=44)                      # 予定表キャンバス
+        self.tit.place(x=40, y=20)                      # タイトル行キャンバス
+        self.scr.place(x=360, y=44, height=g.row*25+1)  # スクロールバー
 
     # 表生成
     def table(self, cmd, txt=None):
@@ -447,17 +449,17 @@ class Schedule:
             self.row = int(cmd)  # 行数設定
         if txt is None:                 # 引数が指定されていない場合
             txt = self.txt              # 自身を保存
-        self.txt = [""] * self.row * 3  # 配列初期化
+        self.txt = [""] * self.row * 4  # 配列初期化
         self.tab.configure(scrollregion=(0, 0, 241, self.row*25+1))  # 可動域変更
-        for i in range(self.row*3):      # 引数行*列だけ繰り返し
+        for i in range(self.row*4):      # 引数行*列だけ繰り返し
             if i < len(txt):          # 文字配列がある場合
                 self.txt[i] = txt[i]  # 文字入力
             self.tab.create_rectangle(
-                i%3*80, i//3*25, i%3*80+80, i//3*25+25, fill="SystemButtonFace",
+                i%4*80, i//4*25, i%4*80+80, i//4*25+25, fill="SystemButtonFace",
                 tags="r"+str(i)
             )  # 表の格子
             self.tab.create_text(
-                i%3*80+40, i//3*25+13, text=self.txt[i], font=("", 11), tags="t"+str(i)
+                i%4*80+40, i//4*25+13, text=self.txt[i], font=("", 11), tags="t"+str(i)
             )  # 表に入る文字
         if self.row == g.row:                     # 行数最小の場合
             self.dlt.configure(state="disabled")  # 削除ボタン無効
@@ -472,17 +474,17 @@ class Schedule:
         y = (e.y + int(d)) // 25        # クリック行
 
         if e.num == 1:  # 左クリック
-            if x in [1, 2]:  # 時間変更
-                if self.txt[3*y+x] != "":              # 既に入力されている場合
-                    self.tim.set_txt(self.txt[3*y+x])  # 入力値
+            if x == 1:  # 時間変更
+                if self.txt[4*y+x] != "":              # 既に入力されている場合
+                    self.tim.set_txt(self.txt[4*y+x])  # 入力値
                 elif g.in_zer:                         # 未記入で初期値を表示させたい場合
                     self.tim.set_int(0)                # 初期値
                 tim = asktime(self.tim)                # 時間変更ウインドウで時間取得
                 if tim is not None:                         # 時間が返された場合
                     self.tim.set_int(tim.n)                 # 時間を保存
-                    self.change(3*y+x, self.tim.out_txt())  # 表の表示を変更
+                    self.change(4*y+x, self.tim.out_txt())  # 表の表示を変更
         elif e.num == 3:  # 右クリック
-            self.change(3*y+x, "")  # 空白を入力
+            self.change(4*y+x, "")  # 空白を入力
 
     # 設定変更
     def change(self, xy, txt):
@@ -499,27 +501,27 @@ class Schedule:
         self.tab.itemconfig(tagOrId="t" + str(xy), text=txt)
 
         # 行が埋まっているか
-        y = xy // 3
-        if (self.txt[3*y+1] != "") or (self.txt[3*y+2] != ""):
-            self.txt[3*y] = str(y+1)
-            self.tab.itemconfig(tagOrId="t" + str(3*y), text=str(y+1))
+        y = xy // 4
+        if (self.txt[4*y+1] != "") or (self.txt[4*y+2] != ""):
+            self.txt[4*y] = str(y+1)
+            self.tab.itemconfig(tagOrId="t" + str(4*y), text=str(y+1))
         else:
-            self.txt[3*y] = ""
-            self.tab.itemconfig(tagOrId="t" + str(3*y), text="")
+            self.txt[4*y] = ""
+            self.tab.itemconfig(tagOrId="t" + str(4*y), text="")
         return 0
 
     # 現在の設定
     def current(self, tim: fc.Time):
         cmp = fc.Time()
-        if self.txt[3*self.crt] != "":                               # 予定行が無効の場合
+        if self.txt[4*self.crt] != "":                               # 予定行が無効の場合
             if not self.mw.wt.cnt:                                   # カウントが無効の場合
-                if self.txt[3*self.crt+1] != "":                     # 空欄でない場合
-                    cmp.set_txt(self.txt[3*self.crt+1])              # 比較用に時間を登録
+                if self.txt[4*self.crt+1] != "":                     # 空欄でない場合
+                    cmp.set_txt(self.txt[4*self.crt+1])              # 比較用に時間を登録
                     if cmp.n <= tim.n < cmp.n+10:                    # 現在時刻の方が大きい場合
                         fc.command(e=None, mw=self.mw, cmd="start")  # カウント開始
             else:
-                if self.txt[3*self.crt+1] != "":                     # 空欄でない場合
-                    cmp.set_txt(self.txt[3*self.crt+2])              # 比較用に時間を登録
+                if self.txt[4*self.crt+1] != "":                     # 空欄でない場合
+                    cmp.set_txt(self.txt[4*self.crt+2])              # 比較用に時間を登録
                     if cmp.n <= tim.n < cmp.n+10:                    # 現在時刻の方が大きい場合
                         fc.command(e=None, mw=self.mw, cmd="stop")   # カウント停止
                         self.crt += 1
