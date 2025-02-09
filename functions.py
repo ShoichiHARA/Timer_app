@@ -1,5 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
+import tkinter as tk
+from functools import partial
 from datetime import datetime
 import os
 import global_val as g
@@ -184,6 +186,91 @@ class SevenSeg:
         )
 
 
+# 時間変更ウインドウ
+class ChanTimeWin(tk.Frame):
+    def __init__(self: tk.Tk, master, tim=None):
+        super().__init__(master)
+        self.pack()
+
+        # 定義
+        if tim is None:
+            self.tim = Time()
+        else:
+            self.tim = Time(tim.n)
+        self.dsp = tk.Label(master=self.master, text=self.tim.out_txt(), font=("", 60, ))
+        self.now = tk.Button(self.master, width=10, text=g.lg.now, command=self.ps_nw)
+        self.rst = tk.Button(self.master, width=10, text=g.lg.rst, command=self.ps_rs)
+        self.ook = tk.Button(self.master, width=10, text=g.lg.ook, command=self.ps_ok)
+        self.ccl = tk.Button(self.master, width=10, text=g.lg.ccl, command=self.ps_cn)
+        self.chg = []  # 変更ボタン
+
+        # ウインドウの定義
+        self.master.title(g.lg.mwn)    # ウインドウタイトル
+        self.master.geometry("400x300")      # ウインドウサイズ
+        self.master.resizable(False, False)  # サイズ変更禁止
+        self.master.protocol("WM_DELETE_WINDOW", self.ps_cn)  # ×ボタンクリック
+        self.widgets()
+
+    def widgets(self: tk.Tk):
+        self.dsp.place(x=15, y=80)    # 時間表示
+        self.now.place(x=120, y=210)  # 現在時刻ボタン
+        self.rst.place(x=210, y=210)  # 初期化ボタン
+        self.ook.place(x=210, y=250)  # 決定ボタン
+        self.ccl.place(x=300, y=250)  # 取消ボタン
+
+        d = [360000, -360000, 6000, -6000, 100, -100, 1, -1]
+        p = [
+            [18, 60], [18, 165], [114, 60], [114, 165],
+            [210, 60], [210, 165], [306, 60], [306, 165]
+        ]
+        for i in range(8):
+            self.chg.append(tk.Button(self.master))  # 変更ボタン追加
+            self.chg[i].configure(
+                width=10, repeatdelay=1000, repeatinterval=50,
+                command=partial(self.ps_ch, n=d[i])
+            )  # 変更ボタン共通設定
+            if i % 2 == 0:
+                self.chg[i].configure(text="↑")
+            else:
+                self.chg[i].configure(text="↓")
+            self.chg[i].place(x=p[i][0], y=p[i][1])
+
+    # 時間変更ボタン押下
+    def ps_ch(self, n):
+        self.tim.n += n
+        self.tim.n = self.tim.n % 36000000
+        self.dsp.configure(text=self.tim.out_txt())
+
+    # 現在時刻押下
+    def ps_nw(self):
+        self.tim.get_now()
+        self.dsp.configure(text=self.tim.out_txt())
+
+    # 初期化押下
+    def ps_rs(self):
+        self.tim.set_int(0)
+        self.dsp.configure(text=self.tim.out_txt())
+
+    # 決定押下
+    def ps_ok(self):
+        self.master.quit()
+        self.master.destroy()
+
+    # 取消押下
+    def ps_cn(self):
+        self.tim = None
+        self.master.quit()
+        self.master.destroy()
+
+
+# 時間変更関数
+def asktime(tim=None):
+    root = tk.Tk()
+    app = ChanTimeWin(master=root, tim=tim)
+    app.mainloop()
+    return app.tim
+
+
 # 文字型ブールをブール型へ
 def tobool(txt):
     if txt == "True":
@@ -196,7 +283,10 @@ def tobool(txt):
 
 # カラーコード判定
 def color(clr):
-    lst = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"]
+    lst = [
+        "0", "1", "2", "3", "4", "5", "6", "7",
+        "8", "9", "a", "b", "c", "d", "e", "f"
+    ]
     if clr in g.ccd:
         return True
     elif clr[0] == "#":
