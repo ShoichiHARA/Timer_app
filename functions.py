@@ -186,6 +186,92 @@ class SevenSeg:
         )
 
 
+# コンボボックス
+class Combobox:
+    def __init__(
+            self, mas, width=0, height=0, row=1, text="", tags="", font=11, lst=None
+    ):
+        self.mas = mas     # ボックス配置元
+        self.wid = width   # 幅
+        self.hei = height  # 高さ
+        self.row = row     # 表示表の行数
+        self.txt = text    # ボックステキスト
+        self.tag = tags    # タグ
+        self.fnt = font    # フォントサイズ
+        if lst is None:
+            self.lst = [""]
+        else:
+            self.lst = lst
+
+        self.frm = tk.Frame(self.mas)                          # コンボボックスフレーム
+        self.tab = tk.Canvas(self.frm, highlightthickness=0)   # タブ用キャンバス
+        self.box = tk.Canvas(self.frm, highlightthickness=0)   # ボックス用キャンバス
+        self.scr = tk.Scrollbar(self.frm, orient=tk.VERTICAL)  # タブ用スクロールバー
+
+        self.widgets()
+        self.box.bind("<ButtonPress-1>", self.click)
+        self.tab.bind("<ButtonPress-1>", self.select)
+        self.mas.bind("<ButtonPress-1>", self.clear)
+
+    def widgets(self):
+        # ウィジェット設定
+        self.frm.configure(width=self.wid, height=self.hei)
+        self.box.configure(width=self.wid, height=self.hei, cursor="hand2")
+        self.box.create_rectangle(
+            0, 0, self.wid-1, self.hei-1,
+            fill="SystemButtonFace", width=1, outline="#000000"
+        )
+        self.box.create_text(
+            self.wid/2, self.hei/2, tags="box",
+            text=self.txt, font=("", self.fnt), activefill="dimgray"
+        )
+
+        # 配置
+        self.box.place(x=0, y=0)  # キャンバス配置
+
+    # ボックス配置
+    def place(self, x, y):
+        self.frm.place(x=x, y=y)
+
+    # ボックスクリック
+    def click(self, e):
+        th = self.fnt * min(self.row, len(self.lst)) * 2 + 1  # 表の高さ
+        sh = self.fnt * len(self.lst) * 2 + 1                 # 表の可動高さ
+        self.frm.configure(width=self.wid+20, height=self.hei+th)
+        self.tab.configure(
+            width=self.wid, height=th, relief="flat", cursor="hand2",
+            scrollregion=(0, 0, self.wid, sh), yscrollcommand=self.scr.set
+        )
+        self.scr.configure(bg="black", relief="flat", command=self.tab.yview)
+        for i in range(len(self.lst)):
+            self.tab.create_text(
+                self.wid/2, i*self.fnt*2+self.fnt,
+                text=self.lst[i], font=("", self.fnt), activefill="dimgray"
+            )
+            self.tab.create_rectangle(
+                0, i*self.fnt*2, self.wid-1, i*self.fnt*2+(self.fnt*2),
+            )
+
+        # 配置
+        self.tab.place(x=0, y=self.hei-1)
+        self.scr.place(x=self.wid, y=self.hei, height=th)
+
+    # ボックス内選択
+    def select(self, e):
+        s = self.scr.get()                       # スクロールバーの位置
+        d = s[0] * self.fnt * len(self.lst) * 2  # スクロール量(ピクセル)
+        n = (e.y + int(d)) // (self.fnt * 2)
+        self.txt = self.lst[n]
+        self.box.itemconfig(tagOrId="box", text=self.txt)
+        self.clear(e)
+
+    # ボックスタブ非表示
+    def clear(self, e):
+        self.tab.place_forget()
+        self.scr.place_forget()
+        self.frm.configure(width=self.wid, height=self.hei)
+
+
 # 時間変更ウインドウ
 class ChanTimeWin(tk.Frame):
     def __init__(self: tk.Tk, master, tim=None):

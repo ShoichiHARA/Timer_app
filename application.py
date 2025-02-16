@@ -22,6 +22,7 @@ class MainWin(tk.Frame):
         self.wt = Watch(self)     # ストップウォッチタブ
         self.st = Setting(self)   # 設定タブ
         self.sc = Schedule(self)  # 予定タブ
+        self.hp = Help(self)      # ヘルプタブ
         self.fl = File(self)      # ファイルタブ
         self.mn = Menu(self)      # メニューバー
         self.mn.change(g.scn0)    # 初期タブ
@@ -160,6 +161,7 @@ class Menu:
         self.mw.wt.frm.pack_forget()
         self.mw.st.frm.pack_forget()
         self.mw.sc.frm.pack_forget()
+        self.mw.hp.frm.pack_forget()
         if scn in ["file", "FIL"]:
             self.mw.fl.frm.pack(expand=True, fill="both")
         elif scn in ["tmr", "TMR"]:
@@ -169,7 +171,7 @@ class Menu:
         elif scn in ["scd", "SCD"]:
             self.mw.sc.frm.pack(expand=True, fill="both")
         elif scn in ["help", "HLP"]:
-            pass
+            self.mw.hp.frm.pack(expand=True, fill="both")
         self.mw.etr.lift()
 
 
@@ -529,6 +531,18 @@ class Schedule:
             self.crt = self.row
 
 
+# ヘルプクラス
+class Help:
+    def __init__(self, mw: MainWin):
+        # 定義
+        self.mw = mw
+        self.frm = tk.Frame(self.mw.master)
+        self.lbl = tk.Label(self.frm, text="テスト環境", bd=1, relief="solid")
+        self.tst = fc.Combobox(self.frm, 100, 20, 3, text="hello")
+        self.lbl.place(x=0, y=0)
+        self.tst.place(x=100, y=100)
+
+
 # ファイルクラス
 class File:
     def __init__(self, mw: MainWin):
@@ -677,8 +691,6 @@ class ViewWin(tk.Frame):
         self.cvs.delete("all")  # 表示リセット
         self.cvs.configure(bg=bgc)
         tim.out_seg(self.cvs, clr, bgc, self.wwd/2, self.whg/2, self.siz)  # 7セグ表示
-
-
 
 
 # アプリケーション
