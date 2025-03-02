@@ -3,7 +3,7 @@ clr0 #000000
 bgc0 #FFFFFF
 md_cmd False
 in_zer False
-scn0 HLP
+scn0 SCD
 row 7
 ctn True
 END

@@ -408,6 +408,10 @@ class Schedule:
         self.scr = tk.Scrollbar(self.frm, orient=tk.VERTICAL)              # スクロールバー
         self.tab = tk.Canvas(self.frm, width=321, height=g.row*25+1, highlightthickness=0)
         self.tit = tk.Canvas(self.frm, width=321, height=25, bg="silver", highlightthickness=0)
+        self.stf = tk.Frame(self.frm)  # 設定用フレーム
+        self.clk = None  # 設定時刻用ラベル
+        self.scd = None  # 設定予定用ラベル
+        self.val = None  # 設定値用ラベル
         self.tim = fc.Time()  # 場面保存用
         self.crt = 0  # 現在の設定行
         self.row = g.row
@@ -421,7 +425,8 @@ class Schedule:
         self.tab.configure(scrollregion=(0, 0, 321, self.row+25+1), yscrollcommand=self.scr.set)
         self.scr.configure(command=self.tab.yview)
         self.tab.bind("<Button>", self.click)
-        self.add.configure(command=pt(self.table, cmd="+"))
+        self.add.configure(command=self.setting)
+        # self.add.configure(command=pt(self.table, cmd="+"))
         self.dlt.configure(command=pt(self.table, cmd="-"))
 
         # タイトル行設定
@@ -467,6 +472,56 @@ class Schedule:
             self.dlt.configure(state="disabled")  # 削除ボタン無効
         else:                                     # その他
             self.dlt.configure(state="normal")    # 削除ボタン有効
+
+    # 予定の設定
+    def setting(self, tim=None, scd="", val=None):
+        # 設定用画面設定
+        t1 = fc.Time(0)
+        t3 = fc.Time(0)
+        lst = ["", g.lg.stt, g.lg.stp, g.lg.ccv, g.lg.rst]
+        self.stf.configure(width=300, height=150, bg="lime", bd=1, relief="solid")
+        ook = tk.Button(self.stf, width=10, text=g.lg.ook, command=pt(self.set_bt, t=1))   # ボタン
+        dlt = tk.Button(self.stf, width=10, text=g.lg.dlt, command=pt(self.set_bt, t=-1))  # ボタン
+        ccl = tk.Button(self.stf, width=10, text=g.lg.ccl, command=pt(self.set_bt, t=0))   # ボタン
+        tt1 = fc.Label(self.stf, width=90, height=25, text=g.lg.tim)
+        tt2 = fc.Label(self.stf, width=91, height=25, text=g.lg.scd)
+        tt3 = fc.Label(self.stf, width=90, height=25, text=g.lg.val)
+        self.clk = fc.Label(self.stf, width=90, height=30)
+        if tim is not None:
+            t1.set_int(tim)
+            self.clk.configure(text=t1.out_txt())
+        self.scd = fc.Combobox(self.stf, width=91, height=30, row=3, lst=lst, text=scd)
+        self.val = fc.Label(self.stf, width=90, height=30)
+        if val is not None:
+            t3.set_int(val)
+            self.val.configure(text=t3.out_txt())
+        self.clk.bind("<Button-1>", pt(self.set_ck, s="tim", t=t1))
+        self.val.bind("<Button-1>", pt(self.set_ck, s="val", t=t3))
+
+        # 配置
+        tt1.place(x=15, y=10)
+        tt2.place(x=104, y=10)
+        tt3.place(x=194, y=10)
+        self.clk.place(x=15, y=34)   # 時刻入力欄
+        self.scd.place(x=104, y=34)  # 予定入力欄
+        self.val.place(x=194, y=34)  # 値入力欄
+        ook.place(x=30, y=110)  # 設定用決定ボタン
+        dlt.place(x=120, y=110)  # 設定用削除ボタン
+        ccl.place(x=210, y=110)  # 設定用取消ボタン
+        self.stf.place(x=10, y=10)
+
+    # 設定用クリック動作
+    def set_ck(self, e, s, t):
+        tim = fc.asktime(t)
+        if tim is not None:
+            if s == "tim":
+                self.clk.configure(text=tim.out_txt())
+            if s == "val":
+                self.val.configure(text=tim.out_txt())
+
+    # 設定用ボタン動作
+    def set_bt(self, t):
+        self.stf.place_forget()
 
     # 表クリック
     def click(self, e):
@@ -537,9 +592,10 @@ class Help:
         # 定義
         self.mw = mw
         self.frm = tk.Frame(self.mw.master)
-        self.lbl = tk.Label(self.frm, text="テスト環境", bd=1, relief="solid")
-        self.tst = fc.Combobox(self.frm, 100, 20, 3, text="hello")
-        self.lbl.place(x=0, y=0)
+        self.lbl = fc.Label(self.frm, width=200, height=100, text="テスト環境", bg="lime")
+        self.lst = ["", g.lg.stt, g.lg.stp, g.lg.ccv, g.lg.rst]
+        self.tst = fc.Combobox(self.frm, 100, 20, 3, lst=self.lst)
+        self.lbl.place(x=10, y=10)
         self.tst.place(x=100, y=100)
 
 

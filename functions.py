@@ -186,7 +186,40 @@ class SevenSeg:
         )
 
 
-# コンボボックス
+# tk.Canvasで作るラベル
+class Label:
+    def __init__(self, mas, width=0, height=0, text="", tags="", font=11, bg="SystemButtonFace"):
+        self.mas = mas     # ラベル配置元
+        self.wid = width   # 幅
+        self.hei = height  # 高さ
+        self.txt = text    # テキスト
+        self.tag = tags    # タグ
+        self.fnt = font    # フォントサイズ
+        self.bgc = bg      # 背景色
+
+        self.cvs = tk.Canvas(self.mas)
+        self.configure()
+
+    def configure(self, width=None, height=None, text=None, tags=None, font=None, bg=None):
+        if width is not None: self.wid = width
+        if height is not None: self.hei = height
+        if text is not None: self.txt = text
+        if tags is not None: self.tag = tags
+        if font is not None: self.fnt = font
+        if bg is not None: self.bgc = bg
+
+        self.cvs.configure(width=self.wid, height=self.hei, bg=self.bgc, highlightthickness=0)
+        self.cvs.create_rectangle(0, 0, self.wid-1, self.hei-1, width=1)
+        self.cvs.create_text(self.wid/2, self.hei/2, text=self.txt, font=("", self.fnt))
+
+    def bind(self, sequence, func):
+        self.cvs.bind(sequence, func)
+
+    def place(self, x=0, y=0):
+        self.cvs.place(x=x, y=y)
+
+
+# tk.Canvasで作るコンボボックス
 class Combobox:
     def __init__(
             self, mas, width=0, height=0, row=1, text="", tags="", font=11, lst=None
@@ -198,6 +231,7 @@ class Combobox:
         self.txt = text    # ボックステキスト
         self.tag = tags    # タグ
         self.fnt = font    # フォントサイズ
+        self.flg = False   # タブが展開されているフラグ
         if lst is None:
             self.lst = [""]
         else:
@@ -209,8 +243,8 @@ class Combobox:
         self.scr = tk.Scrollbar(self.frm, orient=tk.VERTICAL)  # タブ用スクロールバー
 
         self.widgets()
-        self.box.bind("<ButtonPress-1>", self.click)
-        self.tab.bind("<ButtonPress-1>", self.select)
+        self.box.bind("<ButtonPress-1>", self.ck_box)
+        self.tab.bind("<ButtonPress-1>", self.ck_tab)
         self.mas.bind("<ButtonPress-1>", self.clear)
 
     def widgets(self):
@@ -230,11 +264,12 @@ class Combobox:
         self.box.place(x=0, y=0)  # キャンバス配置
 
     # ボックス配置
-    def place(self, x, y):
+    def place(self, x=0, y=0):
         self.frm.place(x=x, y=y)
 
     # ボックスクリック
-    def click(self, e):
+    def ck_box(self, e):
+        self.flg = True
         th = self.fnt * min(self.row, len(self.lst)) * 2 + 1  # 表の高さ
         sh = self.fnt * len(self.lst) * 2 + 1                 # 表の可動高さ
         self.frm.configure(width=self.wid+20, height=self.hei+th)
@@ -257,7 +292,7 @@ class Combobox:
         self.scr.place(x=self.wid, y=self.hei, height=th)
 
     # ボックス内選択
-    def select(self, e):
+    def ck_tab(self, e):
         s = self.scr.get()                       # スクロールバーの位置
         d = s[0] * self.fnt * len(self.lst) * 2  # スクロール量(ピクセル)
         n = (e.y + int(d)) // (self.fnt * 2)
@@ -267,9 +302,17 @@ class Combobox:
 
     # ボックスタブ非表示
     def clear(self, e):
+        self.flg = False
         self.tab.place_forget()
         self.scr.place_forget()
         self.frm.configure(width=self.wid, height=self.hei)
+
+    # ボックスクリック→タブ内選択
+    def select(self, e):
+        self.ck_box(e)
+        while self.flg:
+            continue
+        return self.txt
 
 
 # 時間変更ウインドウ
