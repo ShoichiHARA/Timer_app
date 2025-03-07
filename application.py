@@ -440,8 +440,8 @@ class Schedule:
         self.tit.create_rectangle(240, 0, 320, 24)
 
         # 配置
-        self.add.place(x=190, y=g.row*25+55)                    # 行追加ボタン
-        self.dlt.place(x=280, y=g.row*25+55)                    # 行削除ボタン
+        self.add.place(x=190, y=g.row*25+55)            # 行追加ボタン
+        self.dlt.place(x=280, y=g.row*25+55)            # 行削除ボタン
         self.tab.place(x=40, y=44)                      # 予定表キャンバス
         self.tit.place(x=40, y=20)                      # タイトル行キャンバス
         self.scr.place(x=360, y=44, height=g.row*25+1)  # スクロールバー
@@ -476,9 +476,9 @@ class Schedule:
     # 予定の設定
     def setting(self, tim=None, scd="", val=None):
         # 設定用画面設定
-        t1 = fc.Time(0)
-        t3 = fc.Time(0)
-        lst = ["", g.lg.stt, g.lg.stp, g.lg.ccv, g.lg.rst]
+        t1 = fc.Time(0)  # 時刻
+        t3 = fc.Time(0)  # 設定値
+        lst = ["", g.lg.stt, g.lg.stp, g.lg.ccv, g.lg.rst]  # コンボボックス用リスト
         self.stf.configure(width=300, height=150, bg="lime", bd=1, relief="solid")
         ook = tk.Button(self.stf, width=10, text=g.lg.ook, command=pt(self.set_bt, t=1))   # ボタン
         dlt = tk.Button(self.stf, width=10, text=g.lg.dlt, command=pt(self.set_bt, t=-1))  # ボタン
@@ -499,28 +499,34 @@ class Schedule:
         self.val.bind("<Button-1>", pt(self.set_ck, s="val", t=t3))
 
         # 配置
-        tt1.place(x=15, y=10)
-        tt2.place(x=104, y=10)
-        tt3.place(x=194, y=10)
+        tt1.place(x=15, y=10)        # 時刻タイトル
+        tt2.place(x=104, y=10)       # 予定タイトル
+        tt3.place(x=194, y=10)       # 値タイトル
         self.clk.place(x=15, y=34)   # 時刻入力欄
         self.scd.place(x=104, y=34)  # 予定入力欄
         self.val.place(x=194, y=34)  # 値入力欄
-        ook.place(x=30, y=110)  # 設定用決定ボタン
-        dlt.place(x=120, y=110)  # 設定用削除ボタン
-        ccl.place(x=210, y=110)  # 設定用取消ボタン
-        self.stf.place(x=10, y=10)
+        ook.place(x=30, y=110)       # 設定用決定ボタン
+        dlt.place(x=120, y=110)      # 設定用削除ボタン
+        ccl.place(x=210, y=110)      # 設定用取消ボタン
+        self.stf.place(x=10, y=10)   # 設定用画面
 
     # 設定用クリック動作
     def set_ck(self, e, s, t):
-        tim = fc.asktime(t)
-        if tim is not None:
-            if s == "tim":
-                self.clk.configure(text=tim.out_txt())
-            if s == "val":
-                self.val.configure(text=tim.out_txt())
+        tim = fc.asktime(t)  # 時間取得
+        if tim is not None:  # 時間が入力された場合
+            if s == "tim":   # 時刻の場合
+                self.clk.configure(text=tim.out_txt())  # 時刻再表示
+            if s == "val":   # 値の場合
+                self.val.configure(text=tim.out_txt())  # 値再表示
 
     # 設定用ボタン動作
     def set_bt(self, t):
+        if t == 1:     # 決定押下
+            pass
+        elif t == -1:  # 削除押下
+            pass
+        else:          # その他
+            pass
         self.stf.place_forget()
 
     # 表クリック
@@ -536,7 +542,7 @@ class Schedule:
                     self.tim.set_txt(self.txt[4*y+x])  # 入力値
                 elif g.in_zer:                         # 未記入で初期値を表示させたい場合
                     self.tim.set_int(0)                # 初期値
-                tim = fc.asktime(self.tim)                # 時間変更ウインドウで時間取得
+                tim = fc.asktime(self.tim)             # 時間変更ウインドウで時間取得
                 if tim is not None:                         # 時間が返された場合
                     self.tim.set_int(tim.n)                 # 時間を保存
                     self.change(4*y+x, self.tim.out_txt())  # 表の表示を変更

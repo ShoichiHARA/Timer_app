@@ -28,10 +28,10 @@ class Time:
             self.n += (int(t[0]) * 10 + int(t[1])) * 360000  # h
             return 0
         except IndexError:
-            print("function Line 29", IndexError)
+            print("function Line 30", IndexError)
             return 910
         except ValueError:
-            print("function Line 32", ValueError)
+            print("function Line 33", ValueError)
             return 911
 
     # 現在時刻取得
@@ -453,6 +453,7 @@ def o_gval():
                     g.ctn = tobool(t[1])
         return 0
     else:
+        print("function Line 455")
         return 940
 
 
@@ -528,7 +529,7 @@ def command(e, mw: MainWin, cmd: str):
             else:
                 err = 961
         except IndexError:
-            print("function Line 242", IndexError)
+            print("function Line 531", IndexError)
             err = 960
 
     # 現在値変更
@@ -539,7 +540,7 @@ def command(e, mw: MainWin, cmd: str):
             if err == 0:
                 mw.wt.change(None, tim)
         except IndexError:
-            print("function Line 242", IndexError)
+            print("function Line 542", IndexError)
             err = 905
 
     # アプリケーション終了
@@ -557,7 +558,7 @@ def command(e, mw: MainWin, cmd: str):
                 cmd[1] += ".cut"                       # 拡張子追加
             mw.fl.open(cmd[1])
         except IndexError:
-            print("function Line 242", IndexError)
+            print("function Line 560", IndexError)
             err = 941
 
     # タイマー初期化
@@ -571,7 +572,7 @@ def command(e, mw: MainWin, cmd: str):
                 cmd[1] += ".cut"                       # 拡張子追加
             mw.fl.save(cmd[1])
         except IndexError:
-            print("function Line 250", IndexError)
+            print("function Line 574", IndexError)
             err = 942
 
     # 予定設定
@@ -588,7 +589,7 @@ def command(e, mw: MainWin, cmd: str):
                             else:
                                 err = mw.sc.change(3*i+j, cmd[j])
                         except IndexError:
-                            print("function Line 256", IndexError)
+                            print("function Line 591", IndexError)
                             err = 904
                         if err != 0:
                             break
@@ -600,11 +601,11 @@ def command(e, mw: MainWin, cmd: str):
             if cmd[1] in mw.mn.lst:
                 mw.mn.change(cmd[1])
             else:
-                print("function Line 250")
+                print("function Line 603")
                 err = 902
             mw.etr.lift()
         except IndexError:
-            print("function Line 250", IndexError)
+            print("function Line 607", IndexError)
             err = 901
 
     # 色設定
@@ -618,7 +619,7 @@ def command(e, mw: MainWin, cmd: str):
                         try:
                             err = mw.st.change(4*i+j, cmd[j])
                         except IndexError:
-                            print("function Line 261", IndexError)
+                            print("function Line 621", IndexError)
                             err = 903
                         if err != 0:
                             break
@@ -645,8 +646,6 @@ def command(e, mw: MainWin, cmd: str):
     # 表示ウインドウ表示
     elif cmd[0] == "view":
         mw.wt.display()
-        # mw.viw_win()
-        # mw.master.tkraise(mw.viw_mas)
 
     # 該当コマンドなし
     else:
