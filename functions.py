@@ -21,6 +21,8 @@ class Time:
 
     # テキストから時間を登録
     def set_txt(self, t: str):
+        if t == "":
+            t = "00:00:00.00"
         try:
             self.n = int(t[9]) * 10 + int(t[10])  # ms
             self.n += (int(t[6]) * 10 + int(t[7])) * 100  # s
@@ -207,10 +209,10 @@ class Label:
         if tags is not None: self.tag = tags
         if font is not None: self.fnt = font
         if bg is not None: self.bgc = bg
-
+        self.cvs.delete("rec", "txt")
         self.cvs.configure(width=self.wid, height=self.hei, bg=self.bgc, highlightthickness=0)
-        self.cvs.create_rectangle(0, 0, self.wid-1, self.hei-1, width=1)
-        self.cvs.create_text(self.wid/2, self.hei/2, text=self.txt, font=("", self.fnt))
+        self.cvs.create_rectangle(0, 0, self.wid-1, self.hei-1, width=1, tags="rec")
+        self.cvs.create_text(self.wid/2, self.hei/2, text=self.txt, font=("", self.fnt), tags="txt")
 
     def bind(self, sequence, func):
         self.cvs.bind(sequence, func)
@@ -242,26 +244,33 @@ class Combobox:
         self.box = tk.Canvas(self.frm, highlightthickness=0)   # ボックス用キャンバス
         self.scr = tk.Scrollbar(self.frm, orient=tk.VERTICAL)  # タブ用スクロールバー
 
-        self.widgets()
+        # self.widgets()
+        self.configure()          # 環境設定
+        self.box.place(x=0, y=0)  # キャンバス配置
         self.box.bind("<ButtonPress-1>", self.ck_box)
         self.tab.bind("<ButtonPress-1>", self.ck_tab)
         self.mas.bind("<ButtonPress-1>", self.clear)
 
-    def widgets(self):
-        # ウィジェット設定
+    # 環境設定
+    def configure(self, width=None, height=None, row=None, text=None, tags=None, font=None, lst=None):
+        if width is not None: self.wid = width
+        if height is not None: self.hei = height
+        if row is not None: self.row = row
+        if text is not None: self.txt = text
+        if tags is not None: self.tag = tags
+        if font is not None: self.fnt = font
+        if lst is not None: self.lst = lst
         self.frm.configure(width=self.wid, height=self.hei)
-        self.box.configure(width=self.wid, height=self.hei, cursor="hand2")
+        self.box.configure(width=self.wid, height=self.hei)
+        self.box.delete("cob", "box")
         self.box.create_rectangle(
             0, 0, self.wid-1, self.hei-1,
-            fill="SystemButtonFace", width=1, outline="#000000"
+            fill="SystemButtonFace", width=1, outline="#000000", tags="cob"
         )
         self.box.create_text(
             self.wid/2, self.hei/2, tags="box",
             text=self.txt, font=("", self.fnt), activefill="dimgray"
         )
-
-        # 配置
-        self.box.place(x=0, y=0)  # キャンバス配置
 
     # ボックス配置
     def place(self, x=0, y=0):
@@ -425,6 +434,24 @@ def color(clr):
         return True
     else:
         return False
+
+
+# 言語共通シンボルとの相互変換
+def wrd_sym(key):
+    ls = [
+        ["STT", "Start", "開始"],
+        ["STP", "Stop", "停止"],
+        ["VAL", "Value", "現在値変更"],
+        ["RST", "Reset", "初期化"]
+    ]
+
+    for i in range(4):
+        if key in ls[i]:
+            if ls[i].index(key) == 0:
+                return ls[i][g.lg.lg_list.index(g.lg.lg) + 1]
+            else:
+                return ls[i][0]
+    return key
 
 
 # グローバル変数開く
