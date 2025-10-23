@@ -604,8 +604,8 @@ def command(e, mw: MainWin, cmd: str):
 
     # 予定設定
     elif cmd[0] == "scd":
-        if cmd[1] in ["+", "-"]:  # 行追加または行削除
-            mw.sc.table(cmd[1])
+        if cmd[1] in ["1", "-1"]:  # 行追加または行削除
+            mw.sc.table(int(cmd[1]))
         else:
             for i in range(mw.sc.row):  # 入力行探し
                 if mw.sc.txt[3*i] == "":  # 設定行が未完成の場合

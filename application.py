@@ -419,19 +419,15 @@ class Schedule:
         self.txt = [""] * self.row * 4
 
         self.widgets()
-        self.table1()
-        # self.table(self.row)
+        self.table()
 
     def widgets(self):
         # 設定
         self.tab.configure(scrollregion=(0, 0, 321, self.row+25+1), yscrollcommand=self.scr.set)
         self.scr.configure(command=self.tab.yview)
         self.tab.bind("<Button>", self.click)
-        self.add.configure(command=pt(self.table1, row=1))
-        self.dlt.configure(command=pt(self.table1, row=-1))
-        # self.add.configure(command=self.setting)
-        # self.add.configure(command=pt(self.table, cmd="+"))
-        # self.dlt.configure(command=pt(self.table, cmd="-"))
+        self.add.configure(command=pt(self.table, row=1))
+        self.dlt.configure(command=pt(self.table, row=-1))
 
         # タイトル行設定
         self.tit.create_text(40, 13, text="No.", font=("", 11))
@@ -451,35 +447,7 @@ class Schedule:
         self.scr.place(x=360, y=44, height=g.row*25+1)  # スクロールバー
 
     # 表生成
-    def table(self, cmd, txt=None):
-        if cmd == "+":           # 行追加コマンド
-            self.row += 1        # 1行追加
-        elif cmd == "-":         # 行削除コマンド
-            self.row -= 1        # 1行削除
-        else:                    # 行数入力
-            self.row = int(cmd)  # 行数設定
-        if txt is None:                 # 引数が指定されていない場合
-            txt = self.txt              # 自身を保存
-        self.txt = [""] * self.row * 4  # 配列初期化
-        self.tab.configure(scrollregion=(0, 0, 241, self.row*25+1))  # 可動域変更
-        for i in range(self.row*4):      # 引数行*列だけ繰り返し
-            if i < len(txt):          # 文字配列がある場合
-                self.txt[i] = txt[i]  # 文字入力
-            self.tab.create_rectangle(
-                i%4*80, i//4*25, i%4*80+80, i//4*25+25, fill="SystemButtonFace",
-                tags="r"+str(i)
-            )  # 表の格子
-            self.tab.create_text(
-                i%4*80+40, i//4*25+13, text=fc.wrd_sym(self.txt[i]), font=("", 11), tags="t"+str(i)
-            )  # 表に入る文字
-        if self.row == g.row:                     # 行数最小の場合
-            self.dlt.configure(state="disabled")  # 削除ボタン無効
-        else:                                     # その他
-            self.dlt.configure(state="normal")    # 削除ボタン有効
-
-    # 表生成（新）
-    def table1(self, row=None):
-        print("self.row="+str(self.row))
+    def table(self, row=None):
         # 行数の調整
         if row is not None:  # 行数増減の場合
             self.row += row  # クラス変数に代入
@@ -488,8 +456,7 @@ class Schedule:
                     self.txt.append("")         # 増やす
                 else:                           # 多い場合
                     del self.txt[-1]            # 減らす
-        print(len(self.txt))
-        print(self.txt)
+
         # 表の生成
         self.tab.delete("all")  # 既出の要素すべて削除
         self.tab.configure(scrollregion=(0, 0, 241, self.row*25+1))  # 可動域変更
@@ -536,7 +503,7 @@ class Schedule:
         ook.place(x=30, y=110)       # 設定用決定ボタン
         dlt.place(x=120, y=110)      # 設定用削除ボタン
         ccl.place(x=210, y=110)      # 設定用取消ボタン
-        self.stf.place(x=10, y=10)   # 設定用画面
+        self.stf.place(x=50, y=50)   # 設定用画面
 
     # 設定用クリック動作
     def set_ck(self, e, s):
@@ -553,27 +520,34 @@ class Schedule:
                 self.val.configure(text=tim.out_txt())  # 値再表示
 
     # 設定用ボタン動作
-    def set_bt(self, t):
+    def set_bt(self, t, clk=None, scd=None, val=None):
         if t == 1:     # 決定押下
+            # 引数入力
+            if clk is None:
+                clk = self.clk.txt
+            if scd is None:
+                scd = fc.wrd_sym(self.scd.txt)
+            if val is None:
+                val = self.val.txt
+
             del self.txt[4*self.sel:4*self.sel+4]  # 選択行を削除
-            tim = self.clk.txt  # 入力された時刻
-            clk = fc.Time()     # 時間クラスを用意
-            clk.set_txt(tim)    # 時刻を時間クラスへ
+            tim = fc.Time()     # 時間クラスを用意
+            tim.set_txt(clk)    # 時刻を時間クラスへ
             i = 0               # 予定行番号
             while True:                # 入力行探し
-                tim = self.txt[4*i+1]  # 予定表の時刻
-                if tim == "":          # 空白の場合
+                tms = self.txt[4*i+1]  # 予定表の時刻
+                if tms == "":          # 空白の場合
                     break              # ループ終了
                 lsc = fc.Time()        # 時間クラスを用意
-                lsc.set_txt(tim)       # 時刻を時間クラスへ
-                if clk.n < lsc.n:      # 入力値の方が小さい場合
+                lsc.set_txt(tms)       # 時刻を時間クラスへ
+                if tim.n < lsc.n:      # 入力値の方が小さい場合
                     break              # ループ終了
                 else:
                     i += 1
-            self.txt.insert(4*i+0, "")                        # 番号入力
-            self.txt.insert(4*i+1, clk.out_txt())             # 時刻入力
-            self.txt.insert(4*i+2, fc.wrd_sym(self.scd.txt))  # 予定入力
-            self.txt.insert(4*i+3, self.val.txt)              # 値入力
+            self.txt.insert(4*i+0, "")   # 番号入力
+            self.txt.insert(4*i+1, clk)  # 時刻入力
+            self.txt.insert(4*i+2, scd)  # 予定入力
+            self.txt.insert(4*i+3, val)  # 値入力
 
         elif t == -1:  # 削除押下
             del self.txt[4*self.sel:4*self.sel+4]  # 選択行を削除
@@ -584,8 +558,8 @@ class Schedule:
         for i in range(self.row):
             if self.txt[4*i+2] != "":
                 self.txt[4*i] = str(i+1)
-        self.table1()
-        self.stf.place_forget()
+        self.table()  # 表に反映
+        self.stf.place_forget()  # 予定設定画面非表示
 
     # 表クリック
     def click(self, e):
@@ -597,19 +571,6 @@ class Schedule:
         if e.num == 1:  # 左クリック
             self.sel = y
             self.setting()
-            """
-            if x == 1:  # 時間変更
-                if self.txt[4*y+x] != "":              # 既に入力されている場合
-                    self.tim.set_txt(self.txt[4*y+x])  # 入力値
-                elif g.in_zer:                         # 未記入で初期値を表示させたい場合
-                    self.tim.set_int(0)                # 初期値
-                tim = fc.asktime(self.tim)             # 時間変更ウインドウで時間取得
-                if tim is not None:                         # 時間が返された場合
-                    self.tim.set_int(tim.n)                 # 時間を保存
-                    self.change(4*y+x, self.tim.out_txt())  # 表の表示を変更
-            """
-        # elif e.num == 3:  # 右クリック
-        #     self.change(4*y+x, "")  # 空白を入力
 
     # 設定変更
     def change(self, xy, txt):
@@ -719,7 +680,7 @@ class File:
                     else:                          # その他
                         sc_t.append(sc_l[i])       # 予定
                 self.mw.st.table(st_r, st_t)       # 設定表表示
-                self.mw.sc.table(sc_r, sc_t)       # 予定表表示
+                self.mw.sc.table()                 # 予定表表示
             return 0
         else:
             print("application Line 571", "No File")

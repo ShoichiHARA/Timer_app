@@ -4,8 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="10/30&#10;表示を中央にしたい問題解決&#10;カウントが停止する問題解決&#10;表示ウインドウの表示をボタンで切替">
+    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="03/08&#10;入力したものを表に反映&#10;自動で時刻順に並べ替え">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application.py" beforeDir="false" afterPath="$PROJECT_DIR$/application.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/functions.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -104,7 +106,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-50da183f06c8-d3b881c8e49f-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-233.13135.95" />
+        <option value="bundled-python-sdk-c69650fc56ca-d3b881c8e49f-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-233.15619.17" />
       </set>
     </attachedChunks>
   </component>
@@ -116,30 +118,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1723038717059</updated>
-    </task>
-    <task id="LOCAL-00043" summary="09/01&#10;予約表をクラス化">
-      <option name="closed" value="true" />
-      <created>1725188955728</created>
-      <option name="number" value="00043" />
-      <option name="presentableId" value="LOCAL-00043" />
-      <option name="project" value="LOCAL" />
-      <updated>1725188955728</updated>
-    </task>
-    <task id="LOCAL-00044" summary="09/01&#10;メインウインドウクラス変数減らした">
-      <option name="closed" value="true" />
-      <created>1725190437256</created>
-      <option name="number" value="00044" />
-      <option name="presentableId" value="LOCAL-00044" />
-      <option name="project" value="LOCAL" />
-      <updated>1725190437256</updated>
-    </task>
-    <task id="LOCAL-00045" summary="09/01&#10;設定で色の変更成功">
-      <option name="closed" value="true" />
-      <created>1725194633911</created>
-      <option name="number" value="00045" />
-      <option name="presentableId" value="LOCAL-00045" />
-      <option name="project" value="LOCAL" />
-      <updated>1725194633911</updated>
     </task>
     <task id="LOCAL-00046" summary="09/01&#10;設定表色削除の無効化">
       <option name="closed" value="true" />
@@ -509,7 +487,31 @@
       <option name="project" value="LOCAL" />
       <updated>1730299482201</updated>
     </task>
-    <option name="localTasksCounter" value="92" />
+    <task id="LOCAL-00092" summary="03/02&#10;予定設定画面の完成&#10;表をクリックしたら画面に移りたい&#10;決定押したら表に反映したい">
+      <option name="closed" value="true" />
+      <created>1740922512845</created>
+      <option name="number" value="00092" />
+      <option name="presentableId" value="LOCAL-00092" />
+      <option name="project" value="LOCAL" />
+      <updated>1740922512845</updated>
+    </task>
+    <task id="LOCAL-00093" summary="03/07&#10;コメントの編集">
+      <option name="closed" value="true" />
+      <created>1741316566033</created>
+      <option name="number" value="00093" />
+      <option name="presentableId" value="LOCAL-00093" />
+      <option name="project" value="LOCAL" />
+      <updated>1741316566033</updated>
+    </task>
+    <task id="LOCAL-00094" summary="03/08&#10;入力したものを表に反映&#10;自動で時刻順に並べ替え">
+      <option name="closed" value="true" />
+      <created>1741435347140</created>
+      <option name="number" value="00094" />
+      <option name="presentableId" value="LOCAL-00094" />
+      <option name="project" value="LOCAL" />
+      <updated>1741435347140</updated>
+    </task>
+    <option name="localTasksCounter" value="95" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -524,9 +526,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="09/13&#10;ファイル構成の変更&#10;設定クラスをグローバル変数化" />
-    <MESSAGE value="09/14&#10;設定クラスをグローバル変数へ移行&#10;設定クラスを削除" />
-    <MESSAGE value="09/14&#10;メニューバークラスを作成中" />
     <MESSAGE value="09/15&#10;開始ボタン、リセットボタンを&#10;ストップウォッチクラスへ移行" />
     <MESSAGE value="09/16&#10;ストップウォッチクラスへほぼ完全に移行" />
     <MESSAGE value="09/17&#10;設定クラスを新たに作成したい&#10;cvsで描いてみる" />
@@ -549,6 +548,9 @@
     <MESSAGE value="09/25&#10;グローバス変数のファイル読み書き関数完成" />
     <MESSAGE value="10/27&#10;ファイル保存で拡張子がつかない問題解決&#10;eze化" />
     <MESSAGE value="10/30&#10;表示を中央にしたい問題解決&#10;カウントが停止する問題解決&#10;表示ウインドウの表示をボタンで切替" />
-    <option name="LAST_COMMIT_MESSAGE" value="10/30&#10;表示を中央にしたい問題解決&#10;カウントが停止する問題解決&#10;表示ウインドウの表示をボタンで切替" />
+    <MESSAGE value="03/02&#10;予定設定画面の完成&#10;表をクリックしたら画面に移りたい&#10;決定押したら表に反映したい" />
+    <MESSAGE value="03/07&#10;コメントの編集" />
+    <MESSAGE value="03/08&#10;入力したものを表に反映&#10;自動で時刻順に並べ替え" />
+    <option name="LAST_COMMIT_MESSAGE" value="03/08&#10;入力したものを表に反映&#10;自動で時刻順に並べ替え" />
   </component>
 </project>
