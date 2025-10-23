@@ -7,7 +7,7 @@ import os
 import global_val as g
 
 if TYPE_CHECKING:
-    from application import MainWin
+    from application1 import MainWin
 
 
 # 時間クラス

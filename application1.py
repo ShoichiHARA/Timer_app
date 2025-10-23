@@ -4,7 +4,7 @@ from tkinter import filedialog as fd
 from functools import partial as pt
 import _tkinter
 import os
-import functions as fc
+import functions1 as fc
 import global_val as g
 
 
