@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="03/08&#10;入力したものを表に反映&#10;自動で時刻順に並べ替え">
+    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="10/23&#10;ファイル名変更&#10;初めから作成開始">
+      <change afterPath="$PROJECT_DIR$/application.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/functions.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application.py" beforeDir="false" afterPath="$PROJECT_DIR$/application.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/functions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,6 +24,20 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "ShoichiHARA"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="fbedfae6-b552-414a-af75-9b1644cdbbae" />
+        <option name="url" value="https://github.com/ShoichiHARA/Timer_app.git" />
+      </UrlAndAccount>
+    </option>
   </component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
@@ -118,22 +133,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1723038717059</updated>
-    </task>
-    <task id="LOCAL-00046" summary="09/01&#10;設定表色削除の無効化">
-      <option name="closed" value="true" />
-      <created>1725195275837</created>
-      <option name="number" value="00046" />
-      <option name="presentableId" value="LOCAL-00046" />
-      <option name="project" value="LOCAL" />
-      <updated>1725195275837</updated>
-    </task>
-    <task id="LOCAL-00047" summary="09/01&#10;予約時間にタイマー動作成功">
-      <option name="closed" value="true" />
-      <created>1725199530495</created>
-      <option name="number" value="00047" />
-      <option name="presentableId" value="LOCAL-00047" />
-      <option name="project" value="LOCAL" />
-      <updated>1725199530495</updated>
     </task>
     <task id="LOCAL-00048" summary="09/01&#10;表設定時に既値を表示">
       <option name="closed" value="true" />
@@ -511,7 +510,23 @@
       <option name="project" value="LOCAL" />
       <updated>1741435347140</updated>
     </task>
-    <option name="localTasksCounter" value="95" />
+    <task id="LOCAL-00095" summary="10/23&#10;編集途中のものを保存">
+      <option name="closed" value="true" />
+      <created>1761224604395</created>
+      <option name="number" value="00095" />
+      <option name="presentableId" value="LOCAL-00095" />
+      <option name="project" value="LOCAL" />
+      <updated>1761224604396</updated>
+    </task>
+    <task id="LOCAL-00096" summary="10/23&#10;ファイル名変更&#10;初めから作成開始">
+      <option name="closed" value="true" />
+      <created>1761225035205</created>
+      <option name="number" value="00096" />
+      <option name="presentableId" value="LOCAL-00096" />
+      <option name="project" value="LOCAL" />
+      <updated>1761225035205</updated>
+    </task>
+    <option name="localTasksCounter" value="97" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -526,8 +541,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="09/15&#10;開始ボタン、リセットボタンを&#10;ストップウォッチクラスへ移行" />
-    <MESSAGE value="09/16&#10;ストップウォッチクラスへほぼ完全に移行" />
     <MESSAGE value="09/17&#10;設定クラスを新たに作成したい&#10;cvsで描いてみる" />
     <MESSAGE value="09/17&#10;設定クラス動作は問題ない&#10;位置の調整が必要&#10;関数のバインドが必要" />
     <MESSAGE value="09/18&#10;キャンバスの文字変更ができない" />
@@ -551,6 +564,8 @@
     <MESSAGE value="03/02&#10;予定設定画面の完成&#10;表をクリックしたら画面に移りたい&#10;決定押したら表に反映したい" />
     <MESSAGE value="03/07&#10;コメントの編集" />
     <MESSAGE value="03/08&#10;入力したものを表に反映&#10;自動で時刻順に並べ替え" />
-    <option name="LAST_COMMIT_MESSAGE" value="03/08&#10;入力したものを表に反映&#10;自動で時刻順に並べ替え" />
+    <MESSAGE value="10/23&#10;編集途中のものを保存" />
+    <MESSAGE value="10/23&#10;ファイル名変更&#10;初めから作成開始" />
+    <option name="LAST_COMMIT_MESSAGE" value="10/23&#10;ファイル名変更&#10;初めから作成開始" />
   </component>
 </project>

@@ -1,4 +1,5 @@
-import application1 as app
+import application as app
+# import application1 as app
 
 """
 exe化は、以下のコマンドをターミナルで実行
