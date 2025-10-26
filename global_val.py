@@ -3,11 +3,15 @@ import language
 lg = language.Language()
 clr0 = "#000000"
 bgc0 = "#FFFFFF"
+olc0 = "#FFFFFF"
 rwc0 = "#00FF00"
 md_cmd = False
 in_zer = False  # 未記入の表を選択 True:0または黒, False:前回値
 scn0 = "TMR"    # 最初に開くタブ
 row0 = 7        # 表示行数
+a0 = 18         # セグ幅
+b0 = 35         # セグ高
+c0 = 5          # セグ厚
 row = 7
 ctn = True  # 前回の続き
 gpt = "global_val.gvl"

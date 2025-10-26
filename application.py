@@ -138,7 +138,7 @@ class Watch:
 
 # 設定クラス
 class Setting:
-    def __init__(self,mw: MainWin):
+    def __init__(self, mw: MainWin):
         self.mw = mw
         self.frm = tk.Frame(self.mw.master)  # 設定タブのフレーム
         self.add = tk.Button(self.frm)       # 行追加ボタン
@@ -229,12 +229,108 @@ class ViewWin(tk.Frame):
         self.mw = mw  # メインウインドウ
         self.wwd = 400  # ウインドウ幅
         self.whg = 300  # ウインドウ高
-        self.siz = self.wwd // 85  # 文字サイズ
+        # self.siz = self.wwd // 85  # 文字サイズ
+        self.flc = "#00FF00"       # 文字色
+        self.bkc = "white"         # 背景色
+        self.olc = "white"         # 枠線色
+        self.wid = 3               # 枠線幅
         self.cvs = tk.Canvas(self.master)
+        self.widgets()
+        self.event()
 
         # ウインドウの定義
         self.master.title(lg.twn)
         self.master.geometry("400x300")
+
+    # ウィジェット
+    def widgets(self):
+        # 設定
+        self.cvs.configure(bg=self.bkc)
+
+        # 7セグ描画
+        t = ["A", "B", "C", "D", "E", "F", "G"]
+        for i in range(6):
+            for j in range(7):
+                self.cvs.create_polygon(
+                    1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, tags=t[j]+str(i),
+                    width=self.wid, outline=self.olc
+                )
+        self.drw_seg([0, 0, 0, 0, 0, 0])
+
+        # 配置
+        self.cvs.pack(fill=tk.BOTH, expand=True)
+
+    # イベント
+    def event(self):
+        def win_size(e):
+            if e is not None:
+                self.wwd = self.master.winfo_width()
+                self.whg = self.master.winfo_height()
+                self.drw_seg([None, None, None, None, None, None])
+
+        self.master.bind("<Configure>", win_size)
+
+    # 7セグ描画
+    def drw_seg(self, seg: list, crn="."):
+        s = self.wwd / 400  # 倍率
+        a = g.a0 * s        # セグの横幅
+        b = g.b0 * s        # セグの高さ
+        c = g.c0 * s        # セグの太さ
+        z = [s*50, s*100, s*175, s*225, s*300, s*350]
+        y = self.whg / 2
+        bit = [
+            [1, 1, 1, 1, 1, 1, 0],
+            [0, 1, 1, 0, 0, 0, 0],
+            [1, 1, 0, 1, 1, 0, 1],
+            [1, 1, 1, 1, 0, 0, 1],
+            [0, 1, 1, 0, 0, 1, 1],
+            [1, 0, 1, 1, 0, 1, 1],
+            [1, 0, 1, 1, 1, 1, 1],
+            [1, 1, 1, 0, 0, 1, 0],
+            [1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 0, 1, 1]
+        ]
+        for i in range(6):
+            # 位置変更
+            x = z[i]
+            self.cvs.coords(
+                "A"+str(i), x-a, y-b, x-a+c, y-b-c, x+a-c, y-b-c,
+                x+a, y-b, x+a-c, y-b+c, x-a+c, y-b+c
+            )
+            self.cvs.coords(
+                "B"+str(i), x+a, y-b, x+a+c, y-b+c, x+a+c, y-c,
+                x+a, y, x+a-c, y-c, x+a-c, y-b+c
+            )
+            self.cvs.coords(
+                "C"+str(i), x+a, y, x+a+c, y+c, x+a+c, y+b-c,
+                x+a, y+b, x+a-c, y+b-c, x+a-c, y+c
+            )
+            self.cvs.coords(
+                "D"+str(i), x-a, y+b, x-a+c, y+b-c, x+a-c, y+b-c,
+                x+a, y+b, x+a-c, y+b+c, x-a+c, y+b+c
+            )
+            self.cvs.coords(
+                "E"+str(i), x-a, y, x-a+c, y+c, x-a+c, y+b-c,
+                x-a, y+b, x-a-c, y+b-c, x-a-c, y+c
+            )
+            self.cvs.coords(
+                "F"+str(i), x-a, y-b, x-a+c, y-b+c, x-a+c, y-c,
+                x-a, y, x-a-c, y-c, x-a-c, y-b+c
+            )
+            self.cvs.coords(
+                "G"+str(i), x-a, y, x-a+c, y-c, x+a-c, y-c,
+                x+a, y, x+a-c, y+c, x-a+c, y+c
+            )
+
+            # 色変更
+            t = ["A", "B", "C", "D", "E", "F", "G"]
+            for j in range(7):
+                if seg[i] is None:
+                    pass
+                elif bit[seg[i]][j] == 1:
+                    self.cvs.itemconfig(t[j]+str(i), fill=self.flc)
+                else:
+                    self.cvs.itemconfig(t[j]+str(i), fill=self.bkc)
 
 
 # アプリケーション

@@ -41,3 +41,19 @@ class Time:
         t = str(n // 60 % 100).zfill(2) + ":" + t  # hh:mm:ss.ms
         return t
 
+    # リスト出力
+    def out_lst(self):
+        # 出力数値の決定
+        if self.n < 180000:  # 30m未満
+            n = [
+                self.n // 6000 % 60 // 10, self.n // 6000 % 10,  # 10m, 1m
+                self.n // 100 % 60 // 10, self.n // 100 % 10,    # 10s, 1s
+                self.n % 100 // 10, self.n % 10                  # 0.1s, 0.01s
+            ]
+        else:
+            n = [
+                self.n // 3600000, self.n // 360000 % 10,        # 10h, 1h
+                self.n // 6000 % 60 // 10, self.n // 6000 % 10,  # 10m, 1m
+                self.n // 100 % 60 // 10, self.n // 100 % 10,    # 10s, 1s
+            ]
+

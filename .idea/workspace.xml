@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="10/26&#10;タブ移動の完成">
+    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="10/26&#10;別ウインドウ表示関数完成">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application.py" beforeDir="false" afterPath="$PROJECT_DIR$/application.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/functions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/global_val.py" beforeDir="false" afterPath="$PROJECT_DIR$/global_val.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,12 +24,12 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "ShoichiHARA"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;ShoichiHARA&quot;
   }
-}]]></component>
+}</component>
   <component name="GithubPullRequestsUISettings">
     <option name="selectedUrlAndAccountId">
       <UrlAndAccount>
@@ -133,14 +132,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1723038717059</updated>
-    </task>
-    <task id="LOCAL-00050" summary="09/02&#10;リリースv1.0">
-      <option name="closed" value="true" />
-      <created>1725210519630</created>
-      <option name="number" value="00050" />
-      <option name="presentableId" value="LOCAL-00050" />
-      <option name="project" value="LOCAL" />
-      <updated>1725210519631</updated>
     </task>
     <task id="LOCAL-00051" summary="09/03&#10;停止予約のみを登録するとまっさらになるバグ修正&#10;予約時刻で開始させたときボタン文字を変更">
       <option name="closed" value="true" />
@@ -526,7 +517,15 @@
       <option name="project" value="LOCAL" />
       <updated>1761465280766</updated>
     </task>
-    <option name="localTasksCounter" value="99" />
+    <task id="LOCAL-00099" summary="10/26&#10;別ウインドウ表示関数完成">
+      <option name="closed" value="true" />
+      <created>1761468514057</created>
+      <option name="number" value="00099" />
+      <option name="presentableId" value="LOCAL-00099" />
+      <option name="project" value="LOCAL" />
+      <updated>1761468514057</updated>
+    </task>
+    <option name="localTasksCounter" value="100" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -541,7 +540,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="09/18&#10;キャンバスの文字変更ができない" />
     <MESSAGE value="09/19&#10;表をスクロールすると座標がずれる" />
     <MESSAGE value="09/20&#10;表の位置問題解決" />
     <MESSAGE value="09/21&#10;メインウインドウクラスでタイマー動作" />
@@ -566,6 +564,7 @@
     <MESSAGE value="10/23&#10;ファイル名変更&#10;初めから作成開始" />
     <MESSAGE value="10/25&#10;タイマー画面の表示部分完成" />
     <MESSAGE value="10/26&#10;タブ移動の完成" />
-    <option name="LAST_COMMIT_MESSAGE" value="10/26&#10;タブ移動の完成" />
+    <MESSAGE value="10/26&#10;別ウインドウ表示関数完成" />
+    <option name="LAST_COMMIT_MESSAGE" value="10/26&#10;別ウインドウ表示関数完成" />
   </component>
 </project>
