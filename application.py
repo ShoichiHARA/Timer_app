@@ -20,12 +20,13 @@ class MainWin(tk.Frame):
         self.now = fc.Time()  # 現在時刻
         self.tmr = fc.Time()  # 表示時間
 
-        self.swc = Watch(self)  # ストップウォッタブ
-        self.stg = ""  # 設定タブ
-        self.scd = ""  # 予定タブ
-        self.hlp = ""  # ヘルプタブ
-        self.fil = ""  # ファイルタブ
-        self.men = MenuBar(self)  # メニューバー
+        self.swc = Watch(self)     # ストップウォッタブ
+        self.stg = Setting(self)   # 設定タブ
+        self.scd = Schedule(self)  # 予定タブ
+        self.hlp = Help(self)      # ヘルプタブ
+        self.fil = File(self)      # ファイルタブ
+        self.men = MenuBar(self)   # メニューバー
+        self.men.change(g.scn0)    # 最初に開くタブ
 
         # ウインドウの定義
         self.master.title(lg.mwn)  # ウインドウタイトル
@@ -57,11 +58,21 @@ class MenuBar:
 
     # タブ切り換え
     def change(self, scn):
-
+        self.mw.fil.frm.pack_forget()
+        self.mw.swc.frm.pack_forget()
+        self.mw.stg.frm.pack_forget()
+        self.mw.scd.frm.pack_forget()
+        self.mw.hlp.frm.pack_forget()
         if scn == "FIL":
             self.mw.fil.frm.pack(expand=True, fill="both")
         elif scn == "TMR":
             self.mw.swc.frm.pack(expand=True, fill="both")
+        elif scn == "SET":
+            self.mw.stg.frm.pack(expand=True, fill="both")
+        elif scn == "SCD":
+            self.mw.scd.frm.pack(expand=True, fill="both")
+        elif scn == "HLP":
+            self.mw.hlp.frm.pack(expand=True, fill="both")
 
 
 # ストップウォッチクラス
@@ -91,6 +102,85 @@ class Watch:
         self.ssb.place(x=20, y=120)
         self.rst.place(x=210, y=120)
         self.dsp.place(x=22, y=210)
+
+
+# 設定クラス
+class Setting:
+    def __init__(self,mw: MainWin):
+        self.mw = mw
+        self.frm = tk.Frame(self.mw.master)  # 設定タブのフレーム
+        self.add = tk.Button(self.frm)       # 行追加ボタン
+        self.dlt = tk.Button(self.frm)       # 行削除ボタン
+
+        self.widgets()
+
+    def widgets(self):
+        # 設定
+        self.add.configure(text=lg.rad, width=10)
+        self.dlt.configure(text=lg.rdl, width=10)
+
+        # 配置
+        self.add.place(x=190, y=g.row0*25+55)
+        self.dlt.place(x=280, y=g.row0*25+55)
+
+
+# 予定クラス
+class Schedule:
+    def __init__(self, mw: MainWin):
+        # 定義
+        self.mw = mw
+        self.frm = tk.Frame(self.mw.master)  # 予定タブのフレーム
+        self.add = tk.Button(self.frm)       # 行追加ボタン
+        self.dlt = tk.Button(self.frm)       # 行削除ボタン
+        self.scr = tk.Scrollbar(self.frm)    # スクロールバー
+
+        self.widgets()
+
+    def widgets(self):
+        # 設定
+        self.add.configure(text=lg.rad, width=10)
+        self.dlt.configure(text=lg.rdl, width=10)
+
+        # 配置
+        self.add.place(x=190, y=g.row0*25+55)
+        self.dlt.place(x=280, y=g.row0*25+55)
+
+
+# ヘルプクラス
+class Help:
+    def __init__(self, mw: MainWin):
+        self.mw = mw
+        self.frm = tk.Frame(self.mw.master)
+        self.lbl = tk.Label(self.frm, text="未実装")
+
+        self.lbl.place(x=10, y=10)
+
+
+# ファイルクラス
+class File:
+    def __init__(self, mw: MainWin):
+        # 定義
+        self.mw = mw
+        self.frm = tk.Frame(self.mw.master)  # ヘルプクラスのフレーム
+        self.nwb = tk.Button(self.frm)       # 新規作成
+        self.opn = tk.Button(self.frm)       # 開く
+        self.sav = tk.Button(self.frm)       # 上書き保存
+        self.sva = tk.Button(self.frm)       # 名前を付けて保存
+
+        self.widgets()
+
+    def widgets(self):
+        # 設定
+        self.nwb.configure(text=lg.new, font=("", 15), width=15, height=3)
+        self.opn.configure(text=lg.opn, font=("", 15), width=15, height=3)
+        self.sav.configure(text=lg.sav, font=("", 15), width=15, height=3)
+        self.sva.configure(text=lg.sva, font=("", 15), width=15, height=3)
+
+        # 配置
+        self.nwb.place(x=20, y=50)
+        self.opn.place(x=210, y=50)
+        self.sav.place(x=20, y=150)
+        self.sva.place(x=210, y=150)
 
 
 # アプリケーション
