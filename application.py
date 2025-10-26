@@ -40,6 +40,17 @@ class MainWin(tk.Frame):
         # 現在時刻取得
         self.now.get_now()
 
+    # ウィジェット
+    def widgets(self):
+        pass
+
+    # 表示ウインドウ表示
+    def viw_win(self):
+        if self.viw_mas is None:
+            self.viw_mas = tk.Toplevel(self.master)
+            self.viw_app = ViewWin(self.viw_mas, self)
+            self.viw_mas.focus_set()
+
 
 # メニューバークラス
 class MenuBar:
@@ -73,6 +84,10 @@ class MenuBar:
             self.mw.scd.frm.pack(expand=True, fill="both")
         elif scn == "HLP":
             self.mw.hlp.frm.pack(expand=True, fill="both")
+        else:
+            print("MenuBar.change Error!")
+            return 931
+        return 0
 
 
 # ストップウォッチクラス
@@ -80,6 +95,8 @@ class Watch:
     def __init__(self, mw: MainWin):
         # 定義
         self.mw = mw
+        self.cnt = False                     # カウントしているか
+        self.wnd = False                     # 別ウインドウ表示しているか
         self.frm = tk.Frame(self.mw.master)  # ストップウォッチタブのフレーム
         self.wtc = tk.Label(self.frm)        # 時計
         self.ssb = tk.Button(self.frm)       # スタート/ストップボタン
@@ -88,6 +105,7 @@ class Watch:
 
         self.widgets()
 
+    # ウィジェット
     def widgets(self):
         # 設定
         self.wtc.configure(text=self.mw.tmr.out_txt(), font=("", 60))
@@ -96,12 +114,26 @@ class Watch:
         self.dsp.configure(text=lg.viw, font=("", 15), width=32, height=1)
 
         # 関数割付
+        self.dsp.configure(command=self.display)
 
         # 配置
         self.wtc.place(x=15, y=20)
         self.ssb.place(x=20, y=120)
         self.rst.place(x=210, y=120)
         self.dsp.place(x=22, y=210)
+
+    # 別ウインドウ表示
+    def display(self):
+        if self.wnd:                                 # 表示してる場合
+            self.mw.viw_mas.destroy()                # ウインドウ破壊
+            self.mw.viw_mas = None                   # マスター破壊
+            self.dsp.configure(text=lg.viw)          # ボタンに表示を表示
+            self.wnd = False                         # 表示していないフラグ
+        else:                                        # 表示していない場合
+            self.mw.viw_win()                        # ウインドウ表示
+            self.mw.master.tkraise(self.mw.viw_mas)  # 表示ウインドウを前面へ
+            self.dsp.configure(text=lg.hid)          # ボタンに非表示を表示
+            self.wnd = True                          # 表示しているフラグ
 
 
 # 設定クラス
@@ -118,6 +150,8 @@ class Setting:
         # 設定
         self.add.configure(text=lg.rad, width=10)
         self.dlt.configure(text=lg.rdl, width=10)
+
+        # 関数割付
 
         # 配置
         self.add.place(x=190, y=g.row0*25+55)
@@ -140,6 +174,8 @@ class Schedule:
         # 設定
         self.add.configure(text=lg.rad, width=10)
         self.dlt.configure(text=lg.rdl, width=10)
+
+        # 関数割付
 
         # 配置
         self.add.place(x=190, y=g.row0*25+55)
@@ -181,6 +217,24 @@ class File:
         self.opn.place(x=210, y=50)
         self.sav.place(x=20, y=150)
         self.sva.place(x=210, y=150)
+
+
+# 表示ウインドウ
+class ViewWin(tk.Frame):
+    def __init__(self: tk.Tk, master, mw):
+        super().__init__(master)
+        self.pack()
+
+        # 定義
+        self.mw = mw  # メインウインドウ
+        self.wwd = 400  # ウインドウ幅
+        self.whg = 300  # ウインドウ高
+        self.siz = self.wwd // 85  # 文字サイズ
+        self.cvs = tk.Canvas(self.master)
+
+        # ウインドウの定義
+        self.master.title(lg.twn)
+        self.master.geometry("400x300")
 
 
 # アプリケーション

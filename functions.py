@@ -22,6 +22,7 @@ class Time:
             return 901
         except ValueError:
             print("Time.set_txt Error!", ValueError)
+            return 902
 
     # 現在時刻取得
     def get_now(self):
