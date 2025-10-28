@@ -17,8 +17,9 @@ class MainWin(tk.Frame):
         self.pack()               # 配置
 
         # 定義
-        self.now = fc.Time()  # 現在時刻
-        self.tmr = fc.Time()  # 表示時間
+        self.now = fc.Time()       # 現在時刻
+        self.tmr = fc.Time()       # 表示時間
+        self.pnw = self.now.n      # 前回の現在時刻
 
         self.swc = Watch(self)     # ストップウォッタブ
         self.stg = Setting(self)   # 設定タブ
@@ -38,7 +39,9 @@ class MainWin(tk.Frame):
         self.viw_app = None
 
         # 現在時刻取得
-        self.now.get_now()
+        self.now.get_now()     # 現在時刻取得
+        self.pnw = self.now.n  # 前回の現在時刻
+        self.reload()          # 再演算
 
     # ウィジェット
     def widgets(self):
@@ -46,10 +49,32 @@ class MainWin(tk.Frame):
 
     # 表示ウインドウ表示
     def viw_win(self):
+        # if (self.viw_mas is None) or (not self.viw_mas.winfo_exists()):
         if self.viw_mas is None:
             self.viw_mas = tk.Toplevel(self.master)
             self.viw_app = ViewWin(self.viw_mas, self)
             self.viw_mas.focus_set()
+
+    # 再演算
+    def reload(self):
+        # 現在時刻取得
+        self.now.get_now()
+
+        # カウントアップ
+        if self.swc.cnt:  # カウントが有効な場合
+            # print(self.now.n, self.pnw)
+            if self.now.n > self.pnw:  # 時刻が進んでいる場合
+                self.tmr.n += self.now.n - self.pnw  # 差分だけ進ませる
+                print(self.tmr.n)
+
+        # 時間表示
+        self.swc.wtc.configure(text=self.tmr.out_txt())
+        if self.viw_mas is not None:
+            self.viw_app.drw_tmr()
+
+        # 再演算
+        self.pnw = self.now.n
+        self.master.after(2, self.reload)  # 0.002秒後再演算
 
 
 # メニューバークラス
@@ -114,6 +139,7 @@ class Watch:
         self.dsp.configure(text=lg.viw, font=("", 15), width=32, height=1)
 
         # 関数割付
+        self.ssb.configure(command=self.stt_stp)
         self.dsp.configure(command=self.display)
 
         # 配置
@@ -256,6 +282,7 @@ class ViewWin(tk.Frame):
         # ウインドウの定義
         self.master.title(lg.twn)
         self.master.geometry("400x300")
+        self.master.protocol("WM_DELETE_WINDOW", self.exit)
 
     # ウィジェット
     def widgets(self):
@@ -279,6 +306,10 @@ class ViewWin(tk.Frame):
 
         # 配置
         self.cvs.pack(fill=tk.BOTH, expand=True)
+
+    # ウインドウ削除
+    def exit(self):
+        self.mw.swc.display()
 
     # イベント
     def event(self):
@@ -379,25 +410,25 @@ class ViewWin(tk.Frame):
     # 表示時間と連動
     def drw_tmr(self):
         lst = [0, 0, 0, 0, 0, 0]
-        txt = self.mw.tmr.out_txt   # --:--:--.--
-        if self.mw.tmr.n < 180000:  # 30m未満の場合
-            lst[0] = int(txt[3])    # --:@-:--.--
-            lst[1] = int(txt[4])    # --:-@:--.--
-            lst[2] = int(txt[6])    # --:--:@-.--
-            lst[3] = int(txt[7])    # --:--:-@.--
-            lst[4] = int(txt[9])    # --:--:--.@-
-            lst[5] = int(txt[10])   # --:--:--.-@
-            self.cr1 = ":"          # 左はコロン
-            self.cr2 = "."          # 右はピリオド
-        else:                       # 30m以上の場合
-            lst[0] = int(txt[0])    # @-:--:--.--
-            lst[1] = int(txt[1])    # -@:--:--.--
-            lst[2] = int(txt[3])    # --:@-:--.--
-            lst[3] = int(txt[4])    # --:-@:--.--
-            lst[4] = int(txt[6])    # --:--:@-.--
-            lst[5] = int(txt[7])    # --:--:-@.--
-            self.cr1 = ":"          # 左はコロン
-            self.cr2 = ":"          # 右もコロン
+        txt = self.mw.tmr.out_txt()  # --:--:--.--
+        if self.mw.tmr.n < 180000:   # 30m未満の場合
+            lst[0] = int(txt[3])     # --:@-:--.--
+            lst[1] = int(txt[4])     # --:-@:--.--
+            lst[2] = int(txt[6])     # --:--:@-.--
+            lst[3] = int(txt[7])     # --:--:-@.--
+            lst[4] = int(txt[9])     # --:--:--.@-
+            lst[5] = int(txt[10])    # --:--:--.-@
+            self.cr1 = ":"           # 左はコロン
+            self.cr2 = "."           # 右はピリオド
+        else:                        # 30m以上の場合
+            lst[0] = int(txt[0])     # @-:--:--.--
+            lst[1] = int(txt[1])     # -@:--:--.--
+            lst[2] = int(txt[3])     # --:@-:--.--
+            lst[3] = int(txt[4])     # --:-@:--.--
+            lst[4] = int(txt[6])     # --:--:@-.--
+            lst[5] = int(txt[7])     # --:--:-@.--
+            self.cr1 = ":"           # 左はコロン
+            self.cr2 = ":"           # 右もコロン
         self.drw_seg(lst)
 
 

@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="10/27&#10;表示時刻と別ウインドウを連動" />
+    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="10/28&#10;表示時刻と別ウインドウを連動">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application.py" beforeDir="false" afterPath="$PROJECT_DIR$/application.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/functions.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -128,14 +132,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1723038717059</updated>
-    </task>
-    <task id="LOCAL-00053" summary="09/03&#10;設定、予約表の現在行に色を設定">
-      <option name="closed" value="true" />
-      <created>1725372036006</created>
-      <option name="number" value="00053" />
-      <option name="presentableId" value="LOCAL-00053" />
-      <option name="project" value="LOCAL" />
-      <updated>1725372036006</updated>
     </task>
     <task id="LOCAL-00054" summary="09/03&#10;色が設定されている場合、スケールを移動&#10;pyinstallerでexe化&#10;リリースv2.0">
       <option name="closed" value="true" />
@@ -521,7 +517,15 @@
       <option name="project" value="LOCAL" />
       <updated>1761620770648</updated>
     </task>
-    <option name="localTasksCounter" value="102" />
+    <task id="LOCAL-00102" summary="10/28&#10;表示時刻と別ウインドウを連動">
+      <option name="closed" value="true" />
+      <created>1761621189115</created>
+      <option name="number" value="00102" />
+      <option name="presentableId" value="LOCAL-00102" />
+      <option name="project" value="LOCAL" />
+      <updated>1761621189115</updated>
+    </task>
+    <option name="localTasksCounter" value="103" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -536,7 +540,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="09/21&#10;メインウインドウクラスでタイマー動作" />
     <MESSAGE value="09/21&#10;設定クラスにフレームを移動" />
     <MESSAGE value="09/21&#10;表示ウインドウに時間を表示" />
     <MESSAGE value="09/22&#10;時間変更ウインドウを関数化" />
@@ -561,6 +564,7 @@
     <MESSAGE value="10/26&#10;別ウインドウ表示関数完成" />
     <MESSAGE value="10/27&#10;別ウインドウのサイズに合わせて文字サイズ変更可能" />
     <MESSAGE value="10/27&#10;表示時刻と別ウインドウを連動" />
-    <option name="LAST_COMMIT_MESSAGE" value="10/27&#10;表示時刻と別ウインドウを連動" />
+    <MESSAGE value="10/28&#10;表示時刻と別ウインドウを連動" />
+    <option name="LAST_COMMIT_MESSAGE" value="10/28&#10;表示時刻と別ウインドウを連動" />
   </component>
 </project>
