@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import colorchooser
+from tkinter import colorchooser as cc
 from tkinter import filedialog as fd
 from functools import partial as pt
 import functions as fc
@@ -148,6 +148,7 @@ class Watch:
         self.rst.place(x=210, y=120)
         self.dsp.place(x=22, y=210)
 
+    # 時間変更
     def change(self, e, tim=None):
         if e is None:
             pass
@@ -191,18 +192,132 @@ class Setting:
         self.add = tk.Button(self.frm)       # 行追加ボタン
         self.dlt = tk.Button(self.frm)       # 行削除ボタン
 
-        self.widgets()
+        self.scr = tk.Scrollbar(self.frm)    # スクロールバー
+        self.tab = tk.Canvas(self.frm)       # 色設定表
+        self.tit = tk.Canvas(self.frm)       # 表のタイトル
+        self.tim = "00:00:00.00"             # 保存用
+        self.clr = g.clr0                    # 保存用
+        self.crt = 0                         # 現在の設定行
+        self.row = g.row0
+        self.txt = [""] * self.row * 5
 
+        self.txt[0] = "0"
+        self.txt[1] = "00:00:00.00"
+        self.txt[2] = g.clr0
+        self.txt[3] = g.bgc0
+        self.txt[4] = g.olc0
+
+        self.widgets()
+        self.table(self.row)
+
+    # ウィジェット
     def widgets(self):
         # 設定
-        self.add.configure(text=lg.rad, width=10)
-        self.dlt.configure(text=lg.rdl, width=10)
+        self.tab.configure(
+            width=351, height=g.row0*25+1, highlightthickness=0,
+            scrollregion=(0, 0, 351, g.row0*25+1), yscrollcommand=self.scr.set
+        )
+        self.tab.bind("<ButtonPress>", self.click)
+        self.scr.configure(command=self.tab.yview)
+        self.tit.configure(width=351, height=25, bg="silver", highlightthickness=0)
+        self.add.configure(text=lg.rad, width=10, command=pt(self.table, row=1))
+        self.dlt.configure(text=lg.rdl, width=10, command=pt(self.table, row=-1))
 
-        # 関数割付
+        # タイトル行設定
+        self.tit.create_text(35, 13, text="No.", font=("", 11))
+        self.tit.create_text(105, 13, text=lg.tim, font=("", 11))
+        self.tit.create_text(175, 13, text=lg.clr, font=("", 11))
+        self.tit.create_text(245, 13, text=lg.bgc, font=("", 11))
+        self.tit.create_text(315, 13, text="枠線色", font=("", 11))
+        self.tit.create_rectangle(0, 0, 70, 24)
+        self.tit.create_rectangle(70, 0, 140, 24)
+        self.tit.create_rectangle(140, 0, 210, 24)
+        self.tit.create_rectangle(210, 0, 280, 24)
+        self.tit.create_rectangle(280, 0, 350, 24)
 
         # 配置
         self.add.place(x=190, y=g.row0*25+55)
         self.dlt.place(x=280, y=g.row0*25+55)
+        self.tab.place(x=25, y=44)
+        self.tit.place(x=25, y=20)
+        self.scr.place(x=375, y=44, height=g.row*25+1)
+
+    # 表生成
+    def table(self, row, txt=None):
+        if row in [1, -1]:   # 行数変更キーワード
+            self.row += row  # 行数変更
+        if txt is None:      # 表が指定されていない場合
+            txt = self.txt   # 自身を保存
+        self.txt = [""] * self.row * 5  # 配列初期化
+        self.tab.delete("all")          # 表の描画初期化
+        self.tab.configure(scrollregion=(0, 0, 351, self.row*25+1))  # 可動域変更
+        for i in range(self.row*5):  # 行x列だけ繰り返し
+            if i < len(txt):         # 保存した表にデータがある場合
+                self.txt[i] = txt[i]
+            self.tab.create_rectangle(
+                i%5*70, i//5*25, i%5*70+70, i//5*25+25, fill="SystemButtonFace",
+                tags="r"+str(i)
+            )  # 表の格子
+            self.tab.create_text(
+                i%5*70+35, i//5*25+13, text=self.txt[i], font=("", 10),
+                tags="t"+str(i)
+            )  # 表の文字
+            if i%5 in [2, 3, 4]:  # 色が入る列
+                if self.txt[i] != "":  # 空白でない場合
+                    self.tab.itemconfig("r"+str(i), fill=self.txt[i])
+        if self.row == g.row:                     # 行数最小の場合
+            self.dlt.configure(state="disabled")  # 削除ボタン無効
+        else:
+            self.dlt.configure(state="normal")    # 削除ボタン有効
+
+    # 表クリック
+    def click(self, e):
+        s = self.scr.get()              # スクロールバーの位置
+        d = s[0] * (self.row * 25 + 2)  # スクロール量（ピクセル）
+        x = (e.x - 2) // 70             # クリック列
+        y = (e.y + int(d)) // 25        # クリック行
+
+        if e.num == 1:  # 左クリック
+            if x == 1:  # 時間変更
+                if self.txt[5*y+x] != "":       # 既に入力されている場合
+                    self.tim = self.txt[5*y+x]  # 入力値から変更
+                elif g.in_zer:                  # 未記入で0を表示させたい場合
+                    self.tim = "00:00:00.00"    # 0から変更
+                tim = fc.asktime(self.tim)      # 時間変更
+                if tim is not None:             # 時間が返った場合
+                    self.tim = tim              # 今回値を保存
+                    self.change(5*y+x, tim)     # 設定変更
+            elif x in [2, 3, 4]:  # 色変更
+                if self.txt[5*y+x] != "":       # 既に入力されている場合
+                    self.clr = self.txt[5*y+x]  # 入力値から変更
+                elif g.in_zer:                  # 未入力で0を表示させたい場合
+                    self.clr = "#000000"        # 0から変更
+                clr = cc.askcolor(self.clr, title=lg.ccr)  # 色変更
+                self.clr = clr[1]               # 今回値を保存
+                self.change(5*y+x, self.clr)    # 設定変更
+        elif e.num == 3:  # 右クリック
+            if y != 0:  # 左端列でない場合
+                self.change(5*y+x, "")  # 空白を入力
+
+    # 設定変更
+    def change(self, xy, txt):
+        # 文字列変更
+        self.txt[xy] = txt                          # 文字列を配列へ代入
+        self.tab.itemconfig("t"+str(xy), text=txt)  # 文字列を表に表示
+
+        # 背景色変更
+        if xy % 5 in [2, 3, 4]:                         # 色変更列
+            self.tab.itemconfig("r"+str(xy), fill=txt)  # 色を表背景に描画
+
+        # 行が埋まっているか
+        y = xy // 5  # 行番号
+        g = ((self.txt[4*y+1] != "") and (self.txt[4*y+2] != "")
+             and (self.txt[4*y+3] != "") and (self.txt[4*y+4] != ""))  # 列が埋まっている
+        if g:  # 列が埋まっている場合
+            self.txt[4*y] = str(y)
+        else:
+            self.txt[4*y] = ""
+        self.tab.itemconfig("t"+str(4*y), text=self.txt[4*y])
 
 
 # 予定クラス
@@ -221,12 +336,14 @@ class Schedule:
         # 設定
         self.add.configure(text=lg.rad, width=10)
         self.dlt.configure(text=lg.rdl, width=10)
+        self.lbl = tk.Label(self.frm, text="未実装")
 
         # 関数割付
 
         # 配置
         self.add.place(x=190, y=g.row0*25+55)
         self.dlt.place(x=280, y=g.row0*25+55)
+        self.lbl.place(x=10, y=10)
 
 
 # ヘルプクラス
@@ -249,6 +366,7 @@ class File:
         self.opn = tk.Button(self.frm)       # 開く
         self.sav = tk.Button(self.frm)       # 上書き保存
         self.sva = tk.Button(self.frm)       # 名前を付けて保存
+        self.lbl = tk.Label(self.frm, text="未実装")
 
         self.widgets()
 
@@ -264,6 +382,7 @@ class File:
         self.opn.place(x=210, y=50)
         self.sav.place(x=20, y=150)
         self.sva.place(x=210, y=150)
+        self.lbl.place(x=10, y=10)
 
 
 # 表示ウインドウ
