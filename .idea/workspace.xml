@@ -4,9 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="10/28&#10;時間クラスをオーバーフローに対応">
+    <list default="true" id="7bc4c036-b9a2-4258-affe-9b84657c1a79" name="変更" comment="10/28&#10;時間所得関数一応完成&#10;キーボードからの入力を作成予定">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application.py" beforeDir="false" afterPath="$PROJECT_DIR$/application.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/functions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -131,14 +133,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1723038717059</updated>
-    </task>
-    <task id="LOCAL-00057" summary="09/06&#10;時間クラス改造中&#10;int型で取り扱い">
-      <option name="closed" value="true" />
-      <created>1725553299918</created>
-      <option name="number" value="00057" />
-      <option name="presentableId" value="LOCAL-00057" />
-      <option name="project" value="LOCAL" />
-      <updated>1725553299918</updated>
     </task>
     <task id="LOCAL-00058" summary="09/06&#10;サイズ変更がわからない">
       <option name="closed" value="true" />
@@ -524,7 +518,15 @@
       <option name="project" value="LOCAL" />
       <updated>1761639752233</updated>
     </task>
-    <option name="localTasksCounter" value="106" />
+    <task id="LOCAL-00106" summary="10/28&#10;時間所得関数一応完成&#10;キーボードからの入力を作成予定">
+      <option name="closed" value="true" />
+      <created>1761648258866</created>
+      <option name="number" value="00106" />
+      <option name="presentableId" value="LOCAL-00106" />
+      <option name="project" value="LOCAL" />
+      <updated>1761648258866</updated>
+    </task>
+    <option name="localTasksCounter" value="107" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -539,7 +541,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="09/22&#10;設定クラス行削除、要素削除を追加" />
     <MESSAGE value="09/23&#10;ウォッチクラス、設定クラスのウィジェット定義の最適化&#10;viewコマンド時は入力欄を最前面に" />
     <MESSAGE value="09/23&#10;不要なもの削除" />
     <MESSAGE value="09/23&#10;時間設定で色変更" />
@@ -564,6 +565,7 @@
     <MESSAGE value="10/28&#10;別ウインドウを閉じると発生するバグ解消" />
     <MESSAGE value="10/28&#10;時間のカウント完成" />
     <MESSAGE value="10/28&#10;時間クラスをオーバーフローに対応" />
-    <option name="LAST_COMMIT_MESSAGE" value="10/28&#10;時間クラスをオーバーフローに対応" />
+    <MESSAGE value="10/28&#10;時間所得関数一応完成&#10;キーボードからの入力を作成予定" />
+    <option name="LAST_COMMIT_MESSAGE" value="10/28&#10;時間所得関数一応完成&#10;キーボードからの入力を作成予定" />
   </component>
 </project>

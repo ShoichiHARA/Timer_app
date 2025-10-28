@@ -132,6 +132,7 @@ class Watch:
     def widgets(self):
         # 設定
         self.wtc.configure(text=self.mw.tmr.out_txt(), font=("", 60))
+        self.wtc.bind("<ButtonPress-1>", self.change)
         self.ssb.configure(text=lg.stt, font=("", 15), width=15, height=3)
         self.rst.configure(text=lg.rst, font=("", 15), width=15, height=3)
         self.dsp.configure(text=lg.viw, font=("", 15), width=32, height=1)
@@ -146,6 +147,14 @@ class Watch:
         self.ssb.place(x=20, y=120)
         self.rst.place(x=210, y=120)
         self.dsp.place(x=22, y=210)
+
+    def change(self, e, tim=None):
+        if e is None:
+            pass
+        if tim is None:
+            tim = fc.asktime(self.mw.tmr.out_txt())
+        if tim is not None:
+            self.mw.tmr.set_txt(tim)
 
     # 初期化
     def reset(self):

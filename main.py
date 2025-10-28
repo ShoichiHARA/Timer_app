@@ -9,8 +9,7 @@ pyinstaller main.py --onefile --noconsole
 
 
 def main():
-    # app.application()
-    fnc.asktime()
+    app.application()
 
 
 if __name__ == "__main__":

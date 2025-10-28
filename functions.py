@@ -57,15 +57,12 @@ class Time:
 
 # 時間変更ウインドウ
 class ChanTimeWin(tk.Frame):
-    def __init__(self: tk.Tk, master, tim=None):
+    def __init__(self: tk.Tk, master, tim="00:00:00.00"):
         super().__init__(master)
         self.pack()
 
         # 定義
-        if tim is None:
-            self.tim = Time()
-        else:
-            self.tim = tim                   # 表示時間
+        self.txt = tim                       # 表示時間
         self.dsp = tk.Label(self.master)     # 表示ラベル
         self.now = tk.Button(self.master)    # 現在時刻ボタン
         self.rst = tk.Button(self.master)    # 初期化ボタン
@@ -73,8 +70,6 @@ class ChanTimeWin(tk.Frame):
         self.ccl = tk.Button(self.master)    # 取消ボタン
         self.csr = tk.Label(self.master)     # カーソル
         self.plc = 0                         # カーソル位置
-        self.tim.set_txt("10:10:10.10")
-        self.txt = self.tim.out_txt()
 
         # ウインドウの定義
         self.master.title(lg.mwn)            # ウインドウタイトル
@@ -86,7 +81,7 @@ class ChanTimeWin(tk.Frame):
     # ウィジェット
     def widgets(self):
         # 設定
-        self.dsp.configure(text=self.tim.out_txt(), font=("", 60))
+        self.dsp.configure(text=self.txt, font=("", 60))
         self.now.configure(text=lg.now, width=10, command=self.ps_nw)
         self.rst.configure(text=lg.rst, width=10, command=self.ps_rs)
         self.ook.configure(text=lg.ook, width=10, command=self.ps_ok)
@@ -105,7 +100,6 @@ class ChanTimeWin(tk.Frame):
     def event(self):
         self.master.bind("<KeyPress>", self.ps_ky)
         self.dsp.bind("<ButtonPress>", self.ck_dp)
-        # self.dsp.bind("<Motion>", self.ck_dp)
 
     # 文字クリック
     def ck_dp(self, e):
@@ -186,7 +180,7 @@ class ChanTimeWin(tk.Frame):
 
     # 取消押下
     def ps_cn(self):
-        self.tim = None
+        self.txt = None
         self.master.quit()
         self.master.destroy()
 
@@ -196,4 +190,4 @@ def asktime(tim=None):
     root = tk.Tk()
     app = ChanTimeWin(master=root, tim=tim)
     app.mainloop()
-    return app.tim
+    return app.txt
