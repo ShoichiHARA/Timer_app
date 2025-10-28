@@ -61,16 +61,14 @@ class MainWin(tk.Frame):
         self.now.get_now()
 
         # カウントアップ
-        if self.swc.cnt:  # カウントが有効な場合
-            # print(self.now.n, self.pnw)
-            if self.now.n > self.pnw:  # 時刻が進んでいる場合
+        if self.swc.cnt:                             # カウントが有効な場合
+            if self.now.n > self.pnw:                # 時刻が進んでいる場合
                 self.tmr.n += self.now.n - self.pnw  # 差分だけ進ませる
-                print(self.tmr.n)
 
         # 時間表示
-        self.swc.wtc.configure(text=self.tmr.out_txt())
-        if self.viw_mas is not None:
-            self.viw_app.drw_tmr()
+        self.swc.wtc.configure(text=self.tmr.out_txt())  # 表示タブの時間変更
+        if self.viw_mas is not None:                     # 別ウインドウが存在する場合
+            self.viw_app.drw_tmr()                       # 別ウインドウ描画
 
         # 再演算
         self.pnw = self.now.n
@@ -140,6 +138,7 @@ class Watch:
 
         # 関数割付
         self.ssb.configure(command=self.stt_stp)
+        self.rst.configure(command=self.reset)
         self.dsp.configure(command=self.display)
 
         # 配置
@@ -150,7 +149,7 @@ class Watch:
 
     # 初期化
     def reset(self):
-        pass
+        self.mw.tmr.n = 0
 
     # 開始/停止
     def stt_stp(self):

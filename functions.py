@@ -35,8 +35,8 @@ class Time:
     # テキスト出力
     def out_txt(self):
         n = self.n
-        t = str(n % 100).zfill(2)                  # ---------ms
-        t = str(n // 100 % 60).zfill(2) + "." + t  # ------ss.ms
-        t = str(n // 60 % 60).zfill(2) + ":" + t   # ---mm:ss.ms
-        t = str(n // 60 % 100).zfill(2) + ":" + t  # hh:mm:ss.ms
+        t = str(n % 100).zfill(2)                      # ---------ms
+        t = str(n // 100 % 60).zfill(2) + "." + t      # ------ss.ms
+        t = str(n // 6000 % 60).zfill(2) + ":" + t     # ---mm:ss.ms
+        t = str(n // 360000 % 100).zfill(2) + ":" + t  # hh:mm:ss.ms
         return t
