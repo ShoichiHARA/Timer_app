@@ -1,4 +1,5 @@
 import application as app
+import functions as fnc
 import application1 as app1
 
 """
@@ -8,8 +9,10 @@ pyinstaller main.py --onefile --noconsole
 
 
 def main():
-    app.application()
+    # app.application()
+    fnc.asktime()
 
 
 if __name__ == "__main__":
     main()
+
