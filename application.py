@@ -122,6 +122,19 @@ class Watch:
         self.rst.place(x=210, y=120)
         self.dsp.place(x=22, y=210)
 
+    # 初期化
+    def reset(self):
+        pass
+
+    # 開始/停止
+    def stt_stp(self):
+        if self.cnt:                         # カウントしている場合
+            self.cnt = False                 # カウント停止
+            self.ssb.configure(text=lg.stt)  # 開始を表示
+        else:                                # カウントしていない場合
+            self.cnt = True                  # カウント開始
+            self.ssb.configure(text=lg.stp)  # 停止を表示
+
     # 別ウインドウ表示
     def display(self):
         if self.wnd:                                 # 表示してる場合
@@ -234,6 +247,8 @@ class ViewWin(tk.Frame):
         self.bkc = "white"         # 背景色
         self.olc = "white"         # 枠線色
         self.wid = 3               # 枠線幅
+        self.cr1 = ":"             # 左コロン
+        self.cr2 = ":"             # 右コロン
         self.cvs = tk.Canvas(self.master)
         self.widgets()
         self.event()
@@ -255,6 +270,11 @@ class ViewWin(tk.Frame):
                     1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, tags=t[j]+str(i),
                     width=self.wid, outline=self.olc
                 )
+        t = ["c1u", "c1d", "p1", "c2u", "c2d", "p2"]
+        for i in range(6):
+            self.cvs.create_rectangle(
+                1, 1, 2, 2, tags=t[i], width=self.wid, outline=self.olc
+            )
         self.drw_seg([0, 0, 0, 0, 0, 0])
 
         # 配置
@@ -271,7 +291,7 @@ class ViewWin(tk.Frame):
         self.master.bind("<Configure>", win_size)
 
     # 7セグ描画
-    def drw_seg(self, seg: list, crn="."):
+    def drw_seg(self, seg: list):
         s = self.wwd / 400  # 倍率
         a = g.a0 * s        # セグの横幅
         b = g.b0 * s        # セグの高さ
@@ -331,6 +351,54 @@ class ViewWin(tk.Frame):
                     self.cvs.itemconfig(t[j]+str(i), fill=self.flc)
                 else:
                     self.cvs.itemconfig(t[j]+str(i), fill=self.bkc)
+
+        # コロン、ピリオド
+        self.cvs.coords("c1u", s*138-c, y-(b/2)-c, s*138+c, y-(b/2)+c)
+        self.cvs.coords("c1d", s*138-c, y+(b/2)-c, s*138+c, y+(b/2)+c)
+        self.cvs.coords("p1", s*138-c, y+b-c, s*138+c, y+b+c)
+        self.cvs.coords("c2u", s*262-c, y-(b/2)-c, s*262+c, y-(b/2)+c)
+        self.cvs.coords("c2d", s*262-c, y+(b/2)-c, s*262+c, y+(b/2)+c)
+        self.cvs.coords("p2", s*262-c, y+b-c, s*262+c, y+b+c)
+        if self.cr1 == ".":
+            self.cvs.itemconfig("c1u", fill=self.bkc, outline=self.bkc)
+            self.cvs.itemconfig("c1d", fill=self.bkc, outline=self.bkc)
+            self.cvs.itemconfig("p1",  fill=self.flc, outline=self.olc)
+        elif self.cr1 == ":":
+            self.cvs.itemconfig("c1u", fill=self.flc, outline=self.olc)
+            self.cvs.itemconfig("c1d", fill=self.flc, outline=self.olc)
+            self.cvs.itemconfig("p1",  fill=self.bkc, outline=self.bkc)
+        if self.cr2 == ".":
+            self.cvs.itemconfig("c2u", fill=self.bkc, outline=self.bkc)
+            self.cvs.itemconfig("c2d", fill=self.bkc, outline=self.bkc)
+            self.cvs.itemconfig("p2",  fill=self.flc, outline=self.olc)
+        elif self.cr2 == ":":
+            self.cvs.itemconfig("c2u", fill=self.flc, outline=self.olc)
+            self.cvs.itemconfig("c2d", fill=self.flc, outline=self.olc)
+            self.cvs.itemconfig("p2",  fill=self.bkc, outline=self.bkc)
+
+    # 表示時間と連動
+    def drw_tmr(self):
+        lst = [0, 0, 0, 0, 0, 0]
+        txt = self.mw.tmr.out_txt   # --:--:--.--
+        if self.mw.tmr.n < 180000:  # 30m未満の場合
+            lst[0] = int(txt[3])    # --:@-:--.--
+            lst[1] = int(txt[4])    # --:-@:--.--
+            lst[2] = int(txt[6])    # --:--:@-.--
+            lst[3] = int(txt[7])    # --:--:-@.--
+            lst[4] = int(txt[9])    # --:--:--.@-
+            lst[5] = int(txt[10])   # --:--:--.-@
+            self.cr1 = ":"          # 左はコロン
+            self.cr2 = "."          # 右はピリオド
+        else:                       # 30m以上の場合
+            lst[0] = int(txt[0])    # @-:--:--.--
+            lst[1] = int(txt[1])    # -@:--:--.--
+            lst[2] = int(txt[3])    # --:@-:--.--
+            lst[3] = int(txt[4])    # --:-@:--.--
+            lst[4] = int(txt[6])    # --:--:@-.--
+            lst[5] = int(txt[7])    # --:--:-@.--
+            self.cr1 = ":"          # 左はコロン
+            self.cr2 = ":"          # 右もコロン
+        self.drw_seg(lst)
 
 
 # アプリケーション
