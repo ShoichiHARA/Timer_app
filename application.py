@@ -198,8 +198,8 @@ class Setting:
         self.tim = "00:00:00.00"             # 保存用
         self.clr = g.clr0                    # 保存用
         self.crt = 0                         # 現在の設定行
-        self.row = g.row0
-        self.txt = [""] * self.row * 5
+        self.row = g.row0                    # 行数
+        self.txt = [""] * self.row * 5       # 表の要素
 
         self.txt[0] = "0"
         self.txt[1] = "00:00:00.00"
@@ -265,7 +265,7 @@ class Setting:
             if i%5 in [2, 3, 4]:  # 色が入る列
                 if self.txt[i] != "":  # 空白でない場合
                     self.tab.itemconfig("r"+str(i), fill=self.txt[i])
-        if self.row == g.row:                     # 行数最小の場合
+        if self.row == g.row0:                    # 行数最小の場合
             self.dlt.configure(state="disabled")  # 削除ボタン無効
         else:
             self.dlt.configure(state="normal")    # 削除ボタン有効
@@ -296,8 +296,8 @@ class Setting:
                 self.clr = clr[1]               # 今回値を保存
                 self.change(5*y+x, self.clr)    # 設定変更
         elif e.num == 3:  # 右クリック
-            if y != 0:  # 左端列でない場合
-                self.change(5*y+x, "")  # 空白を入力
+            if y != 0:                          # 左端列でない場合
+                self.change(5*y+x, "")          # 空白を入力
 
     # 設定変更
     def change(self, xy, txt):
@@ -311,13 +311,13 @@ class Setting:
 
         # 行が埋まっているか
         y = xy // 5  # 行番号
-        g = ((self.txt[4*y+1] != "") and (self.txt[4*y+2] != "")
-             and (self.txt[4*y+3] != "") and (self.txt[4*y+4] != ""))  # 列が埋まっている
+        g = ((self.txt[5*y+1] != "") and (self.txt[5*y+2] != "")
+             and (self.txt[5*y+3] != "") and (self.txt[5*y+4] != ""))  # 列が埋まっている
         if g:  # 列が埋まっている場合
-            self.txt[4*y] = str(y)
+            self.txt[5*y] = str(y)
         else:
-            self.txt[4*y] = ""
-        self.tab.itemconfig("t"+str(4*y), text=self.txt[4*y])
+            self.txt[5*y] = ""
+        self.tab.itemconfig("t"+str(5*y), text=self.txt[5*y])
 
 
 # 予定クラス
@@ -329,22 +329,82 @@ class Schedule:
         self.add = tk.Button(self.frm)       # 行追加ボタン
         self.dlt = tk.Button(self.frm)       # 行削除ボタン
         self.scr = tk.Scrollbar(self.frm)    # スクロールバー
-
+        self.tab = tk.Canvas(self.frm)       # 予定表
+        self.tit = tk.Canvas(self.frm)       # 表のタイトル
+        self.tim = "00:00:00.00"             # 保存用
+        self.crt = 0                         # 現在の設定行
+        self.row = g.row0                    # 行数
+        self.txt = [""] * self.row * 4       # 表の要素
+        
         self.widgets()
+        self.table()
 
+    # ウィジェット
     def widgets(self):
         # 設定
+        self.tab.configure(
+            width=321, height=g.row0*25+1, highlightthickness=0,
+            scrollregion=(0, 0, 321, g.row0*25+1), yscrollcommand=self.scr.set
+        )
+        # self.tab.bind("<ButtonPress>", self.click)
+        self.scr.configure(command=self.tab.yview)
+        self.tit.configure(width=321, height=25, bg="silver", highlightthickness=0)
         self.add.configure(text=lg.rad, width=10)
         self.dlt.configure(text=lg.rdl, width=10)
         self.lbl = tk.Label(self.frm, text="未実装")
 
-        # 関数割付
+        # タイトル行設定
+        self.tit.create_text(40, 13, text="No.", font=("", 11))
+        self.tit.create_text(120, 13, text="時刻", font=("", 11))
+        self.tit.create_text(200, 13, text="設定", font=("", 11))
+        self.tit.create_text(280, 13, text="値", font=("", 11))
+        self.tit.create_rectangle(0, 0, 80, 24)
+        self.tit.create_rectangle(80, 0, 160, 24)
+        self.tit.create_rectangle(160, 0, 240, 24)
+        self.tit.create_rectangle(240, 0, 320, 24)
 
         # 配置
         self.add.place(x=190, y=g.row0*25+55)
         self.dlt.place(x=280, y=g.row0*25+55)
+        self.tab.place(x=40, y=44)
+        self.tit.place(x=40, y=20)
         self.lbl.place(x=10, y=10)
+        
+    # 表の生成
+    def table(self, row, txt=None):
+        if row in [1, -1]:   # 行数変更キーワード
+            self.row += row  # 行数変更
+        if txt is None:      # 表が指定されていない場合
+            txt = self.txt   # 自身を保存
+        self.txt = [""] * self.row * 4  # 配列初期化
+        self.tab.delete("all")  # 表の描画初期化
+        self.tab.configure(scrollregion=(0, 0, 321, self.row*25+1))  # 可動域変更
+        for i in range(self.row*4):  # 行x列だけ繰り返し
+            if i < len(txt):  # 保存した表にデータがある場合
+                self.txt[i] = txt[i]
+            self.tab.create_rectangle(
+                i%4*80, i//4*25, i%4*80+80, i//4*25+25, fill="SystemButtonFace",
+                tags="r"+str(i)
+            )  # 表の格子
+            self.tab.create_text(
+                i%4*80+40, i//4*25+13, text=self.txt[i], font=("", 11),
+                tags="t"+str(i)
+            )  # 表の文字
+        if self.row == g.row0:  # 行数最小の場合
+            self.dlt.configure(state="disabled")  # 削除ボタン無効
+        else:
+            self.dlt.configure(state="normal")    # 削除ボタン有効
 
+    # 表クリック
+    def click(self, e):
+        s = self.scr.get()              # スクロールバーの位置
+        d = s[0] * (self.row * 25 + 2)  # スクロール量
+        x = (e.x - 2) // 80             # クリック列
+        y = (e.y + int(d)) // 25        # クリック行
+        
+        if e.num == 1:  # 左クリック
+            if x == 1:  # 時間変更
+                
 
 # ヘルプクラス
 class Help:
