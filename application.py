@@ -312,8 +312,8 @@ class Setting:
         # 行が埋まっているか
         y = xy // 5  # 行番号
         g = ((self.txt[5*y+1] != "") and (self.txt[5*y+2] != "")
-             and (self.txt[5*y+3] != "") and (self.txt[5*y+4] != ""))  # 列が埋まっている
-        if g:  # 列が埋まっている場合
+             and (self.txt[5*y+3] != "") and (self.txt[5*y+4] != ""))  # 行が埋まっている
+        if g:  # 行が埋まっている場合
             self.txt[5*y] = str(y)
         else:
             self.txt[5*y] = ""
@@ -335,9 +335,10 @@ class Schedule:
         self.crt = 0                         # 現在の設定行
         self.row = g.row0                    # 行数
         self.txt = [""] * self.row * 4       # 表の要素
+        self.lbl = tk.Label(self.frm, text="未実装")
         
         self.widgets()
-        self.table()
+        self.table(self.row)
 
     # ウィジェット
     def widgets(self):
@@ -346,12 +347,11 @@ class Schedule:
             width=321, height=g.row0*25+1, highlightthickness=0,
             scrollregion=(0, 0, 321, g.row0*25+1), yscrollcommand=self.scr.set
         )
-        # self.tab.bind("<ButtonPress>", self.click)
+        self.tab.bind("<ButtonPress>", self.click)
         self.scr.configure(command=self.tab.yview)
         self.tit.configure(width=321, height=25, bg="silver", highlightthickness=0)
-        self.add.configure(text=lg.rad, width=10)
-        self.dlt.configure(text=lg.rdl, width=10)
-        self.lbl = tk.Label(self.frm, text="未実装")
+        self.add.configure(text=lg.rad, width=10, command=pt(self.table, row=1))
+        self.dlt.configure(text=lg.rdl, width=10, command=pt(self.table, row=-1))
 
         # タイトル行設定
         self.tit.create_text(40, 13, text="No.", font=("", 11))
@@ -368,6 +368,7 @@ class Schedule:
         self.dlt.place(x=280, y=g.row0*25+55)
         self.tab.place(x=40, y=44)
         self.tit.place(x=40, y=20)
+        self.scr.place(x=360, y=44, height=g.row*25+1)
         self.lbl.place(x=10, y=10)
         
     # 表の生成
@@ -404,6 +405,30 @@ class Schedule:
         
         if e.num == 1:  # 左クリック
             if x == 1:  # 時間変更
+                if self.txt[4*y+x] != "":  # 既に入力されている場合
+                    self.tim = self.txt[4*y+x]  # 入力値から変更
+                elif g.in_zer:                  # 未記入で0を表示させたい場合
+                    self.tim = "00:00:00.00"    # 0から変更
+                tim = fc.asktime(self.tim)      # 時間変更
+                if tim is not None:             # 時間が返った場合
+                    self.tim = tim              # 今回値を保存
+                    self.change(4*y+x, tim)     # 設定変更
+
+    # 設定変更
+    def change(self, xy, txt):
+        # 文字列変更
+        self.txt[xy] = txt  # 文字列を配列へ代入
+        self.tab.itemconfig("t"+str(xy), text=txt)  # 文字列を表に表示
+
+        # 行が埋まっているか
+        y = xy // 4  # 行番号
+        g = ((self.txt[4*y+1] != "") and (self.txt[4*y+2] != "")
+             and (self.txt[4*y+3] != ""))  # 行が埋まっている
+        if g:  # 行が埋まっている場合
+            self.txt[4*y] = str(y)
+        else:
+            self.txt[4*y] = ""
+        self.tab.itemconfig("t"+str(4*y), text=self.txt[4*y])
                 
 
 # ヘルプクラス
